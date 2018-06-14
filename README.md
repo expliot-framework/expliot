@@ -7,6 +7,9 @@ Internet Of Things Exploitation Framework
 Expliot is a framework for security testing IoT and IoT infrastructure. It provides a set of plugins (test cases) 
 and can be extended easily to create new plugins. The name expliot is a pun on exploit and explains the purpose of
 the framework i.e. IoT exploitation. It is developed in python3
+####Note:
+Expliot is developed in python3. It will not work on python2
+
 
 ### Objective ###
 1. Easy to use
@@ -17,8 +20,9 @@ the framework i.e. IoT exploitation. It is developed in python3
 6. One-stop-shop for IoT and IoT infrastructure security testing.
 
 ### Install ###
-
+* Make sure you have python3 installed
 * Download the repo
+* $ sudo apt-get install libglib2.0-dev # (This is bluepy dependency)
 * $ cd expliot
 * $ python setup.py install
 
