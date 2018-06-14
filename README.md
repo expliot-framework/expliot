@@ -7,7 +7,8 @@ Internet Of Things Exploitation Framework
 Expliot is a framework for security testing IoT and IoT infrastructure. It provides a set of plugins (test cases) 
 and can be extended easily to create new plugins. The name expliot is a pun on exploit and explains the purpose of
 the framework i.e. IoT exploitation. It is developed in python3
-####Note:
+
+####Note:####
 Expliot is developed in python3. It will not work on python2
 
 
