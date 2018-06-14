@@ -43,7 +43,7 @@ class BleScan(Test):
                          descr    = """This test allows you to scan and list the BLE devices
                                         in the proximity. It can also enumerate the characteristics
                                         of a single device if specified. NOTE: This plugin needs 
-                                        root privileges. You run it as $ sudo efconsole""",
+                                        root privileges. You may run it as $ sudo efconsole""",
                          author   = "Aseem Jakhar",
                          email    = "aseemjakhar@gmail.com",
                          ref      = ["https://en.wikipedia.org/wiki/Bluetooth_Low_Energy"],
