@@ -1,24 +1,11 @@
 #
 #
-# expliot - Internet Of Things Exploitation Framework
+# expliot - Internet Of Things Security Testing and Exploitation Framework
 # 
 # Copyright (C) 2018  Aseem Jakhar
 #
 # Email:   aseemjakhar@gmail.com
 # Twitter: @aseemjakhar
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 # BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -32,7 +19,6 @@
 #
 
 from expliot.core.tests.test import *
-from expliot.core.common.exceptions import sysexcinfo
 from expliot.core.protocols.internet.mqtt import SimpleMqttClient
 
 class MqttSub(Test):
@@ -73,4 +59,4 @@ class MqttSub(Test):
             for m in msgs:
                 TLog.success("(topic={})(payload={})".format(m.topic, str(m.payload)))
         except:
-            self.result.setstatus(passed=False, reason="Exception caught: {}".format(sysexcinfo()))
+            self.result.exception()

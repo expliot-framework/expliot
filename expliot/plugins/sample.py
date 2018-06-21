@@ -1,24 +1,11 @@
 #
 #
-# expliot - Internet Of Things Exploitation Framework
+# expliot - Internet Of Things Security Testing and Exploitation Framework
 # 
 # Copyright (C) 2018  Aseem Jakhar
 #
 # Email:   aseemjakhar@gmail.com
 # Twitter: @aseemjakhar
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 # BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -32,7 +19,6 @@
 #
 
 
-import argparse
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 
 class Sample(Test):
@@ -47,9 +33,9 @@ class Sample(Test):
                          category = TCategory(TCategory.COAP, TCategory.SW, TCategory.EXPLOIT),
                          target   = TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC))
 
-        self.argparser.add_argument('-r', '--rhost', required=True, help="IP address of the target")
-        self.argparser.add_argument('-p', '--rport', default=80, type=int, help="Port number of the target. Default is 80")
-        self.argparser.add_argument('-v', '--verbose', action="store_true", help="show verbose output")
+        self.argparser.add_argument("-r", "--rhost", required=True, help="IP address of the target")
+        self.argparser.add_argument("-p", "--rport", default=80, type=int, help="Port number of the target. Default is 80")
+        self.argparser.add_argument("-v", "--verbose", action="store_true", help="show verbose output")
 
     def pre(self):
         TLog.generic("Enter {}.pre()".format(self.id))
@@ -72,7 +58,8 @@ class Sample(Test):
         TLog.fail("No response received")
         TLog.generic("Re-sending command")
         rcv = "Response received from the server"
-        self.result.setstatus(passed=True)
-        # or in case of failure
-        # self.result.setstatus(passed=False, reason="Server is not vulnerable")
+        # In case of failure (Nothing to do in case of success)
+        self.result.setstatus(passed=False, reason="Server is not vulnerable")
+        # Or in case you want the test to fail with whatever exception occured as the reason
+        # self.result.excpetion()
 

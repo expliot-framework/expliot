@@ -1,24 +1,11 @@
 #
 #
-# expliot - Internet Of Things Exploitation Framework
+# expliot - Internet Of Things Security Testing and Exploitation Framework
 # 
 # Copyright (C) 2018  Aseem Jakhar
 #
 # Email:   aseemjakhar@gmail.com
 # Twitter: @aseemjakhar
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 # BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -42,13 +29,14 @@ class BleScan(Test):
                          summary  = "Scan for BLE devices",
                          descr    = """This test allows you to scan and list the BLE devices
                                         in the proximity. It can also enumerate the characteristics
-                                        of a single device if specified. NOTE: This plugin needs 
+                                        of a single device if specified. NOTE: This plugin needs
                                         root privileges. You may run it as $ sudo efconsole""",
                          author   = "Aseem Jakhar",
                          email    = "aseemjakhar@gmail.com",
                          ref      = ["https://en.wikipedia.org/wiki/Bluetooth_Low_Energy"],
                          category = TCategory(TCategory.BLE, TCategory.RD, TCategory.RECON),
-                         target   = TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC))
+                         target   = TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
+                         needroot = True)
 
         self.argparser.add_argument("-i", "--iface", default=0, type=int,
                                     help="HCI interface no. to use for scanning. 0 = hci0, 1 = hci1 and so on. Default is 0")
@@ -65,13 +53,8 @@ class BleScan(Test):
                                     help="Enumerate the characteristics of the BLE device")
         self.argparser.add_argument("-v", "--verbose", action="store_true", help="""Verbose output. Use it for more
                                     info about the devices and their characteristics""")
-
         self.found = False
         self.reason = None
-        # Advertising Data Type value for "Complete Local Name"
-        # Ref: https://www.bluetooth.com/specifications/assigned-numbers/generic-access-profile
-        self.adtype_name = 9
-
 
     def execute(self):
         if self.args.addr is not None:
@@ -90,7 +73,7 @@ class BleScan(Test):
             devs = Ble.scan(iface=self.args.iface, tout=self.args.timeout)
             for d in devs:
                 self.found=True
-                TLog.success("(name={})(address={})".format(d.getValueText(self.adtype_name) or "Unknown", d.addr))
+                TLog.success("(name={})(address={})".format(d.getValueText(Ble.ADTYPE_NAME) or "Unknown", d.addr))
                 if self.args.verbose is True:
                     TLog.success("    (rssi={}dB)".format(d.rssi))
                     TLog.success("    (connectable={})".format(d.connectable))
@@ -106,6 +89,7 @@ class BleScan(Test):
     def enumerate(self):
         """
         Enumerate the services and/or characteristsics of the specified BLE device
+
         :return:
         """
         # documentation is wrong, the first keyword argument is deviceAddr instead of deviceAddress as per the doc

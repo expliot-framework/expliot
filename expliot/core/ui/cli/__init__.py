@@ -1,24 +1,11 @@
 #
 #
-# expliot - Internet Of Things Exploitation Framework
+# expliot - Internet Of Things Security Testing and Exploitation Framework
 # 
 # Copyright (C) 2018  Aseem Jakhar
 #
 # Email:   aseemjakhar@gmail.com
 # Twitter: @aseemjakhar
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 # BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -53,13 +40,13 @@ class Cli(Cmd):
         # Initialize Cmd members
         self.prompt = prompt
         self.intro = intro
-        self.commentGrammars = pyparsing.Or([]) # No C or python comment parsing please
+        self.commentGrammars = pyparsing.Or([])  # No C or python comment parsing please
         self.redirector = "\x01"
         self.allow_cli_args = False
         self.allow_redirection = False
         self.locals_in_py = False
-        #set_use_arg_list(True)
-        #set_strip_quotes(True)
+        # set_use_arg_list(True)
+        # set_strip_quotes(True)
         super().__init__()
         self.del_defaultcmds()
 
@@ -74,7 +61,7 @@ class Cli(Cmd):
 
         :return:
         """
-        del [Cmd.do_edit, Cmd.do_py, Cmd.do_pyscript, Cmd.do_load, Cmd.do_shell, Cmd.do_shortcuts] #, Cmd.do_set]
+        del [Cmd.do_edit, Cmd.do_py, Cmd.do_pyscript, Cmd.do_load, Cmd.do_shell, Cmd.do_shortcuts]  # , Cmd.do_set]
 
     def do_list(self, args):
         """
@@ -94,7 +81,7 @@ class Cli(Cmd):
         :return:
         """
         alist = args.split()
-        alen   = len(alist)
+        alen  = len(alist)
         if alen == 0:
             self.runp.print_help()
             return

@@ -1,24 +1,11 @@
 #
 #
-# expliot - Internet Of Things Exploitation Framework
+# expliot - Internet Of Things Security Testing and Exploitation Framework
 # 
 # Copyright (C) 2018  Aseem Jakhar
 #
 # Email:   aseemjakhar@gmail.com
 # Twitter: @aseemjakhar
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 # BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -42,6 +29,9 @@ class Ble():
 
     ADDR_TYPE_RANDOM = btle.ADDR_TYPE_RANDOM
     ADDR_TYPE_PUBLIC = btle.ADDR_TYPE_PUBLIC
+    # Advertising Data Type value for "Complete Local Name"
+    # Ref: https://www.bluetooth.com/specifications/assigned-numbers/generic-access-profile
+    ADTYPE_NAME = 9
 
     @staticmethod
     def scan(iface=0, tout=10):

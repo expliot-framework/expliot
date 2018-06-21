@@ -1,24 +1,11 @@
 #
 #
-# expliot - Internet Of Things Exploitation Framework
+# expliot - Internet Of Things Security Testing and Exploitation Framework
 # 
 # Copyright (C) 2018  Aseem Jakhar
 #
 # Email:   aseemjakhar@gmail.com
 # Twitter: @aseemjakhar
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 # BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -34,6 +21,8 @@
 import sys
 import argparse
 from collections import namedtuple
+from os import geteuid
+from expliot.core.common.exceptions import sysexcinfo
 
 class TCategory(namedtuple("TCategory", "proto, iface, action")):
     """
@@ -49,9 +38,10 @@ class TCategory(namedtuple("TCategory", "proto, iface, action")):
 
     #Protocol category - The protocol used by the test
     # internet protocols
-    COAP   = "coap"
-    MQTT   = "mqtt"
-    UDP    = "udp"
+    COAP      = "coap"
+    MQTT      = "mqtt"
+    UDP       = "udp"
+    MODBUSTCP = "modbustcp"
     # Radio protocols
     BLE    = "ble"
     ZIGBEE = "zigbee"
@@ -60,7 +50,7 @@ class TCategory(namedtuple("TCategory", "proto, iface, action")):
     JTAG   = "jtag"
     I2C    = "i2c"
     SPI    = "spi"
-    _protocols = [COAP, MQTT, UDP, BLE, ZIGBEE, UART, JTAG, I2C, SPI]
+    _protocols = [COAP, MQTT, UDP, MODBUSTCP, BLE, ZIGBEE, UART, JTAG, I2C, SPI]
 
     # Interface category - whether the test is for software, hardware or radio
     SW = "software"
@@ -110,7 +100,6 @@ class TResult():
     def __init__(self):
         self.passed = True
         self.reason  = None
-        #self.comm   = []
 
     def setstatus(self, passed=True, reason=None):
         """
@@ -123,16 +112,14 @@ class TResult():
         self.passed = passed
         self.reason = reason
 
-    #def appendcomm(self, sent, recvd):
+    def exception(self):
         """
-        Append the sent and received communication data to the TResult for reporting.
-        Plugins should call this method after each send/recv. It is only required for reporting
-        :param sent: Data/summary of data sent to the target, to be used in reporting
-        :param recvd: Data/summary of data received from the target, to be used in reporting
+        Set passed to False and reason to the exception message
+
         :return:
         """
-    #    self.comm.append({'sent':sent, 'recvd':recvd})
-
+        self.passed=False
+        self.reason="Exception caught: ({})".format(sysexcinfo())
 
 class TLog():
     """
@@ -236,8 +223,9 @@ class Test:
         self.ref      = kwargs["ref"]
         self.category = kwargs["category"]
         self.target   = kwargs["target"]
+        self.needroot = kwargs["needroot"] if ("needroot" in kwargs.keys()) else False
 
-        self.setid()
+        self._setid()
         self.argparser = argparse.ArgumentParser(prog=self.id, description=self.descr)
         self.result = TResult()
 
@@ -273,25 +261,38 @@ class Test:
 
 
     def run(self, arglist):
-        self.args = self.argparser.parse_args(arglist)
+        try:
+            self.args = self.argparser.parse_args(arglist)
 
-        # Log Test Intro messages
-        self.intro()
+            # Log Test Intro messages
+            self.intro()
 
-        # Test pre() method is used for setup related tasks, if any.
-        self.pre()
+            # Check if the plugin needs root privileges and the program has the required privileges
+            self._assertpriv()
 
-        # Test execute() method is for the main test case execution.
-        self.execute()
+            # Test pre() method is used for setup related tasks, if any.
+            self.pre()
 
-        # Test post() method is used for cleanup related tasks, if any.
-        self.post()
+            # Test execute() method is for the main test case execution.
+            self.execute()
+
+            # Test post() method is used for cleanup related tasks, if any.
+            self.post()
+        except:
+            self.result.exception()
 
         # Log Test status
-        self.logstatus()
+        self._logstatus()
 
+    def _assertpriv(self):
+        """
+        Raises an exception if the plugin needs root privileges but program is not executing as root
+        :return:
+        """
+        if self.needroot and geteuid() != 0:
+            raise PermissionError("Need root privilege to execute the plugin ({})".format(self.id))
 
-    def setid(self):
+    def _setid(self):
         """
         Set the Unique Test ID. The ID is the plugin class name in lower case
 
@@ -299,8 +300,8 @@ class Test:
         """
         self.id = self.__class__.__name__.lower()
 
-    def logstatus(self):
-        if self.result.passed == True:
+    def _logstatus(self):
+        if self.result.passed:
             TLog.success("Test {} Passed".format(self.id))
         else:
             TLog.fail("Test {} Failed. Reason = {}".format(self.id, self.result.reason))
