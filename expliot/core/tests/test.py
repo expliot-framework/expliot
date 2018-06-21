@@ -119,7 +119,7 @@ class TResult():
         :return:
         """
         self.passed=False
-        self.reason="Exception caught: ({})".format(sysexcinfo())
+        self.reason="Exception caught: [{}]".format(sysexcinfo())
 
 class TLog():
     """

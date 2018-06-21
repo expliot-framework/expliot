@@ -21,16 +21,15 @@
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.core.protocols.internet.modbus import ModbusTcpClient
 
-class MBTcpRead(Test):
+class MBTcpWrite(Test):
     COIL = 0
-    DINPUT = 1
-    HREG = 2
-    IREG = 3
-    ITEMS = ["coil", "discrete input", "holding register", "input register"]
+    REG = 1
+
+    ITEMS = ["coil", "register"]
     def __init__(self):
         super().__init__(name     = "Modbus TCP Write",
                          summary  = "Write coil and register values to a Modbus server (slave)",
-                         descr    = "This plugin write the item (coil, register) values to a Modbus server",
+                         descr    = "This plugin writes the item (coil, register) values to a Modbus server",
                          author   = "Aseem Jakhar",
                          email    = "aseemjakhar@gmail.com",
                          ref      = ["https://en.wikipedia.org/wiki/Modbus", "http://www.modbus.org/specs.php"],
@@ -41,66 +40,51 @@ class MBTcpRead(Test):
         self.argparser.add_argument("-p", "--rport", default=502, type=int,
                                     help="Port number of the Modbus server. Default is 502")
         self.argparser.add_argument("-i", "--item", default=0, type=int,
-                                    help="""The item to read from. {} = {},
-                                            {} = {}, {} = {}, {} = {}. Default is {}""".format(self.COIL,
-                                                                                               self.ITEMS[self.COIL],
-                                                                                               self.DINPUT,
-                                                                                               self.ITEMS[self.DINPUT],
-                                                                                               self.HREG,
-                                                                                               self.ITEMS[self.HREG],
-                                                                                               self.IREG,
-                                                                                               self.ITEMS[self.IREG],
-                                                                                               self.COIL))
-        self.argparser.add_argument("-a", "--address",default=0, type=int, help="The start address of item to read from")
-        self.argparser.add_argument("-c", "--count",default=1, type=int, help="The count of items to read. Default is 1")
+                                    help="""The item to read from. {} = {}, {} = {}. 
+                                            Default is {}""".format(self.COIL,
+                                                                    self.ITEMS[self.COIL],
+                                                                    self.REG,
+                                                                    self.ITEMS[self.REG],
+                                                                    self.COIL))
+        self.argparser.add_argument("-a", "--address",default=0, type=int, help="The start address of item to write to")
+        self.argparser.add_argument("-c", "--count",default=1, type=int, help="The count of items to write. Default is 1")
         self.argparser.add_argument("-u", "--unit", default=1, type=int,
-                                    help="The Unit ID of the slave on the server to read from")
-        self.argparser.add_argument("-v", "--verbose", action="store_true", help="show verbose output")
+                                    help="The Unit ID of the slave on the server to write to")
+        self.argparser.add_argument("-w", "--value", required=True, type=int, help="The value to write")
 
     def execute(self):
+        c = ModbusTcpClient(self.args.rhost, port=self.args.rport)
         try:
-            values = None
-            c = ModbusTcpClient(self.args.rhost, port=self.args.rport)
-            # Check what to read i.e. coils, holding registers etc
+            # Check what to write to i.e. coils, registers etc
             if self.args.item < 0 or self.args.item >= len(self.ITEMS):
                 raise AttributeError("Unknown --item specified ({})".format(self.args.item))
+            if self.args.count < 1:
+                raise AttributeError("Invalid --count specified ({})".format(self.args.count))
 
-            TLog.generic("Sending read command to Modbus Server ({}) on port ({})".format(self.args.rhost,
-                                                                                          self.args.rport))
+            TLog.generic("Sending write command to Modbus Server ({}) on port ({})".format(self.args.rhost,
+                                                                                           self.args.rport))
             TLog.generic("(item={})(address={})(count={})(unit={})".format(self.ITEMS[self.args.item],
                                                                            self.args.address,
                                                                            self.args.count,
                                                                            self.args.unit))
             c.connect()
             if self.args.item == self.COIL:
-                r = c.read_coils(self.args.address, self.args.count, unit=self.args.unit)
+                val = True if self.args.value != 0 else False
+                TLog.trydo("Writing value(s) ({})".format(val))
+                # below r = class pymodbus.bit_write_message.WriteMultipleCoilsResponse
+                r = c.write_coils(self.args.address, [val]*self.args.count, unit=self.args.unit)
                 if r.isError() == True:
                     raise Exception(str(r))
-                values = r.bits
-            elif self.args.item == self.DINPUT:
-                # below r = class pymodbus.bit_read_message.ReadDiscreteInputsResponse
-                r = c.read_discrete_inputs(self.args.address, self.args.count, unit=self.args.unit)
+            elif self.args.item == self.REG:
+                TLog.trydo("Writing value(s) ({})".format(self.args.value))
+                # below r = class pymodbus.register_write_message.WriteMultipleRegistersResponse
+                r = c.write_registers(self.args.address, [self.args.value]*self.args.count, unit=self.args.unit)
                 if r.isError() == True:
                     raise Exception(str(r))
-                values = r.bits
-            elif self.args.item == self.HREG:
-                # below r = class pymodbus.register_read_message.ReadHoldingRegistersResponse
-                r = c.read_holding_registers(self.args.address, self.args.count, unit=self.args.unit)
-                if r.isError() == True:
-                    raise Exception(str(r))
-                values = r.registers
-            elif self.args.item == self.IREG:
-                # below r = class pymodbus.register_read_message.ReadInputRegistersResponse
-                r = c.read_input_registers(self.args.address, self.args.count, unit=self.args.unit)
-                if r.isError() == True:
-                    raise Exception(str(r))
-                values = r.registers
             else:
                 raise AttributeError("Unknown --item specified ({})".format(self.args.item))
-            for i in range(0, self.args.count):
-                TLog.success("({}[{}]={})".format(self.ITEMS[self.args.item], self.args.address + i, values[i]))
+            TLog.success("Values successfully written")
         except:
             self.result.exception()
         finally:
             c.close()
-

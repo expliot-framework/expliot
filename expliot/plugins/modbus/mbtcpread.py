@@ -56,12 +56,11 @@ class MBTcpRead(Test):
         self.argparser.add_argument("-c", "--count",default=1, type=int, help="The count of items to read. Default is 1")
         self.argparser.add_argument("-u", "--unit", default=1, type=int,
                                     help="The Unit ID of the slave on the server to read from")
-        self.argparser.add_argument("-v", "--verbose", action="store_true", help="show verbose output")
 
     def execute(self):
+        c = ModbusTcpClient(self.args.rhost, port=self.args.rport)
         try:
             values = None
-            c = ModbusTcpClient(self.args.rhost, port=self.args.rport)
             # Check what to read i.e. coils, holding registers etc
             if self.args.item < 0 or self.args.item >= len(self.ITEMS):
                 raise AttributeError("Unknown --item specified ({})".format(self.args.item))

@@ -21,7 +21,6 @@
 from expliot.core.tests.test import *
 from expliot.core.protocols.radio.ble import Ble, BlePeripheral
 from hashlib import md5
-from os import geteuid
 
 class TappUnlock(Test):
     TNAMEPREFIX = "TL104A"
