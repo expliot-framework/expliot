@@ -22,7 +22,6 @@
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 
 class Sample(Test):
-
     def __init__(self):
         super().__init__(name     = "Sample name",
                          summary  = "Sample Summary",
@@ -48,7 +47,7 @@ class Sample(Test):
         TLog.generic("Exit {}.post()".format(self.id))
 
     def execute(self):
-        TLog.generic("Executing Test ID {}".format(self.id))
+        TLog.generic("Sending request to server({}) on port({})".format(self.args.rhost, self.args.rport))
         TLog.trydo("Searching imaginary database")
         TLog.success("Found matching entry in db - ({})".format("FooEntry"))
         snd = "GET / HTTP/1.1"

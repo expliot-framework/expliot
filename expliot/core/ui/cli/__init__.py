@@ -20,7 +20,7 @@
 
 import argparse
 import pyparsing
-from cmd2 import Cmd
+from cmd2 import Cmd, with_argument_list
 from expliot.core.tests.testsuite import TestSuite
 
 
@@ -74,22 +74,21 @@ class Cli(Cmd):
             t = self.tsuite[test]()
             print("{:<20} {}".format(test, t.summary))
 
-    def do_run(self, args):
+    @with_argument_list
+    def do_run(self, arglist):
         """
-         Execute a specific test case
-        :param args: Arguments (array) of the test case
+        Execute a specific test case
+        :param arglist: Argument list (array) passed from the console
         :return:
         """
-        alist = args.split()
-        alen  = len(alist)
+        alen  = len(arglist)
         if alen == 0:
             self.runp.print_help()
             return
-        elif alen == 1 and ('-h' in alist or '--help' in alist):
+        elif alen == 1 and ('-h' in arglist or '--help' in arglist):
             self.runp.print_help()
             return
-        ns, subarglist = self.runp.parse_known_args(alist)
-
+        ns, subarglist = self.runp.parse_known_args(arglist)
         self.runtest(ns.testname, subarglist)
 
     def runtest(self, name, arglist):

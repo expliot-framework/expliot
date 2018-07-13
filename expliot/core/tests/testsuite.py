@@ -67,7 +67,7 @@ class TestSuite(dict):
                             self[tname.lower()] = klass
 
 
-if __name__ == "__main__":
-    ts = TestSuite()
-    t = ts.get('ssample', None)
-    print(t)
+#if __name__ == "__main__":
+#    ts = TestSuite()
+#    t = ts.get('ssample', None)
+#    print(t)

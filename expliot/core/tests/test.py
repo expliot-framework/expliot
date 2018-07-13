@@ -46,11 +46,12 @@ class TCategory(namedtuple("TCategory", "proto, iface, action")):
     BLE    = "ble"
     ZIGBEE = "zigbee"
     # hardware protocols
+    CAN    = "can"
     UART   = "uart"
     JTAG   = "jtag"
     I2C    = "i2c"
     SPI    = "spi"
-    _protocols = [COAP, MQTT, UDP, MODBUSTCP, BLE, ZIGBEE, UART, JTAG, I2C, SPI]
+    _protocols = [COAP, MQTT, UDP, MODBUSTCP, BLE, ZIGBEE, CAN, UART, JTAG, I2C, SPI]
 
     # Interface category - whether the test is for software, hardware or radio
     SW = "software"
@@ -230,7 +231,7 @@ class Test:
         self.result = TResult()
 
         # Namespace returned by self.argparser.parser_args()
-        # This gets defined in the runtest method and has a getter self.args for inherited class Plugin
+        # This gets defined in the run() method and has a getter self.args for inherited class Plugin
         self.args = None
 
     def pre(self):
@@ -261,9 +262,12 @@ class Test:
 
 
     def run(self, arglist):
-        try:
-            self.args = self.argparser.parse_args(arglist)
-
+        # Not keeping parse_args in try block because it raises SystemExit in case of -h/--help
+        # which gets handled by cmd or argparse I think. If we keep in it below try block
+        # run plugin with -h/--help catches the exception and fails the test case due to the
+        # below except
+        self.args = self.argparser.parse_args(arglist)
+        for i in range(0,1): #try:
             # Log Test Intro messages
             self.intro()
 
@@ -278,8 +282,8 @@ class Test:
 
             # Test post() method is used for cleanup related tasks, if any.
             self.post()
-        except:
-            self.result.exception()
+        #except:
+        #    self.result.exception()
 
         # Log Test status
         self._logstatus()
