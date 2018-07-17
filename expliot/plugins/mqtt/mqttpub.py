@@ -44,13 +44,24 @@ class MqttPub(Test):
                                     help="Message to be published on the specified topic")
         self.argparser.add_argument("-i", "--id",
                                     help="The client ID to be used for the connection. Default is random client ID")
+        self.argparser.add_argument('-u', '--user',
+                                    help="Specify the user name to be used. If not specified, it connects without authentication")
+        self.argparser.add_argument('-w', '--passwd',
+                                    help="Specify the password to be used. If not specified, it connects with without authentication")
 
 
     def execute(self):
-        TLog.generic("Sending message to MQTT Broker ({}) on port ({})".format(self.args.rhost, self.args.rport))
+        TLog.generic("Publishing message on topic ({}) to MQTT Broker ({}) on port ({})".format(self.args.rhost,
+                                                                                                self.args.topic,
+                                                                                                self.args.rport))
+        creds = None
+        if self.args.user and self.args.passwd:
+            creds = {'username': self.args.user, 'password': self.args.passwd}
+            TLog.trydo("Using authentication (username={})(password={})".format(self.args.user,
+                                                                                     self.args.passwd))
         try:
             SimpleMqttClient.pub(self.args.topic, payload=self.args.msg, hostname=self.args.rhost,
-                                 port=self.args.rport, client_id=self.args.id)
+                                 port=self.args.rport, auth=creds, client_id=self.args.id)
             TLog.success("Done")
         except:
             self.result.exception()

@@ -55,7 +55,7 @@ class MqttAuth(Test):
     def execute(self):
 
         TLog.generic("Attempting to authenticate with the MQTT Broker ({}) on port ({})".format(self.args.rhost,
-                                                                                            self.args.rport))
+                                                                                                self.args.rport))
         found = False
         try:
             if self.args.pfile and self.args.user:

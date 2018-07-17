@@ -45,17 +45,27 @@ class MqttSub(Test):
                                             messages are read. Default is 1""")
         self.argparser.add_argument("-i", "--id",
                                     help="The client ID to be used for the connection. Default is random client ID")
+        self.argparser.add_argument('-u', '--user',
+                                    help="Specify the user name to be used. If not specified, it connects without authentication")
+        self.argparser.add_argument('-w', '--passwd',
+                                    help="Specify the password to be used. If not specified, it connects with without authentication")
 
 
 
 
     def execute(self):
-        TLog.generic("Susbcribing to topic ({}) to MQTT Broker ({}) on port ({})".format(self.args.topic,
+        TLog.generic("Susbcribing to topic ({}) on MQTT Broker ({}) on port ({})".format(self.args.topic,
                                                                                          self.args.rhost,
                                                                                          self.args.rport))
         try:
+            creds = None
+            if self.args.user and self.args.passwd:
+                creds = {'username':self.args.user, 'password':self.args.passwd}
+                TLog.trydo("Using authentication (username={})(password={})".format(self.args.user,
+                                                                                         self.args.passwd))
+
             msgs = SimpleMqttClient.sub(self.args.topic, hostname=self.args.rhost, port=self.args.rport,
-                                 client_id=self.args.id, msg_count=self.args.count)
+                                 client_id=self.args.id, auth=creds, msg_count=self.args.count)
             for m in msgs:
                 TLog.success("(topic={})(payload={})".format(m.topic, str(m.payload)))
         except:
