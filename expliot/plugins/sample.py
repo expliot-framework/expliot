@@ -60,5 +60,5 @@ class Sample(Test):
         # In case of failure (Nothing to do in case of success)
         self.result.setstatus(passed=False, reason="Server is not vulnerable")
         # Or in case you want the test to fail with whatever exception occured as the reason
-        # self.result.excpetion()
+        # self.result.exception()
 
