@@ -22,13 +22,16 @@ Expliot is developed in python3. It will not work on python2
 
 ### Install ###
 * Make sure you have python3 installed
-* Download the repo
-* $ sudo apt-get install libglib2.0-dev # (This is bluepy dependency)
-* $ cd expliot
-* $ python setup.py install
+* $ Install bluepy dependency => libglib2
+`$ sudo apt-get install libglib2.0-dev`
+* $ Install pyspiflash/pyftdi dependency => libusb1
+`$ sudo apt-get install libusb-1.0`
+* Download the repo `$ git clone https://.....`
+* `$ cd expliot`
+* `$ sudo python3 setup.py install`
 
 ### Run ###
-* $ efconsole
+* `$ efconsole`
 
 ### Contribution ###
 * Suggest new plugins/test cases

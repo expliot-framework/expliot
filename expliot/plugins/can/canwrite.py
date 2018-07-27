@@ -44,10 +44,10 @@ class CANWrite(Test):
                                     help="Specify the data to write, as hex stream, without the 0x prefix")
 
     def execute(self):
-        TLog.generic("Writing to CANbus on interface({}), arbitration id({}), extended?({}) data({})".format(self.args.iface,
-                                                                                                             self.args.arbitid,
-                                                                                                             self.args.exid,
-                                                                                                             self.args.data))
+        TLog.generic("Writing to CANbus on interface({}), arbitration id(0x{:x}), extended?({}) data({})".format(self.args.iface,
+                                                                                                                 self.args.arbitid,
+                                                                                                                 self.args.exid,
+                                                                                                                 self.args.data))
         bus = None
         try:
             bus = CanBus(bustype="socketcan", channel=self.args.iface)
