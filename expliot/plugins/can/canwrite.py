@@ -18,6 +18,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
+from time import sleep
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.core.protocols.hardware.can import CanBus, CanMessage
 
@@ -26,9 +27,9 @@ class CANWrite(Test):
     def __init__(self):
         super().__init__(name     = "CANbus write",
                          summary  = "Send a data frame on CANBus",
-                         descr    = """This test case allows you to write a message on the CANBus i.e. send a data 
+                         descr    = """This plugin allows you to write message(s) on the CANBus i.e. send a data 
                                        frame. As of now it uses socketcan but if you want to extend it to other 
-                                       interfaces, just open an issue on the official project repository""",
+                                       interfaces, just open an issue on the official expliot project repository""",
                          author   = "Aseem Jakhar",
                          email    = "aseemjakhar@gmail.com",
                          ref      = ["https://en.wikipedia.org/wiki/CAN_bus"],
@@ -42,6 +43,12 @@ class CANWrite(Test):
                                     help="Speficy this option if using extended format --arbitid")
         self.argparser.add_argument("-d", "--data", required=True,
                                     help="Specify the data to write, as hex stream, without the 0x prefix")
+        self.argparser.add_argument("-c", "--count", type=int, default=1,
+                                    help="Specify the no. of messages to write. Default is 1")
+        self.argparser.add_argument("-w", "--wait", type=float,
+                                    help="""Specify the wait time, in seconds, between each consecutive message write.  
+                                            Default is to not wait between writes. You may use float values as well 
+                                            i.e. 0.5""")
 
     def execute(self):
         TLog.generic("Writing to CANbus on interface({}), arbitration id(0x{:x}), extended?({}) data({})".format(self.args.iface,
@@ -50,12 +57,19 @@ class CANWrite(Test):
                                                                                                                  self.args.data))
         bus = None
         try:
+            if self.args.count < 1:
+                raise ValueError("Illegal count value {}".format(self.args.count))
             bus = CanBus(bustype="socketcan", channel=self.args.iface)
             msg = CanMessage(arbitration_id=self.args.arbitid,
                          extended_id=self.args.exid,
                          data=list(bytes.fromhex(self.args.data)))
-            bus.send(msg)
+            for cnt in range(1, self.args.count + 1):
+                bus.send(msg)
+                TLog.success("Wrote message {}".format(cnt))
+                if self.args.wait and cnt < self.args.count:
+                    sleep(self.args.wait)
         except:
             self.result.exception()
         finally:
-            bus.shutdown()
+            if bus:
+                bus.shutdown()

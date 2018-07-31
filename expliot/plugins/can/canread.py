@@ -27,9 +27,9 @@ class CANRead(Test):
     def __init__(self):
         super().__init__(name     = "CANbus read",
                          summary  = "Read frames from CANBus",
-                         descr    = """This test case allows you to read messages from the CANBus. As of now it 
+                         descr    = """This plugin allows you to read message(s) from the CANBus. As of now it 
                                        uses socketcan but if you want to extend it to other interfaces, just 
-                                       open an issue on the official project repository""",
+                                       open an issue on the official expliot project repository""",
                          author   = "Aseem Jakhar",
                          email    = "aseemjakhar@gmail.com",
                          ref      = ["https://en.wikipedia.org/wiki/CAN_bus"],
@@ -41,25 +41,31 @@ class CANRead(Test):
                                     help="Show messages of the specified arbitration ID only. For hex value prefix it with 0x")
         self.argparser.add_argument("-c", "--count", type=int, default=10,
                                     help="Specify the count of messages to read from the CANBus. Default is 10")
+        self.argparser.add_argument("-t", "--timeout", type=float,
+                                    help="""Specify the time, in seconds, to wait for each read. Default is to wait 
+                                            forever. You may use float values as well i.e. 0.5""")
 
     def execute(self):
         TLog.generic("Reading ({}) messages from CANbus on interface({})".format(self.args.count, self.args.iface))
 
         bus = None
         try:
+            if self.args.count < 1:
+                raise ValueError("Illegal count value {}".format(self.args.count))
             bus = CanBus(bustype="socketcan", channel=self.args.iface)
-            cnt = 0
-            for m in bus:
-                if cnt >= self.args.count:
-                    break
+            for cnt in range(1, self.args.count + 1):
+                m = bus.recv(timeout=self.args.timeout)
+                if m is None:
+                    raise TimeoutError("Timed out while waiting for CAN message")
                 if self.args.arbitid:
                     if self.args.arbitid == m.arbitration_id:
-                        cnt += 1
-                        TLog.success("(data={})".format(hexlify(m.data).decode()))
+                        TLog.success("(msg={})(data={})".format(cnt, hexlify(m.data).decode()))
                 else:
-                    cnt += 1
-                    TLog.success("(arbitration_id=0x{:x})(data={})".format(m.arbitration_id, hexlify(m.data).decode()))
+                    TLog.success("(msg={})(arbitration_id=0x{:x})(data={})".format(cnt,
+                                                                                   m.arbitration_id,
+                                                                                   hexlify(m.data).decode()))
         except:
             self.result.exception()
         finally:
-            bus.shutdown()
+            if bus:
+                bus.shutdown()
