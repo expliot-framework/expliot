@@ -20,7 +20,7 @@
 
 from time import time
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
-from expliot.core.protocols.hardware.spi.ftdi import FlashManager
+from expliot.core.protocols.hardware.spi import SpiFlashManager
 
 class SPIFlashWrite(Test):
     def __init__(self):
@@ -29,9 +29,9 @@ class SPIFlashWrite(Test):
                          descr    = """This plugin writes data to a serial flash chip that implements SPI protocol.
                                        It needs an FTDI interface to write data to the target flash chip. You can buy 
                                        an FTDI device online. If you are interested we have an FTDI based product - 
-                                       Expliot Nano which you can order online from www.expliot.io
+                                       'Expliot Nano' which you can order online from www.expliot.io
                                        This plugin uses pyspiflash package which in turn uses pyftdi python driver 
-                                       for ftdi chips. For more details on supported flash chips check the readme at 
+                                       for ftdi chips. For more details on supported flash chips, check the readme at 
                                        https://github.com/eblot/pyspiflash. Thank you Emmanuel Blot for pyspiflash. 
                                        You may want to run it as root in case you get a USB error related to langid""",
                          author   = "Aseem Jakhar",
@@ -74,7 +74,7 @@ class SPIFlashWrite(Test):
             else:
                 raise AttributeError("Specify either --data or --rfile (but not both)")
 
-            d = FlashManager.get_flash_device(self.args.url, freq=self.args.freq)
+            d = SpiFlashManager.get_flash_device(self.args.url, freq=self.args.freq)
             TLog.success("(chip found={})(chip size={} bytes)(using frequency={})".format(d,
                                                                                           len(d),
                                                                                           int(d.spi_frequency)))
@@ -119,4 +119,4 @@ class SPIFlashWrite(Test):
         except:
             self.result.exception()
         finally:
-            FlashManager.close(d)
+            SpiFlashManager.close(d)

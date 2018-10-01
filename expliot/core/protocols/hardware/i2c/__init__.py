@@ -18,4 +18,4 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-from expliot.core.interfaces.ftdi import SpiFlashManager
+from expliot.core.interfaces.ftdi import I2cEepromManager

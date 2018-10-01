@@ -18,23 +18,3 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-from spiflash.serialflash import SerialFlashManager
-
-class FlashManager(SerialFlashManager):
-    """
-    A wrapper around pyspiflash SerialFlashManager. DMore details can be found at https://github.com/eblot/pyspiflash
-    """
-
-    """
-    Calls terminate() on the SpiController to close the ftdi device. As of now there is no close or terminate method
-    provided in spiflash.
-    XXX: Remove me when pyspiflash implements one.
-    
-    :param device: The Flash device returned from get_flash_device()
-    :return:
-    """
-    @staticmethod
-    def close(device):
-        if device:
-            device._spi._controller.terminate()
-

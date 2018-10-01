@@ -20,24 +20,24 @@
 
 from time import time
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
-from expliot.core.protocols.hardware.spi import SpiFlashManager
+from expliot.core.protocols.hardware.i2c import I2cEepromManager
 
-class SPIFlashRead(Test):
+class I2cEepromRead(Test):
     def __init__(self):
-        super().__init__(name     = "SPI Flash Read",
-                         summary  = "Read data from a SPI Flash chip",
-                         descr    = """This plugin reads data from a serial flash chip that implements SPI protocol.
-                                       It needs an FTDI interface to read data from the target flash chip. You can buy 
-                                       an FTDI device online. If you are interested we have an FTDI based product - 
-                                       'Expliot Nano' which you can order online from www.expliot.io
-                                       This plugin uses pyspiflash package which in turn uses pyftdi python driver 
-                                       for ftdi chips. For more details on supported flash chips, check the readme at 
-                                       https://github.com/eblot/pyspiflash. Thank you Emmanuel Blot for pyspiflash. 
-                                       You may want to run it as root in case you get a USB error related to langid""",
+        super().__init__(name     = "I2C EEPROM Read",
+                         summary  = "Read data from an I2C EEPROM chip",
+                         descr    = """This plugin reads data from an I2C EEPROM chip. It needs an FTDI interface to 
+                                       read data from the target EEPROM chip. You can buy an FTDI device online. If you 
+                                       are interested we have an FTDI based product - 'Expliot Nano' which you can 
+                                       order online from www.expliot.io This plugin uses pyi2cflash package which in 
+                                       turn uses pyftdi python driver for ftdi chips. For more details on supported 
+                                       I2C EEPROM chips, check the readme at https://github.com/eblot/pyi2cflash Thank 
+                                       you Emmanuel Blot for pyi2cflash. You may want to run it as root in case you 
+                                       get a USB error related to langid""",
                          author   = "Aseem Jakhar",
                          email    = "aseemjakhar@gmail.com",
-                         ref      = ["https://github.com/eblot/pyspiflash"],
-                         category = TCategory(TCategory.SPI, TCategory.HW, TCategory.ANALYSIS),
+                         ref      = ["https://github.com/eblot/pyi2cflash"],
+                         category = TCategory(TCategory.I2C, TCategory.HW, TCategory.ANALYSIS),
                          target   = TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC))
 
         self.argparser.add_argument("-a", "--addr", default=0, type=int,
@@ -48,26 +48,24 @@ class SPIFlashRead(Test):
         self.argparser.add_argument("-u", "--url", default="ftdi:///1",
                                     help="""URL of the connected FTDI device. Default is "ftdi:///1". For more details
                                             on the URL scheme check https://eblot.github.io/pyftdi/urlscheme.html""")
-        self.argparser.add_argument("-f", "--freq", type=int,
-                                    help="""Specify a frequency in Hz(example: 1000000 for 1 MHz. If not, specified, 
-                                            default frequency of the device is used. You may want to decrease the 
-                                            frequency if you keep seeing FtdiError:UsbError.""")
-        self.argparser.add_argument("-w", "--wfile", help="""Specify the file path where data, read from the spi flash
-                                                             device, is to be written. If not specified output the 
+        self.argparser.add_argument("-c", "--chip", required=True,
+                                    help="""Specify the chip. Supported chips are 24AA32A, 24AA64, 24AA128, 24AA256, 
+                                            24AA512""")
+        self.argparser.add_argument("-w", "--wfile", help="""Specify the file path where data, read from the i2c
+                                                             chip, is to be written. If not specified output the 
                                                              data on the terminal.""")
+        self.slaveaddr = 0x50
 
     def execute(self):
-        TLog.generic("Reading data from spi flash at address({}) using device({})".format(self.args.addr,
-                                                                                          self.args.url))
+        TLog.generic("Reading data from i2c eeprom at address({}) using device({})".format(self.args.addr,
+                                                                                           self.args.url))
         d = None
         try:
             stime = None
             etime = None
-            d = SpiFlashManager.get_flash_device(self.args.url, freq=self.args.freq)
+            d = I2cEepromManager.get_flash_device(self.args.url, self.args.chip, address=self.slaveaddr)
             length = self.args.length or (len(d) - self.args.addr)
-            TLog.success("(chip found={})(chip size={} bytes)(using frequency={})".format(d,
-                                                                                          len(d),
-                                                                                          int(d.spi_frequency)))
+            TLog.success("(chip size={} bytes)".format(len(d)))
             TLog.trydo("Reading {} bytes from start address {}".format(length, self.args.addr))
             if self.args.addr + length > len(d):
                 raise IndexError("Length is out of range of the chip size")
@@ -77,7 +75,7 @@ class SPIFlashRead(Test):
             if self.args.wfile:
                 TLog.trydo("Writing data to the file ({})".format(self.args.wfile))
                 f = open(self.args.wfile, "w+b")
-                data.tofile(f)
+                f.write(data)
                 f.close()
             else:
                 TLog.success("(data={})".format([hex(x) for x in data]))
@@ -86,4 +84,4 @@ class SPIFlashRead(Test):
         except:
             self.result.exception()
         finally:
-            SpiFlashManager.close(d)
+            I2cEepromManager.close(d)
