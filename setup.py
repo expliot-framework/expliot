@@ -33,7 +33,7 @@ setup(
     scripts=["bin/efconsole"],
     install_requires=["cmd2>=0.8.0", "paho-mqtt>=1.3.1", "coapthon3>=1.0.1", "bluepy>=1.1.4", "pyserial>=3.4",
                       "pyparsing>=2.2.0", "pycrypto>=2.6.1", "pymodbus>=1.5.2", "python-can>=2.1.0",
-                      "pyspiflash>=0.5.2"],
+                      "pyspiflash>=0.5.2", "pyi2cflash>=0.1.1"],
     python_requires=">=3.5",
     classifiers=["Development Status :: 3 - Alpha",
                  "Intended Audience :: Information Technology",
