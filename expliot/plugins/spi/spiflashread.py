@@ -24,8 +24,8 @@ from expliot.core.protocols.hardware.spi import SpiFlashManager
 
 class SPIFlashRead(Test):
     def __init__(self):
-        super().__init__(name     = "SPI Flash Read",
-                         summary  = "Read data from a SPI Flash chip",
+        super().__init__(name     = "readflash",
+                         summary  = "SPI Flash Reader",
                          descr    = """This plugin reads data from a serial flash chip that implements SPI protocol.
                                        It needs an FTDI interface to read data from the target flash chip. You can buy 
                                        an FTDI device online. If you are interested we have an FTDI based product - 

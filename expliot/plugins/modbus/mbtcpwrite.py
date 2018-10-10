@@ -27,13 +27,13 @@ class MBTcpWrite(Test):
 
     ITEMS = ["coil", "register"]
     def __init__(self):
-        super().__init__(name     = "Modbus TCP Write",
-                         summary  = "Write coil and register values to a Modbus server (slave)",
+        super().__init__(name     = "writetcp",
+                         summary  = "Modbus TCP Writer",
                          descr    = "This plugin writes the item (coil, register) values to a Modbus server",
                          author   = "Aseem Jakhar",
                          email    = "aseemjakhar@gmail.com",
                          ref      = ["https://en.wikipedia.org/wiki/Modbus", "http://www.modbus.org/specs.php"],
-                         category = TCategory(TCategory.MODBUSTCP, TCategory.SW, TCategory.ANALYSIS),
+                         category = TCategory(TCategory.MODBUS, TCategory.SW, TCategory.ANALYSIS),
                          target   = TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC))
 
         self.argparser.add_argument("-r", "--rhost", required=True, help="hotname/IP address of the Modbus server")

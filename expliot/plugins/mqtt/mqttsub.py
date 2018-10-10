@@ -24,8 +24,8 @@ from expliot.core.protocols.internet.mqtt import SimpleMqttClient
 class MqttSub(Test):
 
     def __init__(self):
-        super().__init__(name     = "MQTT Subscribe",
-                         summary  = "Subscribe to an MQTT Topic.",
+        super().__init__(name     = "sub",
+                         summary  = "MQTT Subscriber",
                          descr    = """This test allows you to subscribe to a topic on an MQTT
                                         broker and read messages being published on the same topic.""",
                          author   = "Aseem Jakhar",

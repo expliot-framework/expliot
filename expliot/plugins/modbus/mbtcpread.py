@@ -28,14 +28,14 @@ class MBTcpRead(Test):
     IREG = 3
     ITEMS = ["coil", "discrete input", "holding register", "input register"]
     def __init__(self):
-        super().__init__(name     = "Modbus TCP Read",
-                         summary  = "Read coil and register values from a Modbus server (slave)",
+        super().__init__(name     = "readtcp",
+                         summary  = "Modbus TCP Reader",
                          descr    = """This plugin reads the item (coil, discrete input, holding and input register) 
                                        values from a Modbus server""",
                          author   = "Aseem Jakhar",
                          email    = "aseemjakhar@gmail.com",
                          ref      = ["https://en.wikipedia.org/wiki/Modbus", "http://www.modbus.org/specs.php"],
-                         category = TCategory(TCategory.MODBUSTCP, TCategory.SW, TCategory.ANALYSIS),
+                         category = TCategory(TCategory.MODBUS, TCategory.SW, TCategory.ANALYSIS),
                          target   = TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC))
 
         self.argparser.add_argument("-r", "--rhost", required=True, help="hotname/IP address of the Modbus server")

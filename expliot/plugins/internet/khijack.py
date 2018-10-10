@@ -25,8 +25,8 @@ from expliot.core.tests.test import *
 class KHijack(Test):
 
     def __init__(self):
-        super().__init__(name     = "Kankun SmartPlug Hijack",
-                         summary  = "Remotely Switch Kankun SmartPlug ON/OFF",
+        super().__init__(name     = "hijack",
+                         summary  = "Kankun SmartPlug Hijacker",
                          descr    = """This test case connects to the Kankun SmartPlug and sends unauthorized
                                         switch ON/OFF commands to it. If you don't know the password, try with
                                         the default or sniff the network for UDP packets as the commands

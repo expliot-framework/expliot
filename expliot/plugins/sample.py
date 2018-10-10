@@ -23,7 +23,7 @@ from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 
 class Sample(Test):
     def __init__(self):
-        super().__init__(name     = "Sample name",
+        super().__init__(name     = "Sample",
                          summary  = "Sample Summary",
                          descr    = "Sample Description",
                          author   = "Sample author",

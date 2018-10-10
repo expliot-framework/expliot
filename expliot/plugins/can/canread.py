@@ -25,8 +25,8 @@ from expliot.core.protocols.hardware.can import CanBus #, CanMessage
 class CANRead(Test):
 
     def __init__(self):
-        super().__init__(name     = "CANbus read",
-                         summary  = "Read frames from CANBus",
+        super().__init__(name     = "readcan",
+                         summary  = "CANbus reader",
                          descr    = """This plugin allows you to read message(s) from the CANBus. As of now it 
                                        uses socketcan but if you want to extend it to other interfaces, just 
                                        open an issue on the official expliot project repository""",

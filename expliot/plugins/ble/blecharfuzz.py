@@ -26,8 +26,8 @@ from expliot.core.protocols.radio.ble import Ble, BlePeripheral
 class BleCharFuzz(Test):
 
     def __init__(self):
-        super().__init__(name     = "BLE Charecteristic value fuzzer",
-                         summary  = "Fuzz and write values to a characteristic on a BLE peripheral",
+        super().__init__(name     = "fuzzchar",
+                         summary  = "BLE Charecteristic value fuzzer",
                          descr    = """This test allows you to fuzz the value of a characteristic and
                                         write to a BLE peripheral device. Devices that have improper
                                         input handling code for values usually crash/reboot""",

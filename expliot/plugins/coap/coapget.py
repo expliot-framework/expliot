@@ -24,8 +24,8 @@ from expliot.core.tests.test import *
 class CoapGet(Test):
 
     def __init__(self):
-        super().__init__(name     = "CoAP GET",
-                         summary  = "Send a GET request to a CoAP server",
+        super().__init__(name     = "get",
+                         summary  = "CoAP GET",
                          descr    = """This test allows you to send a CoAP GET request (Message)
                                         to a CoAP server on a specified resource path""",
                          author   = "Aseem Jakhar",

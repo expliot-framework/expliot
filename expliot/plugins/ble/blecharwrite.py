@@ -24,8 +24,8 @@ from expliot.core.protocols.radio.ble import Ble, BlePeripheral
 class BleCharWrite(Test):
 
     def __init__(self):
-        super().__init__(name     = "BLE charecteristic write",
-                         summary  = "Write a value to a characteristic on a BLE peripheral",
+        super().__init__(name     = "writechar",
+                         summary  = "BLE charecteristic writer",
                          descr    = """This test allows you to write a value to a characteristic on
                                         a BLE peripheral device""",
                          author   = "Aseem Jakhar",

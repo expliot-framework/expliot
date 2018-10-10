@@ -25,8 +25,8 @@ from expliot.core.protocols.hardware.can import CanBus, CanMessage
 class CANWrite(Test):
 
     def __init__(self):
-        super().__init__(name     = "CANbus write",
-                         summary  = "Send a data frame on CANBus",
+        super().__init__(name     = "writecan",
+                         summary  = "CANbus writer",
                          descr    = """This plugin allows you to write message(s) on the CANBus i.e. send a data 
                                        frame. As of now it uses socketcan but if you want to extend it to other 
                                        interfaces, just open an issue on the official expliot project repository""",

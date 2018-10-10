@@ -52,6 +52,8 @@ class Cli(Cmd):
 
         # Initialize Cli members
         self.tsuite = TestSuite()
+        self.subcmds = list(self.tsuite.keys())
+        self.subcmds.sort()
         self.runp = argparse.ArgumentParser(prog="run", description="Executes a Test case", add_help=False)
         self.runp.add_argument("testname", help="The test case to execute along with its options")
 
@@ -67,12 +69,12 @@ class Cli(Cmd):
         """
         List the available test cases
         """
-        print("{:<20} {}".format("TEST", "SUMMARY"))
-        print("{:<20} {}\n".format("====", "======="))
+        print("Total plugins: {}\n".format(len(self.subcmds)))
+        print("{:<25} {}".format("PLUGIN", "SUMMARY"))
+        print("{:<25} {}\n".format("======", "======="))
 
-        for test in self.tsuite:
-            t = self.tsuite[test]()
-            print("{:<20} {}".format(test, t.summary))
+        for test in self.subcmds:
+            print("{:<25} {}".format(test, self.tsuite[test]["summary"]))
 
     @with_argument_list
     def do_run(self, arglist):
@@ -91,6 +93,23 @@ class Cli(Cmd):
         ns, subarglist = self.runp.parse_known_args(arglist)
         self.runtest(ns.testname, subarglist)
 
+    def complete_run(self, text, line, start_index, end_index):
+        """
+        Tab completion method for run command. It shows the list of available plugins that match the subcommand
+        specified by the user
+
+        :param text: run subcommand string specified by the user
+        :param line: The whole run command string typed by the user
+        :param start_index: Start index subcommand in the line
+        :param end_index: End index of the subcommand in the line
+        :return: List of matching subcommands(plugins)
+        """
+        #print("complete_run text ({}), line ({}), start_index ({}), end_index ({})".format(text, line, start_index, end_index))
+        if text:
+            return [c for c in self.subcmds if c.startswith(text)]
+        else:
+            return self.subcmds
+
     def runtest(self, name, arglist):
         """
         Runs a single test case from the TestSuite if it exists
@@ -99,7 +118,7 @@ class Cli(Cmd):
         :return: void
         """
         if name in self.tsuite.keys():
-            tobj = self.tsuite[name]()
+            tobj = self.tsuite[name]["class"]()
             tobj.run(arglist)
         else:
             print("Error: test ({}) not found.".format(name))

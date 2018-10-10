@@ -24,8 +24,8 @@ from expliot.core.protocols.internet.mqtt import SimpleMqttClient
 class MqttPub(Test):
 
     def __init__(self):
-        super().__init__(name     = "MQTT Publish",
-                         summary  = "Publish a message on a MQTT Topic.",
+        super().__init__(name     = "pub",
+                         summary  = "MQTT Publisher",
                          descr    = """This test case publishes a message on a topic to a specified
                                         MQTT broker on a specified port.""",
                          author   = "Aseem Jakhar",

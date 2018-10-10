@@ -24,8 +24,8 @@ from expliot.core.protocols.hardware.i2c import I2cEepromManager
 
 class I2cEepromRead(Test):
     def __init__(self):
-        super().__init__(name     = "I2C EEPROM Read",
-                         summary  = "Read data from an I2C EEPROM chip",
+        super().__init__(name     = "readeeprom",
+                         summary  = "I2C EEPROM Reader",
                          descr    = """This plugin reads data from an I2C EEPROM chip. It needs an FTDI interface to 
                                        read data from the target EEPROM chip. You can buy an FTDI device online. If you 
                                        are interested we have an FTDI based product - 'Expliot Nano' which you can 

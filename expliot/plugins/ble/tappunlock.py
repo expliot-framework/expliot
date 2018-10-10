@@ -34,8 +34,8 @@ class TappUnlock(Test):
 
     def __init__(self):
 
-        super().__init__(name     = "Tapplock unlock",
-                         summary  = "Unlock BLE Tapplocks in close proximity",
+        super().__init__(name     = "unlock",
+                         summary  = "Tapplock unlock",
                          descr    = """This plugin allows you to unlock the Tapplocks in close (BLE) proximity.
                                     It was made possible by @cybergibbons research on the same and he was 
                                     kind enough to share his code. NOTE: This plugin needs root privileges.  

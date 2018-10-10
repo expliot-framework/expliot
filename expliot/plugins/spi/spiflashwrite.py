@@ -24,8 +24,8 @@ from expliot.core.protocols.hardware.spi import SpiFlashManager
 
 class SPIFlashWrite(Test):
     def __init__(self):
-        super().__init__(name     = "SPI Flash Write",
-                         summary  = "write data to a SPI Flash chip",
+        super().__init__(name     = "writeflash",
+                         summary  = "SPI Flash Writer",
                          descr    = """This plugin writes data to a serial flash chip that implements SPI protocol.
                                        It needs an FTDI interface to write data to the target flash chip. You can buy 
                                        an FTDI device online. If you are interested we have an FTDI based product - 

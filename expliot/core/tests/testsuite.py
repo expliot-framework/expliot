@@ -64,7 +64,8 @@ class TestSuite(dict):
                     mod = importlib.import_module(name)
                     for tname, klass in inspect.getmembers(mod):
                         if inspect.isclass(klass) and issubclass(klass, Test) and klass not in TestSuite.testcls:
-                            self[tname.lower()] = klass
+                            t = klass()
+                            self[t.id] = {"class":klass, "summary":t.summary}
 
 
 #if __name__ == "__main__":

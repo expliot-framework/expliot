@@ -25,7 +25,7 @@ from expliot.core.protocols.internet.mqtt import SimpleMqttClient
 class MqttAuth(Test):
 
     def __init__(self):
-        super().__init__(name     = "MQTT Auth Crack",
+        super().__init__(name     = "crackauth",
                          summary  = "MQTT authentication cracker",
                          descr    = """This test case attempts to crack the MQTT authentication with the specified
                                        credentials. You need specify the user and password or password dictionary""",

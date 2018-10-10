@@ -25,8 +25,8 @@ from expliot.core.protocols.radio.ble import Ble, BlePeripheral
 class BleScan(Test):
 
     def __init__(self):
-        super().__init__(name     = "BLE Scan",
-                         summary  = "Scan for BLE devices",
+        super().__init__(name     = "scan",
+                         summary  = "BLE Scanner",
                          descr    = """This test allows you to scan and list the BLE devices
                                         in the proximity. It can also enumerate the characteristics
                                         of a single device if specified. NOTE: This plugin needs

@@ -24,8 +24,8 @@ from expliot.core.protocols.hardware.i2c import I2cEepromManager
 
 class I2cEepromWrite(Test):
     def __init__(self):
-        super().__init__(name     = "I2C EEPROM Write",
-                         summary  = "write data to an I2C EEPROM chip",
+        super().__init__(name     = "writeeeprom",
+                         summary  = "I2C EEPROM Writer",
                          descr    = """This plugin writes data to an I2C EEPROM chip. It needs an FTDI interface to
                                        write data to the target EEPROM chip. You can buy an FTDI device online. If you
                                        are interested we have an FTDI based product - 'Expliot Nano' which you can

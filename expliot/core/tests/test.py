@@ -41,7 +41,7 @@ class TCategory(namedtuple("TCategory", "proto, iface, action")):
     COAP      = "coap"
     MQTT      = "mqtt"
     UDP       = "udp"
-    MODBUSTCP = "modbustcp"
+    MODBUS    = "modbus"
     # Radio protocols
     BLE    = "ble"
     ZIGBEE = "zigbee"
@@ -51,7 +51,7 @@ class TCategory(namedtuple("TCategory", "proto, iface, action")):
     JTAG   = "jtag"
     I2C    = "i2c"
     SPI    = "spi"
-    _protocols = [COAP, MQTT, UDP, MODBUSTCP, BLE, ZIGBEE, CAN, UART, JTAG, I2C, SPI]
+    _protocols = [COAP, MQTT, UDP, MODBUS, BLE, ZIGBEE, CAN, UART, JTAG, I2C, SPI]
 
     # Interface category - whether the test is for software, hardware or radio
     SW = "software"
@@ -60,11 +60,12 @@ class TCategory(namedtuple("TCategory", "proto, iface, action")):
     _interfaces = [SW, HW, RD]
 
     # Action category - The type of test
-    RECON    = "recon"
-    ANALYSIS = "analysis"
-    FUZZ     = "fuzz"
-    EXPLOIT  = "exploit"
-    _actions = [RECON, ANALYSIS, FUZZ, EXPLOIT]
+    RECON     = "recon"
+    DISCOVERY = "discovery"
+    ANALYSIS  = "analysis"
+    FUZZ      = "fuzz"
+    EXPLOIT   = "exploit"
+    _actions  = [RECON, DISCOVERY, ANALYSIS, FUZZ, EXPLOIT]
 
     def __init__(self, proto, iface, action):
         if proto not in TCategory._protocols:
@@ -302,7 +303,8 @@ class Test:
 
         :return:
         """
-        self.id = self.__class__.__name__.lower()
+        #self.id = self.__class__.__name__.lower()
+        self.id = "{}.{}.{}".format(self.category.proto, self.target.name, self.name).lower()
 
     def _logstatus(self):
         if self.result.passed:

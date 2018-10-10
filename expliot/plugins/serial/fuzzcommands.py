@@ -24,20 +24,20 @@ from expliot.core.protocols.hardware.serial import Serial
 import itertools
 import time
 
-class SerialBrute(Test):
+class FuzzCommands(Test):
 
     def __init__(self):
-        super().__init__(name     = "Serial Brute-force",
-                         summary  = "Brute-force over serial connection to find hidden UART commands",
-                         descr    = """This test helps in finding hidden commands/back doors in custom consoles, of
-                                        devices exposed over the UART port on the board. It sends random words as
-                                        specified over the serial connection and matches the response to a specified
-                                        string (case insensitive). Based on match or nomatch criteria it decides
-                                        whether the word is a valid or invalid command""",
+        super().__init__(name     = "fuzzcmds",
+                         summary  = "Serial console command brute-forcer/fuzzer",
+                         descr    = """This test helps in finding/fuzzing hidden commands/parameters/back doors
+                                        in custom consoles, of devices exposed over the UART port on the board. It 
+                                        sends random words as specified over the serial connection and matches the
+                                        response to a specified string (case insensitive). Based on match or nomatch
+                                        criteria it decides whether the word is a valid or invalid command""",
                          author   = "Aseem Jakhar",
                          email    = "aseemjakhar@gmail.com",
                          ref      = ["https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter"],
-                         category = TCategory(TCategory.UART, TCategory.HW, TCategory.ANALYSIS),
+                         category = TCategory(TCategory.UART, TCategory.HW, TCategory.FUZZ),
                          target   = TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC))
 
         self.argparser.add_argument("-b", "--baud", type=int, default=115200,
