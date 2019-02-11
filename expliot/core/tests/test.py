@@ -247,7 +247,7 @@ class Test:
         print("Test base class execute() method")
 
     def intro(self):
-        TLog.generic("{:<13} {}".format("Test:", self.name))
+        TLog.generic("{:<13} {}".format("Test:", self.id))
         TLog.generic("{:<13} {}".format("Author:", self.author))
         TLog.generic("{:<13} {}".format("Author Email:", self.email))
         TLog.generic("{:<13} {}".format("Reference(s):", self.ref))
