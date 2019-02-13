@@ -20,7 +20,7 @@
 
 class Expliot():
     VMAJOR = 0
-    VMINOR = 1
+    VMINOR = 5
     VPATCH = 0
 
     SUB = "a1"
