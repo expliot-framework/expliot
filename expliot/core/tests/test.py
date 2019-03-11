@@ -42,6 +42,7 @@ class TCategory(namedtuple("TCategory", "proto, iface, action")):
     MQTT      = "mqtt"
     UDP       = "udp"
     MODBUS    = "modbus"
+    DICOM     = "dicom"
     # Radio protocols
     BLE    = "ble"
     ZIGBEE = "zigbee"
@@ -51,7 +52,7 @@ class TCategory(namedtuple("TCategory", "proto, iface, action")):
     JTAG   = "jtag"
     I2C    = "i2c"
     SPI    = "spi"
-    _protocols = [COAP, MQTT, UDP, MODBUS, BLE, ZIGBEE, CAN, UART, JTAG, I2C, SPI]
+    _protocols = [COAP, MQTT, UDP, MODBUS, DICOM, BLE, ZIGBEE, CAN, UART, JTAG, I2C, SPI]
 
     # Interface category - whether the test is for software, hardware or radio
     SW = "software"
