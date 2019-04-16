@@ -54,8 +54,8 @@ class Cli(Cmd):
         self.tsuite = TestSuite()
         self.subcmds = list(self.tsuite.keys())
         self.subcmds.sort()
-        self.runp = argparse.ArgumentParser(prog="run", description="Executes a Test case", add_help=False)
-        self.runp.add_argument("testname", help="The test case to execute along with its options")
+        self.runp = argparse.ArgumentParser(prog="run", description="Executes a plugin (test case)", add_help=False)
+        self.runp.add_argument("plugin", help="The test case to execute along with its options")
 
     def del_defaultcmds(self):
         """
@@ -91,7 +91,7 @@ class Cli(Cmd):
             self.runp.print_help()
             return
         ns, subarglist = self.runp.parse_known_args(arglist)
-        self.runtest(ns.testname, subarglist)
+        self.runtest(ns.plugin, subarglist)
 
     def complete_run(self, text, line, start_index, end_index):
         """

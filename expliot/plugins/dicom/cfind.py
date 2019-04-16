@@ -55,7 +55,7 @@ class CFind(Test):
                                     help="""Application Entity Title (AET) of Service Class User (SCU) i.e. the 
                                             calling AET(client/expliot). Default is \"ANY-SCU\" string""")
         self.argparser.add_argument('-s', '--aetscp', default="ANY-SCP",
-                                    help="""Application Entity Title (AET) of Service Class Provider (SCU) i.e. the 
+                                    help="""Application Entity Title (AET) of Service Class Provider (SCP) i.e. the 
                                             called AET(DICOM server). Default is \"ANY-SCP\" string.""")
         #self.argparser.add_argument('-c', '--pcontext', default="1.2.840.10008.5.1.4.1.2.1.1",
         #                            help="""Presentation Context SOP class UID to use for C-FIND. Default is

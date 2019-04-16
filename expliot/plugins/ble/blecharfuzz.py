@@ -27,7 +27,7 @@ class BleCharFuzz(Test):
 
     def __init__(self):
         super().__init__(name     = "fuzzchar",
-                         summary  = "BLE Charecteristic value fuzzer",
+                         summary  = "BLE Characteristic value fuzzer",
                          descr    = """This test allows you to fuzz the value of a characteristic and
                                         write to a BLE peripheral device. Devices that have improper
                                         input handling code for values usually crash/reboot""",

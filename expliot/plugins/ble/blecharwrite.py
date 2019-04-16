@@ -25,7 +25,7 @@ class BleCharWrite(Test):
 
     def __init__(self):
         super().__init__(name     = "writechar",
-                         summary  = "BLE charecteristic writer",
+                         summary  = "BLE Characteristic writer",
                          descr    = """This test allows you to write a value to a characteristic on
                                         a BLE peripheral device""",
                          author   = "Aseem Jakhar",

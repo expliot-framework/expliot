@@ -45,7 +45,7 @@ class CEcho(Test):
                                     help="""Application Entity Title (AET) of Service Class User (SCU) i.e. the 
                                             calling AET(client/expliot). Default is \"ANY-SCU\" string.""")
         self.argparser.add_argument('-s', '--aetscp', default="ANY-SCP",
-                                    help="""Application Entity Title (AET) of Service Class Provider (SCU) i.e. the 
+                                    help="""Application Entity Title (AET) of Service Class Provider (SCP) i.e. the 
                                             called AET(DICOM server). Default is \"ANY-SCP\" string.""")
     def execute(self):
 
