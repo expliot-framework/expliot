@@ -31,7 +31,7 @@ setup(
     description="Expliot - IoT security testing and exploitation framework",
     packages=find_packages(),
     scripts=["bin/efconsole"],
-    install_requires=["cmd2>=0.9.3", "paho-mqtt>=1.3.1", "coapthon3>=1.0.1", "bluepy>=1.1.4", "pyserial>=3.4",
+    install_requires=["cmd2>=0.9.13", "paho-mqtt>=1.3.1", "coapthon3>=1.0.1", "bluepy>=1.1.4", "pyserial>=3.4",
                       "pyparsing>=2.2.0", "pycrypto>=2.6.1", "pymodbus>=1.5.2", "python-can>=2.1.0",
                       "pyspiflash>=0.5.2", "pyi2cflash>=0.1.1", "pynetdicom>=1.2.0"],
     python_requires=">=3.5",

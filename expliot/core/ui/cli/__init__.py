@@ -38,6 +38,7 @@ class Cli(Cmd):
 
     def __init__(self, prompt=None, intro=None):
         # Initialize Cmd members
+        super().__init__()
         self.prompt = prompt
         self.intro = intro
         self.commentGrammars = pyparsing.Or([])  # No C or python comment parsing please
@@ -47,7 +48,6 @@ class Cli(Cmd):
         self.locals_in_py = False
         # set_use_arg_list(True)
         # set_strip_quotes(True)
-        super().__init__()
         self.del_defaultcmds()
 
         # Initialize Cli members
