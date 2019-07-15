@@ -22,11 +22,12 @@ from pynetdicom import (
     AE as AppEntity,
     VerificationPresentationContexts,
     QueryRetrievePresentationContexts,
-    BasicWorklistManagementPresentationContexts
+    BasicWorklistManagementPresentationContexts,
+    StoragePresentationContexts
 )
 
 #from pynetdicom.sop_class import *
-
+from pydicom import dcmread
 from pydicom.dataset import Dataset as DS
 
 class AE(AppEntity):

@@ -6,7 +6,6 @@ Table of Contents
 [TOC]
 
 # Introduction
-___
 **EXPLIoT**
 
 *noun*
@@ -16,20 +15,17 @@ ___
 A Framework for security testing and exploiting IoT products and IoT infrastructure. It provides a set of plugins (test cases) which are used to perform the assessment and can be extended easily with new ones. The name **EXPLIoT** *(pronounced expl-aa-yo-tee)* is a pun on the word **exploit** and explains the purpose of the framework i.e. IoT exploitation. It is developed in *python3*.
 
 # License
-
 EXPLIoT Framework is under GNU  AGPLv3 license.
 
 # Author
-
 EXPLIoT Framework is conceptualized, designed and implemented by Aseem Jakhar
 
 Reach out: aseem  ___a__t___ expliot D0t io
-[Website](https://expliot.io)
-[LinkedIn](https://www.linkedin.com/in/aseemjakhar/)
-[Twitter](https://twitter.com/aseemjakhar)
+* [Website](https://expliot.io)
+* [LinkedIn](https://www.linkedin.com/in/aseemjakhar/)
+* [Twitter](https://twitter.com/aseemjakhar)
 
 # Installation
-___
 It is very simple to install. However, prior to installing EXPLIoT framework, you need to install the dependencies of some of the packages it uses.
 
 Please follow the below steps to install expliot and its dependencies:
@@ -59,7 +55,6 @@ Please follow the below steps to install expliot and its dependencies:
 7. Voila! You are done.
 
 # Thank you
-___
 * Computer pirates HDS ;)
 * [null - The open security community](http://null.co.in)
 * [Abhisek Datta](https://twitter.com/abh1sek)
@@ -70,7 +65,6 @@ ___
 * [nullcon Conference](http://nullcon.net/)
 
 # User Guide
-___
 Great! You have successfully installed EXPLIoT Framework. Now what? To use the framework as a tool you can run the command line utility *efconsole* and you will be greeted with a banner which shows the current version number, name and finally the console.
 
 ```
@@ -120,7 +114,6 @@ ef>
 ```
 
 ## Plugins / Test Cases
-___
 The framework consists of various plugins which are either exploits or for recon, analysis etc. Each plugin executes a specific test case. These test cases are the basis of automation of security/regression testing for IoT products and infrastructure. The name of a plugin, as seen on the framework's console, is a *unique identifier* (ID) which identifies the plugin's capabilities and the target.
 
 ### Plugin IDs
@@ -134,7 +127,6 @@ The format of the ID is `protocol.product.plugin_name`
 For example, the ID of the BLE scanner plugin is `ble.generic.scan` Since it is a generic BLE scanner and not specific to any BLE product, the product component of the ID is *generic*.
 
 ## Commands
-___
 As of now there are only four commands defined in the framework. The other commands are from the cmd2 module and not used for the framework. These will be removed post beta version.
 1. *exit* - To exit from the console.
 2. *quit* - Same as *exit*
@@ -262,11 +254,9 @@ ef>
 ```
 
 # IoT Attack Surface
-___
 IoT is a combination of different technologies and the attack surface is considerably large. A simple explanation of the attack surface is given here - https://payatu.com/iot-security-part-2-101-iot-attack-surface/.
 
 ## Coverage
-___
 There is obviously no silver bullet (read tool) that can cover(test) the whole IoT eco-system attack surface. Our aim with EXPLIoT is to reach as close as possible i.e. to cover as many IoT protocols, hardware platforms, products as possible. We will explain the coverage of the framework based on protocols and technologies including the what, why and how of each plugin.
 
 ### BLE
@@ -527,7 +517,6 @@ This is an exploit for a Smart plug called Kankun, manufactured by a Chinese ven
 
 
 # Developer Guide
-___
 EXPLIoT Framework is a brilliant choice for vendors, smart infrastructure admins, developers and security researchers for various reasons:
 1. It will streamline your security/regression testing
 2. You will be able to identify security loopholes prior to deployment on an IoT solution in your infrastructure.
@@ -539,19 +528,15 @@ EXPLIoT Framework is a brilliant choice for vendors, smart infrastructure admins
 If you are interested in extending the framework i.e. writing new plugins, follow on :smiley:
 
 ## History
-___
-
 I started dreaming about an IoT vulnerability scanner way back in 2014. My idea was to automate the painful parts of an IoT penetration test. I figured that in our pen-tests, we were wasting a lot of time in setting up the test case environment and trying out different tools for specific purposes. Some tools were new, some were incomplete, buggy, some were proprietary with the hardware. After a while, we ended up writing our own scripts. Also, the nature of the IoT pentest projects is such that no two projects will be the same, today you might be pentesting a fleet management device and tomorrow you will get to test a smart vacuum cleaner or a gas sensor or something else, all of which have completely different use cases and physical interfaces i.e. attack surface. So, I started conceptualizing and implementing a framework that can encompass different functionality for an IoT pentest. I chose ruby as a language for implementing it as it is quite flexible. During the development, I realized that there was not much support for hardware and radio interfacing in ruby. The first version was written in ruby and after a lot of thought and stress I decided to rewrite it in python3. The current version is obviously in python3 :smiley:. 
 
 ## Design Goals
-___
 I had three major design goals for the framework:
 1. It should be simple to use.
 2. It should be extendable.
 3. It should be easy to write new plugins (test cases).
 
 ## Architecture
-___
 The architecture, as of now, is kept very simple. I assume as we include new functionality it may become slightly complex. I would like to think it is sufficiently object-oriented and component based. The below diagram explains the major components of the framework which are explained in detail component wise. Some design considerations are:
 1. There should be no external dependency for a plugin except for core python functionality which comes with the standard installation.
 2. All the protocol, interface etc. implementation must reside within the framework and is utilized by the plugins.
@@ -576,7 +561,6 @@ I have created a unified interface for the plugins so they can utilize everythin
 This is only true for external package. Anything that is part of [*the python standard library*](https://docs.python.org/3/library/index.html) can be used freely i.e. imported and used directly by the plugins.
 
 ## Coding style
-___
 Please follow the below coding style, when writing new code, if you are used to some other style.
 
 1. Class names should be short, simple and define the purpose. It **must** be in [*CamelCase*](https://en.wikipedia.org/wiki/Camel_case).
@@ -585,7 +569,6 @@ Please follow the below coding style, when writing new code, if you are used to 
 4. More to come soon.  
 
 ## Contribute
-___
 If you are interested in contributing to the project. Please follow these steps:
 1. You must have an idea or a bug fix.
 2. If this is your first time with EXPLIoT, **please DO NOT submit a patch/merge request etc. yet. Instead send me an email describing your code changes.**
@@ -594,7 +577,6 @@ If you are interested in contributing to the project. Please follow these steps:
 
 
 ## Bin
-___
 **Module Directory**
 `bin`
 
@@ -611,7 +593,6 @@ This script starts the console for the user. It just initializes the [`Cli` clas
         2. `cli` - Object of the [`Cli` class](expliot/core/ui/cli/__init__.py) 
 
 ## Core
-___
 **Module Directory**
 `expliot/core`
 
@@ -872,7 +853,6 @@ ___
 To add a new command, we need to implement a callback method in [`Cli`](expliot/core/ui/cli/__init__.py) class as we have done for *run* and *list* commands. As per [`cmd2` documentation](https://cmd2.readthedocs.io/en/latest/) to add a new command, you need to implement a callback method in your code and the method name should be of the format `do_commandname()`. For example, to add a command *foobar* we will implement a callback method `do_foobar()`. 
 
 ## Plugins (Test Cases)
-___
 Plugins are classes that inherit from *Test* base class and implement a specific test case which can be an exploit, analysis, recon, fuzzer etc. To extend the framework one can implement any no. of plugins. 
 
 ### Sample Plugin *coap.generic.sample*
