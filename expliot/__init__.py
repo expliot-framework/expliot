@@ -20,10 +20,10 @@
 
 class Expliot():
     VMAJOR = 0
-    VMINOR = 5
+    VMINOR = 6
     VPATCH = 0
 
-    SUB = "a1"
+    SUB = ""
     # Name for 0.x.x version
     VNAME = "agni"
 

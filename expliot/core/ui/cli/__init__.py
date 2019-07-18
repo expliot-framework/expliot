@@ -38,12 +38,11 @@ class Cli(Cmd):
 
     def __init__(self, prompt=None, intro=None):
         # Initialize Cmd members
-        super().__init__()
+        super().__init__(allow_cli_args=False, allow_redirection=False)
         self.prompt = prompt
         self.intro = intro
         self.commentGrammars = pyparsing.Or([])  # No C or python comment parsing please
         self.redirector = "\x01"
-        self.allow_cli_args = False
         self.allow_redirection = False
         self.locals_in_py = False
         # set_use_arg_list(True)
@@ -79,7 +78,8 @@ class Cli(Cmd):
     @with_argument_list
     def do_run(self, arglist):
         """
-        Execute a specific test case
+        Execute a specific plugin/test case
+
         :param arglist: Argument list (array) passed from the console
         :return:
         """
@@ -121,4 +121,4 @@ class Cli(Cmd):
             tobj = self.tsuite[name]["class"]()
             tobj.run(arglist)
         else:
-            print("Error: test ({}) not found.".format(name))
+            print("Error: plugin ({}) not found.".format(name))

@@ -2,8 +2,8 @@
 #
 #
 # expliot - Internet Of Things Security Testing and Exploitation Framework
-# 
-# Copyright (C) 2018  Aseem Jakhar
+#
+# Copyright (C) 2019  Aseem Jakhar
 #
 # Email:   aseemjakhar@gmail.com
 # Twitter: @aseemjakhar
@@ -20,16 +20,17 @@
 #
 
 import sys
+import argparse
 sys.path.append("..")
 from expliot import Expliot
 from expliot.core.ui.cli import Cli
 from expliot.core.tests.test import TLog
 
-class EfConsole():
+class EfCli():
     """
-    EfConsole
+    EfCli
 
-    The console interface for expliot framework.
+    The interactive console as well as cli interface for expliot framework.
     """
     banner ="""
 
@@ -43,13 +44,14 @@ class EfConsole():
                          |_|
 
 
-                         expliot
+                        EXPLIoT
                     version: {}
                     version name: {}
+                    web: www.expliot.io
 
                     Internet Of Things
-             Security Testing and Exploitation
-                        Framework
+                    Security Testing and 
+                    Exploitation Framework
 
                      By Aseem Jakhar
 
@@ -60,14 +62,31 @@ class EfConsole():
     @classmethod
     def main(cls):
         """
-        Run the main command loop of the Console
+        Run a single command given on the command line or run the main command loop of the Console if no command line
+        arguments given.
+
         :return: void
         """
         TLog.init()
-        cls.cli.cmdloop()
 
+        parser = argparse.ArgumentParser(description="""Expliot - Internet Of Things Security Testing and Exploitation
+                                                        Framework Command Line Interface.""")
+
+        parser.add_argument("cmd", nargs="?", help="""Command to execute. If no command is given, it enters an 
+                                                      interactive console. To see the list of available commands 
+                                                      use help command""")
+        parser.add_argument("cmd_args", nargs=argparse.REMAINDER, help="Sub-command and/or (optional) arguments")
+
+        args = parser.parse_args()
+
+        if args.cmd:
+            # Execute a single command and exit
+            cls.cli.onecmd_plus_hooks("{} {}".format(args.cmd, " ".join(args.cmd_args)))
+        else:
+            # No command line argument specified, drop into interactive mode
+            cls.cli.cmdloop()
 
 if __name__ == '__main__':
 
-    EfConsole.main()
+    EfCli.main()
 

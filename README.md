@@ -65,10 +65,112 @@ Please follow the below steps to install expliot and its dependencies:
 * [nullcon Conference](http://nullcon.net/)
 
 # User Guide
-Great! You have successfully installed EXPLIoT Framework. Now what? To use the framework as a tool you can run the command line utility *efconsole* and you will be greeted with a banner which shows the current version number, name and finally the console.
+Great! You have successfully installed EXPLIoT Framework. Now what?
+To use the framework as a tool you can run the command line utility *expliot*.
+
+## Running
+There are two ways to run *expliot*: *command line mode* and *interactive mode*.
+You can use whatever mode suits your requirements.
+
+### Command line mode
+Run the tool with command line arguments, it will execute the respective
+command/arguments and exit. This is helpful for automation and
+scripting different test cases as part of your testing: regression,
+acceptance, security etc. The way you specify the command and arguments
+is the same as *interactive mode*
+
+#### Examples
+* Run with help option
+```
+$ expliot -h
+usage: expliot [-h] [cmd] ...
+
+Expliot - Internet Of Things Security Testing and Exploitation Framework
+Command Line Interface.
+
+positional arguments:
+  cmd         Command to execute. If no command is given, it enters an
+              interactive console. To see the list of available commands use
+              help command
+  cmd_args    Sub-command and/or (optional) arguments
+
+optional arguments:
+  -h, --help  show this help message and exit
+expliot@jaiho:~/Desktop/expliot/bin$ 
+```
+* EXPLIoT commands help
 
 ```
-$ ./efconsole 
+$ expliot help
+
+Documented commands (type help <topic>):
+========================================
+alias  exit  help  history  list  macro  quit  run  set
+
+$
+```
+
+* List all available plugins
+
+```
+$ expliot list
+Total plugins: 23
+
+PLUGIN                    SUMMARY
+======                    =======
+
+ble.generic.fuzzchar      BLE Characteristic value fuzzer
+ble.generic.scan          BLE Scanner
+ble.generic.writechar     BLE Characteristic writer
+ble.tapplock.unlock       Tapplock unlock
+can.generic.readcan       CANbus reader
+can.generic.writecan      CANbus writer
+coap.generic.get          CoAP GET
+coap.generic.sample       Sample Summary
+dicom.generic.c-echo      DICOM Connection Checker
+dicom.generic.c-find      DICOM Data Finder
+dicom.generic.c-store     DICOM File Store
+i2c.generic.readeeprom    I2C EEPROM Reader
+i2c.generic.writeeeprom   I2C EEPROM Writer
+modbus.generic.readtcp    Modbus TCP Reader
+modbus.generic.writetcp   Modbus TCP Writer
+mqtt.generic.crackauth    MQTT authentication cracker
+mqtt.generic.pub          MQTT Publisher
+mqtt.generic.sub          MQTT Subscriber
+spi.generic.readflash     SPI Flash Reader
+spi.generic.writeflash    SPI Flash Writer
+uart.generic.baudscan     Baud rate scanner for serial connection
+uart.generic.fuzzcmds     Serial console command brute-forcer/fuzzer
+udp.kankun.hijack         Kankun SmartPlug Hijacker
+$ 
+```
+
+* Execute a plugin
+
+```
+$ expliot run coap.generic.sample -h
+usage: coap.generic.sample [-h] -r RHOST [-p RPORT] [-v]
+
+Sample Description
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -r RHOST, --rhost RHOST
+                        IP address of the target
+  -p RPORT, --rport RPORT
+                        Port number of the target. Default is 80
+  -v, --verbose         show verbose output
+$
+```
+
+### Interactive mode
+Run the the tool without specifying any command line arguments and you
+will be greeted with a banner which shows the current version number,
+name and finally the interactive console. You will now be able to run
+individual plugins manually.
+
+```
+$ expliot 
 
 
                   __   __      _ _       _
@@ -232,7 +334,7 @@ usage: ble.generic.scan [-h] [-i IFACE] [-t TIMEOUT] [-a ADDR] [-r] [-s] [-c]
 
 This test allows you to scan and list the BLE devices in the proximity. It can
 also enumerate the characteristics of a single device if specified. NOTE: This
-plugin needs root privileges. You may run it as $ sudo efconsole
+plugin needs root privileges. You may run it as $ sudo expliot
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -543,8 +645,8 @@ The architecture, as of now, is kept very simple. I assume as we include new fun
 
 ```mermaid
 graph TD
-A((o_o)) --> |uses| B(efconsole)
-B(efconsole) -->|run plugin| C(Cmd)
+A((o_o)) --> |uses| B(expliot)
+B(expliot) -->|run plugin| C(Cmd)
 subgraph EXPLIoT Framework
     C --> D(TestSuite)
     D --> |collection of| E(Plugin)
@@ -582,10 +684,10 @@ If you are interested in contributing to the project. Please follow these steps:
 
 This module contains the executable scripts for the framework.
 
-### [efconsole](bin/efconsole)
+### [expliot](bin/expliot)
 ___
 This script starts the console for the user. It just initializes the [`Cli` class](expliot/core/ui/cli/__init__.py) as explained in the *ui* section below. The components of the script are:
-1. `class EfConsole()` - It is responsible for running the Cli.
+1. `class EfCli()` - It is responsible for running the Cli.
     1. Methods:
         1. `main(cls)` - Class method that starts the command loop.
     2. Members:
@@ -841,9 +943,9 @@ Refer the code in [expliot/core/ui/cli/__init__.py](expliot/core/ui/cli/__init__
 This file has the code for the Cli as of now.
 1. `class Cli(Cmd)` - The main class that implements the [`cmd2`](https://cmd2.readthedocs.io/en/latest/) cli logic. It loads all the plugins using the `tsuite` member object of class [`TestSuite`](expliot/core/tests/testsuite.py).
     1. `__init__(self, prompt=None, intro=None)` - The constructor of the class. This is used for initializing *cmd2* members.
-    2. `del_defaultcmds(self)` - This method removes the [`cmd2`](https://cmd2.readthedocs.io/en/latest/) default commands that come along with it as we do not want to show it in [`efconsole`](bin/efconsole).
-    3. `do_list(self, args)` - This callback method implements the *list* command in [`efconsole`](bin/efconsole).
-    4. `do_run(self, arglist)` - The callback method implements the *run* command in [`efconsole`](bin/efconsole).
+    2. `del_defaultcmds(self)` - This method removes the [`cmd2`](https://cmd2.readthedocs.io/en/latest/) default commands that come along with it as we do not want to show it in [`expliot`](bin/expliot).
+    3. `do_list(self, args)` - This callback method implements the *list* command in [`expliot`](bin/expliot).
+    4. `do_run(self, arglist)` - The callback method implements the *run* command in [`expliot`](bin/expliot).
     5. `complete_run(self, text, line, start_index, end_index)` - This callback method implement the TAB completion of plugin names in the *run* command.
     6. `runtest(self, name, arglist)` - This method is internally called by `do_run()` and calls the `run()` method of the plugin object.  
     7. `Cmd.do_exit` - This is an alias defined for `Cmd.do_quit` method provided by default in [`cmd2`](https://cmd2.readthedocs.io/en/latest/)
