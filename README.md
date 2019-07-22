@@ -673,7 +673,9 @@ Please follow the below coding style, when writing new code, if you are used to 
 ## Contribute
 If you are interested in contributing to the project. Please follow these steps:
 1. You must have an idea or a bug fix.
-2. If this is your first time with EXPLIoT, **please DO NOT submit a patch/merge request etc. yet. Instead send me an email describing your code changes.**
+2. If this is your first time contributing to EXPLIoT, then please DO NOT submit
+a pull/merge request first thing. Instead please open an
+[issue](https://gitlab.com/expliot_framework/expliot/issues/new) describing your code changes.
 3. You will need to sign a contributor license agreement. Please sign, scan and email the same.
 4. Send the merge request.
 
