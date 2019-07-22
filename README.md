@@ -644,16 +644,15 @@ The architecture, as of now, is kept very simple. I assume as we include new fun
 2. All the protocol, interface etc. implementation must reside within the framework and is utilized by the plugins.
 
 ```mermaid
-graph TD
+graph LR
 A((o_o)) --> |uses| B(expliot)
 B(expliot) -->|run plugin| C(Cmd)
-subgraph EXPLIoT Framework
+subgraph "EXPLIoT Framework"
     C --> D(TestSuite)
     D --> |collection of| E(Plugin)
     E --> |inherits from| F(Test)
-    E --> |Uses| G(Protocols)
+    E --> |uses| G(Protocols)
 end
-
 ```
 ## Unified Interface
 I have created a unified interface for the plugins so they can utilize everything from within the framework. The benefits are:
