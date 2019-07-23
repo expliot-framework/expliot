@@ -1,60 +1,70 @@
 **EXPLIoT Framework Documentation**
-___
 
-Table of Contents
-
-[TOC]
 
 # Introduction
+
 **EXPLIoT**
 
 *noun*
 
 /ɛkˈsplʌɪəti:/
 
-A Framework for security testing and exploiting IoT products and IoT infrastructure. It provides a set of plugins (test cases) which are used to perform the assessment and can be extended easily with new ones. The name **EXPLIoT** *(pronounced expl-aa-yo-tee)* is a pun on the word **exploit** and explains the purpose of the framework i.e. IoT exploitation. It is developed in *python3*.
+A Framework for security testing and exploiting IoT products and IoT
+infrastructure. It provides a set of plugins (test cases) which are used to
+perform the assessment and can be extended easily with new ones. The name
+**EXPLIoT** *(pronounced expl-aa-yo-tee)* is a pun on the word **exploit**
+and explains the purpose of the framework i.e. IoT exploitation. It is
+developed in *Python 3*.
+
+Website: [https://expliot.io](https://expliot.io)
+
 
 # License
-EXPLIoT Framework is under GNU  AGPLv3 license.
+
+EXPLIoT Framework is under GNU AGPLv3 license.
 
 # Author
-EXPLIoT Framework is conceptualized, designed and implemented by Aseem Jakhar
+
+EXPLIoT Framework is conceptualized, designed and implemented by Aseem Jakhar.
 
 Reach out: aseem  ___a__t___ expliot D0t io
-* [Website](https://expliot.io)
+
 * [LinkedIn](https://www.linkedin.com/in/aseemjakhar/)
 * [Twitter](https://twitter.com/aseemjakhar)
 
 # Installation
-It is very simple to install. However, prior to installing EXPLIoT framework, you need to install the dependencies of some of the packages it uses.
+
+It is very simple to install. However, prior to installing EXPLIoT framework,
+you need to install the dependencies of some of the packages it uses.
 
 Please follow the below steps to install expliot and its dependencies:
 
-1. python3: Please install python3 on the system
+1. Python 3: Please install Python 3 on the system.
 
-2. *bluepy* python package dependency - *libglib2*
+2. *bluepy* Python package dependency - *libglib2*
 
    `$ sudo apt-get install libglib2.0-dev`
 
-3. *pyftdi/pyspiflash/pyi2cflash* python package dependency - *libusb*
+3. *pyftdi/pyspiflash/pyi2cflash* Python package dependency - *libusb*
    
    `$ sudo apt-get install libusb-1.0`
 
-4. Copy the EXPLIoT git repo on your system
+4. Copy the EXPLIoT git repo on your system.
 
    `$ git clone https://gitlab.com/expliot_framework/expliot.git`
 
-5. Go to the local repo
+5. Go to the local repo.
 
    `cd expliot`
 
-6. Install EXPLIoT
+6. Install EXPLIoT.
 
-   `$ sudo python3 setup.py install`
+   `$ python3 setup.py install --user`
 
 7. Voila! You are done.
 
 # Thank you
+
 * Computer pirates HDS ;)
 * [null - The open security community](http://null.co.in)
 * [Abhisek Datta](https://twitter.com/abh1sek)
@@ -65,23 +75,28 @@ Please follow the below steps to install expliot and its dependencies:
 * [nullcon Conference](http://nullcon.net/)
 
 # User Guide
+
 Great! You have successfully installed EXPLIoT Framework. Now what?
-To use the framework as a tool you can run the command line utility *expliot*.
+To use the framework as a tool you can run the command line utility `expliot`.
 
 ## Running
+
 There are two ways to run *expliot*: *command line mode* and *interactive mode*.
 You can use whatever mode suits your requirements.
 
 ### Command line mode
+
 Run the tool with command line arguments, it will execute the respective
 command/arguments and exit. This is helpful for automation and
 scripting different test cases as part of your testing: regression,
 acceptance, security etc. The way you specify the command and arguments
-is the same as *interactive mode*
+is the same as *interactive mode*.
 
 #### Examples
+
 * Run with help option
-```
+
+```bash
 $ expliot -h
 usage: expliot [-h] [cmd] ...
 
@@ -98,9 +113,10 @@ optional arguments:
   -h, --help  show this help message and exit
 expliot@jaiho:~/Desktop/expliot/bin$ 
 ```
+
 * EXPLIoT commands help
 
-```
+```bash
 $ expliot help
 
 Documented commands (type help <topic>):
@@ -112,7 +128,7 @@ $
 
 * List all available plugins
 
-```
+```bash
 $ expliot list
 Total plugins: 23
 
@@ -147,7 +163,7 @@ $
 
 * Execute a plugin
 
-```
+```bash
 $ expliot run coap.generic.sample -h
 usage: coap.generic.sample [-h] -r RHOST [-p RPORT] [-v]
 
@@ -164,12 +180,13 @@ $
 ```
 
 ### Interactive mode
+
 Run the the tool without specifying any command line arguments and you
 will be greeted with a banner which shows the current version number,
 name and finally the interactive console. You will now be able to run
 individual plugins manually.
 
-```
+```bash
 $ expliot 
 
 
@@ -199,7 +216,7 @@ ef>
 
 To see the available commands on the console type *?* or *help* and press *enter*
 
-```
+```bash
 ef> ?
 
 Documented commands (type help <topic>):
@@ -216,49 +233,71 @@ ef>
 ```
 
 ## Plugins / Test Cases
-The framework consists of various plugins which are either exploits or for recon, analysis etc. Each plugin executes a specific test case. These test cases are the basis of automation of security/regression testing for IoT products and infrastructure. The name of a plugin, as seen on the framework's console, is a *unique identifier* (ID) which identifies the plugin's capabilities and the target.
+
+The framework consists of various plugins which are either exploits or for
+recon, analysis etc. Each plugin executes a specific test case. These test
+cases are the basis of automation of security/regression testing for IoT
+products and infrastructure. The name of a plugin, as seen on the framework's
+console, is a *unique identifier* (ID) which identifies the plugin's
+capabilities and the target.
 
 ### Plugin IDs
-___
-The plugins are identified and categorized using their IDs and have a specific format. The IDs are unique within the framework. They are comprised of three components. 
+
+The plugins are identified and categorized using their IDs and have a specific
+format. The IDs are unique within the framework. They are comprised of three
+components. 
+
 1. Protocol or the technology it targets
 2. Product that it targets
 3. Name of the of the plugin itself that describes its action.
 
 The format of the ID is `protocol.product.plugin_name`
-For example, the ID of the BLE scanner plugin is `ble.generic.scan` Since it is a generic BLE scanner and not specific to any BLE product, the product component of the ID is *generic*.
+For example, the ID of the BLE scanner plugin is `ble.generic.scan` Since it
+is a generic BLE scanner and not specific to any BLE product, the product 
+component of the ID is *generic*.
 
 ## Commands
-As of now there are only four commands defined in the framework. The other commands are from the cmd2 module and not used for the framework. These will be removed post beta version.
-1. *exit* - To exit from the console.
-2. *quit* - Same as *exit*
-3. *list* -  to list down all the available plugins.
-4. *run* - To run/execute a plugin.
 
-**Note: All commands and plugins support tab completion. However, the plugin arguments, as of now, do not**
+As of now there are only four commands defined in the framework. The other
+commands are from the cmd2 module and not used for the framework. These will
+be removed post beta version.
 
-### exit command
-___
+1. `exit`: To exit from the console.
+2. `quit`: Same as `exit`.
+3. `list`: To list down all the available plugins.
+4. `run`: To run/execute a plugin.
+
+**Note: All commands and plugins support tab completion. However, the plugin
+arguments, as of now, do not**
+
+### `exit` command
+
 As the name suggests, it is used to exit from the framework's console.
 Example:
-```
+
+```bash
 ef> exit
 $
 ```
-### quit command
-___
+
+### `quit` command
+
 It is the same as *exit* command.
+
 Example:
-```
+
+```bash
 ef> quit
 $
 ```
-### list command
-___
+
+### `list` command
+
 This command lists down all the available plugins in the framework.
+
 Example as of version 0.5.0a1:
 
-```
+```bash
 ef> list
 Total plugins: 22
 
@@ -291,10 +330,11 @@ ef>
 ```
 
 
-### run command
-___
+### `run` command
+
 This is the main command that executes a plugin.
-```
+
+```bash
 ef> run -h
 usage: run plugin
 
@@ -304,12 +344,19 @@ positional arguments:
   plugin  The test case to execute along with its options
 ef> 
 ```
-**Executing a plugin**
-___
-To execute a plugin, you need to specify the plugin name and its arguments. All the plugins are well documented and to find out their description and arguments you need to specify the *help* argument (*-h* or *--help*) for the plugin.
-We have an example plugin called *coap.generic.sample* within the framework, which can be used to study the code for a plugin and how one can write their own plugins. This is explained in detail in the **Development** section. Below you can see the output of the help argument of a plugin (using our sample plugin).
 
-```
+**Executing a plugin**
+
+To execute a plugin, you need to specify the plugin name and its arguments.
+All the plugins are well documented and to find out their description and
+arguments you need to specify the *help* argument (*-h* or *--help*) for the
+plugin. We have an example plugin called *coap.generic.sample* within the
+framework, which can be used to study the code for a plugin and how one can
+write their own plugins. This is explained in detail in the **Development**
+section. Below you can see the output of the help argument of a plugin (using
+our sample plugin).
+
+```bash
 ef> run coap.generic.sample -h
 usage: coap.generic.sample [-h] -r RHOST [-p RPORT] [-v]
 
@@ -324,10 +371,9 @@ optional arguments:
   -v, --verbose         show verbose output
 ```
 
-
 Output of the BLE scanner plugin help argument:
 
-```
+```bash
 ef> run ble.generic.scan -h
 usage: ble.generic.scan [-h] [-i IFACE] [-t TIMEOUT] [-a ADDR] [-r] [-s] [-c]
                         [-v]
@@ -356,292 +402,550 @@ ef>
 ```
 
 # IoT Attack Surface
-IoT is a combination of different technologies and the attack surface is considerably large. A simple explanation of the attack surface is given here - https://payatu.com/iot-security-part-2-101-iot-attack-surface/.
+
+IoT is a combination of different technologies and the attack surface is
+considerably large. A simple explanation of the attack surface is given
+[here](https://payatu.com/iot-security-part-2-101-iot-attack-surface/).
 
 ## Coverage
-There is obviously no silver bullet (read tool) that can cover(test) the whole IoT eco-system attack surface. Our aim with EXPLIoT is to reach as close as possible i.e. to cover as many IoT protocols, hardware platforms, products as possible. We will explain the coverage of the framework based on protocols and technologies including the what, why and how of each plugin.
+
+There is obviously no silver bullet (read tool) that can cover(test) the whole
+IoT eco-system attack surface. Our aim with EXPLIoT is to reach as close as
+possible i.e. to cover as many IoT protocols, hardware platforms, products
+as possible. We will explain the coverage of the framework based on protocols
+and technologies including the what, why and how of each plugin.
 
 ### BLE
-___
-[Bluetooth Low Energy](https://en.wikipedia.org/wiki/Bluetooth_Low_Energy) (BLE) protocol is an integral part of the smart tech and used widely in home, lifestyle, healthcare and enterprise IoT products. Below are the plugins that are implemented:
+
+[Bluetooth Low Energy](https://en.wikipedia.org/wiki/Bluetooth_Low_Energy)
+(BLE) protocol is an integral part of the smart tech and used widely in home,
+lifestyle, healthcare and enterprise IoT products. Below are the plugins that
+are implemented:
 
 #### ble.generic.scan
-___
+
 **Description**
 ```
 ef> run ble.generic.scan -h
 ```
 **More information**
-This is a generic BLE scanner to get information about BLE peripherals in the vicinity. It performs three different operations:
-1. Scan for BLE peripherals around and show their BLE addresses.
-2. Enumerate and show the services of a specific  BLE peripheral (specified by *-a or --addr*)
-3. Enumerate and show the characteristics of a specific  BLE peripheral (specified by *-a or --addr*)
 
-The *-v or --verbose* option shows more details in the output. Some peripherals may not connect if you have a PUBLIC addressing, in that case it is useful to specify *-r* or *--randaddrtype*.
+This is a generic BLE scanner to get information about BLE peripherals in the
+vicinity. It performs three different operations:
+
+1. Scan for BLE peripherals around and show their BLE addresses.
+2. Enumerate and show the services of a specific  BLE peripheral (specified
+   by *-a or --addr*)
+3. Enumerate and show the characteristics of a specific  BLE peripheral
+   (specified by *-a or --addr*)
+
+The *-v or --verbose* option shows more details in the output. Some peripherals
+may not connect if you have a PUBLIC addressing, in that case it is useful to
+specify *-r* or *--randaddrtype*.
 
 **Note: This plugin requires root privileges to run as of now.**
 
 #### ble.generic.writechar
-___
+
 **Description**
-```
+
+```bash
 ef> run ble.generic.writechar -h
 ```
+
 **More information**
-This test is used to write values to a characteristic on a BLE peripheral, provided the device lets you write data on that specific characteristic. Which characteristic to write depends on your analysis of the available characteristics on the BLE peripheral. You can find the characteristics and their corresponding handle  using  *ble.generic.scan* plugin and analyse the BLE communication between the mobile app and the device to identify which characteristic is used for what and what are the valid values that you can write to it. To execute this test, you need to specify the BLE address of the device using *-a* or *--addr* argument and the characteristic handle using *-n* or *--handle* argument.  You may use *-s* or *--noresponse* argument if it does not respond with a write request. The *-r* or *--randaddrtype* can be used if the device does not respond, as described above in *ble.generic.scan* 
+
+This test is used to write values to a characteristic on a BLE peripheral,
+provided the device lets you write data on that specific characteristic.
+Which characteristic to write depends on your analysis of the available
+characteristics on the BLE peripheral. You can find the characteristics and
+their corresponding handle  using `ble.generic.scan` plugin and analyse the
+BLE communication between the mobile app and the device to identify which
+characteristic is used for what and what are the valid values that you can
+write to it. To execute this test, you need to specify the BLE address of the
+device using *-a* or *--addr* argument and the characteristic handle using
+*-n* or *--handle* argument.  You may use *-s* or *--noresponse* argument if
+it does not respond with a write request. The *-r* or *--randaddrtype* can be
+used if the device does not respond, as described above in `ble.generic.scan`. 
 
 #### ble.generic.fuzzchar
-___
+
 **Description**
-```
+
+```bash
 ef> run ble.generic.fuzzchar -h
 ```
+
 **More information**
-This test is very interesting and the idea came to us while pentesting a BLE device. Given, the capability to write data to characteristics, we can also automate and fuzz the values. These semantics of these values are defined by the developers and may be prone to memory corruption. We have tested this on a few devices and found different results from crash, display changes to DFU mode enable etc. Most of the arguments are the same as *ble.generic.writechar*. The *-i* or *--iter* is the no. of iterations of writes that you want to do and the *-w* or *--value* which is the value you want to fuzz, you will have to replace the bytes that you want to fuzz with *xx* and only those bytes will be randomized for each iteration.
+This test is very interesting and the idea came to us while pentesting a
+BLE device. Given, the capability to write data to characteristics, we can
+also automate and fuzz the values. These semantics of these values are defined
+by the developers and may be prone to memory corruption. We have tested this
+on a few devices and found different results from crash, display changes to
+DFU mode enable etc. Most of the arguments are the same as
+`ble.generic.writechar`. The *-i* or *--iter* is the no. of iterations of
+writes that you want to do and the *-w* or *--value* which is the value you
+want to fuzz, you will have to replace the bytes that you want to fuzz with
+*xx* and only those bytes will be randomized for each iteration.
 
 #### ble.tapplock.unlock
-___
+
 **Description**
-```
+
+```bash
 ef> run ble.tapplock.unlock -h
 ```
-**More information**
-This is an exploit for Tapplock, a BLE and fingerprint based door Lock. It is a commercially available product that you can purchase from the vendor's website or other famous e-commerce portals. The affected versions have two different implementations for generating the auth code to unlock i.e. either default hardcoded using *-d* or *--default* argument or generate it from the BLE address of the lock.
 
-**Note: This plugin requires root privileges to run as of now as it needs scan capabilities.**
+**More information**
+
+This is an exploit for Tapplock, a BLE and fingerprint based door Lock. It is
+a commercially available product that you can purchase from the vendor's
+website or other famous e-commerce portals. The affected versions have two
+different implementations for generating the auth code to unlock i.e. either
+default hardcoded using *-d* or *--default* argument or generate it from the
+BLE address of the lock.
+
+**Note: This plugin requires root privileges to run as of now as it needs
+scan capabilities.**
 
 ### CAN
-___
-[Controller Area Network](https://en.wikipedia.org/wiki/CAN_bus) (or CAN Bus) is a robust hardware communication protocol primarily used in vehicles. Other noted uses are in Industrial automation, Building automation, elevators etc. CAN hacking has really caught up due to advancements in automotive technology or in business terms introduction of IoT in automotive. Hence, it makes sense to have test case for security researchers to be able to analyse CAN enabled devices.
+
+[Controller Area Network](https://en.wikipedia.org/wiki/CAN_bus) (or CAN Bus)
+is a robust hardware communication protocol primarily used in vehicles. Other
+noted uses are in Industrial automation, Building automation, elevators etc.
+CAN hacking has really caught up due to advancements in automotive technology
+or in business terms introduction of IoT in automotive. Hence, it makes sense
+to have test case for security researchers to be able to analyse CAN enabled
+devices.
 
 #### can.generic.readcan
-___
+
 **Description**
-```
+
+```bash
 ef> run can.generic.readcan -h
 ```
+
 **More information**
-This test reads and shows the data on the CANBus. It uses [socketcan](https://en.wikipedia.org/wiki/SocketCAN) as of now. You need to have a CAN interface on your pc which is connected to the CANBus or for testing you can use a simulator and [configure](https://en.wikipedia.org/wiki/SocketCAN) a virtual can interface. In future version, we will add more capabilities and support for interfacing with different CAN analysis hardware. 
+
+This test reads and shows the data on the CANBus. It uses
+[socketcan](https://en.wikipedia.org/wiki/SocketCAN) as of now. You need to
+have a CAN interface on your pc which is connected to the CANBus or for
+testing you can use a simulator and [configure](https://en.wikipedia.org/wiki/SocketCAN)
+a virtual can interface. In future version, we will add more capabilities 
+and support for interfacing with different CAN analysis hardware. 
 
 #### can.generic.writecan
-___
+
 **Description**
-```
+
+```bash
 ef> run can.generic.writecan -h
 ```
+
 **More information**
-This test writes data on the CANBus. It uses [socketcan](https://en.wikipedia.org/wiki/SocketCAN) as of now. You need to have a CAN interface on your pc which is connected to the CANBus or for testing you can use a simulator and [configure](https://en.wikipedia.org/wiki/SocketCAN) a virtual can interface. In future version, we will add more capabilities and support for interfacing with different CAN analysis hardware. 
+
+This test writes data on the CANBus. It uses [socketcan](https://en.wikipedia.org/wiki/SocketCAN)
+as of now. You need to have a CAN interface on your pc which is connected to
+the CANBus or for testing you can use a simulator and 
+[configure](https://en.wikipedia.org/wiki/SocketCAN) a virtual can interface.
+In future version, we will add more capabilities and support for interfacing
+with different CAN analysis hardware. 
 
 ### CoAP
-___
-[Constrained Application Protocol](https://en.wikipedia.org/wiki/Constrained_Application_Protocol) (CoAP) is a light weight network communication protocol used for constrained devices. It is an IETF standard defined in [RFC 7252](https://tools.ietf.org/html/rfc7252) and is used in various IoT products. 
+
+[Constrained Application Protocol](https://en.wikipedia.org/wiki/Constrained_Application_Protocol)
+(CoAP) is a light weight network communication protocol used for constrained
+devices. It is an IETF standard defined in [RFC 7252](https://tools.ietf.org/html/rfc7252)
+and is used in various IoT products. 
 
 #### coap.generic.get
-___
+
 **Description**
-```
+
+```bash
 ef> run coap.generic.get -h
 ```
+
 **More information**
+
 This test is not implemented yet. It will be added soon.
 
 #### coap.generic.sample
-___
+
 **Description**
-```
+
+```bash
 run coap.generic.sample -h
 ```
+
 **More information**
-This is just a sample plugin. It is intended for developers to understand the structure of a plugin class and how to implement one. 
+
+This is just a sample plugin. It is intended for developers to understand
+the structure of a plugin class and how to implement one. 
 
 **Note: This plugin does not do anything. Stay away.**
 
 ### DICOM
-___
-[Digital Imaging and Communications in Medicine](https://en.wikipedia.org/wiki/DICOM) (DICOM) is a healthcare standard for communication and management of patient information. It is used in various medical equipment to store and share image, patient data etc. If you are into medical security research the plugins will help you in testing the security of these devices.
+
+[Digital Imaging and Communications in Medicine](https://en.wikipedia.org/wiki/DICOM)
+(DICOM) is a healthcare standard for communication and management of patient
+information. It is used in various medical equipment to store and share image,
+patient data, etc. If you are into medical security research the plugins will
+help you in testing the security of these devices.
 
 #### dicom.generic.c-echo
-___
+
 **Description**
-```
+
+```bash
 ef> run dicom.generic.c-echo -h
 ```
+
 **More information**
-This test is basically used to check if you can connect to a DICOM server and get information about the software used as well. If you are not familiar with DICOM, you can go through [this tutorial](http://dicomiseasy.blogspot.com/2011/10/introduction-to-dicom-chapter-1.html) which explains the basics and essentials of the protocol. 
+
+This test is basically used to check if you can connect to a DICOM server and
+get information about the software used as well. If you are not familiar with
+DICOM, you can go through [this tutorial](http://dicomiseasy.blogspot.com/2011/10/introduction-to-dicom-chapter-1.html)
+which explains the basics and essentials of the protocol. 
 
 #### dicom.generic.c-find
-___
+
 **Description**
-```
+
+```bash
 run dicom.generic.c-find -h
 ```
+
 **More information**
-This test allows you to query data from the DICOM server. The protocol does not specify any authentication process. The authentication for CFIND is typically based on:
-1. Cllent IP - You can't do much about this, unless there is another way to extract that information or test from local network and hope there is no IP restriction :smiley:
+
+This test allows you to query data from the DICOM server. The protocol does
+not specify any authentication process. The authentication for CFIND is
+typically based on:
+
+1. Cllent IP - You can't do much about this, unless there is another way to
+   extract that information or test from local network and hope there is no
+   IP restriction.
 2. Client port - Can be specified using *-q* or *--lport* argument
 3. Called AET (server) - Can be specified using *-s* or *--aetscp* argument
 
-
 ### I2C
-___
-[Inter-Integrated Circuit](https://en.wikipedia.org/wiki/I%C2%B2C) (I2C) is a synchronous, serial hardware bus communication protocol used for intra-board (short distance) communication i.e. between two components on a circuit board. It is a *2-wire* bus. It is also used in EEPROMs for example to read and write data.
+
+[Inter-Integrated Circuit](https://en.wikipedia.org/wiki/I%C2%B2C) (I2C) is a
+synchronous, serial hardware bus communication protocol used for intra-board
+(short distance) communication i.e. between two components on a circuit board.
+It is a *2-wire* bus. It is also used in EEPROMs for example to read and write
+data.
 
 #### i2c.generic.readeeprom
-___
+
 **Description**
-```
+
+```bash
 ef> run i2c.generic.readeeprom -h
 ```
+
 **More information**
-The current implementation is dependent on *pyi2cflash* package which in turn is dependent on *pyftdi* package. Note that there will be some extra info printed on the console, when the plugin executes, which comes from the *pyi2cflash* package and is not part of the plugin code. To interface your PC with the I2C EEPROM chip, you need a hardware connector or bridge. You can use any FTDI based device, that provides an I2C interface. We have created a multi-protocol connector called **EXPLIoT Nano** which is available at our online store on https://expliot.io. Although, the framework should work with any *pyftdi* compatible FTDI device.
+
+The current implementation is dependent on *pyi2cflash* package which in turn
+is dependent on *pyftdi* package. Note that there will be some extra info
+printed on the console, when the plugin executes, which comes from the
+*pyi2cflash* package and is not part of the plugin code. To interface your
+PC with the I2C EEPROM chip, you need a hardware connector or bridge. You can
+use any FTDI based device, that provides an I2C interface. We have created a
+multi-protocol connector called **EXPLIoT Nano** which is available at our
+[online store](https://expliot.io). Although, the framework should work with
+any *pyftdi* compatible FTDI device.
 
 #### i2c.generic.writeeeprom
-___
+
 **Description**
-```
+
+```bash
 ef> run i2c.generic.writeeeprom -h
 ```
-**More information**
-Similar considerations as *i2c.generic.readeeprom*
 
-### MODBUS
-___
-[Modbus](https://en.wikipedia.org/wiki/Modbus) is a serial communication protocol used in ICS (Industrial Control Systems)  infrastructure, typically be devices like PLCs etc. Modbus is still an integral part of ICS and in your IoT assessments for Smart ICS infrastructure (Industry 4.0) you may still encounter devices talking Modbus. 
+**More information**
+
+Similar considerations as `i2c.generic.readeeprom`.
+
+### Modbus
+
+[Modbus](https://en.wikipedia.org/wiki/Modbus) is a serial communication
+protocol used in ICS (Industrial Control Systems) infrastructure, typically
+be devices like PLCs etc. Modbus is still an integral part of ICS and in your
+IoT assessments for Smart ICS infrastructure (Industry 4.0) you may still
+encounter devices talking Modbus. 
 
 #### modbus.generic.readtcp
-___
+
 **Description**
+
+```bash
+ef> run modbus.generic.readtcp -h
 ```
-run modbus.generic.readtcp -h
-```
+
 **More information**
-This plugin reads coil, register values from a Modbus server running over a TCP/IP network. 
+
+This plugin reads coil, register values from a Modbus server running over a
+TCP/IP network. 
 
 #### modbus.generic.writetcp
-___
+
 **Description**
-```
+
+```bash
 ef> run modbus.generic.writetcp -h
 ```
+
 **More information**
-This plugin writes coil, register values to a Modbus server running over a TCP/IP network. 
+
+This plugin writes coil and register values to a Modbus server running over a
+TCP/IP network. 
 
 ### MQTT
-___
-[Message Queuing Telemetry Transport](https://en.wikipedia.org/wiki/MQTT)(MQTT) is a messaging protocol based on publish-subscribe mechanism and works over TCP/IP protocol stack. It is an ISO standard - [ISO/IEC 20922:2016](https://www.iso.org/standard/69466.html). You can also read the specification [here](http://mqtt.org/documentation). It is a very famous protocol in the IoT scene and is used in various domains from Home to ICS.
 
+[Message Queuing Telemetry Transport](https://en.wikipedia.org/wiki/MQTT)(MQTT)
+is a messaging protocol based on publish-subscribe mechanism and works over
+TCP/IP protocol stack. It is an ISO standard - [ISO/IEC 20922:2016](https://www.iso.org/standard/69466.html).
+You can also read the specification [here](http://mqtt.org/documentation).
+It is a very famous protocol in the IoT scene and is used in various domains
+from home to ICS.
 
 #### mqtt.generic.crackauth
-___
 
 **Description**
-```
+
+```bash
 ef> run mqtt.generic.crackauth -h
 ```
+
 **More information**
-You should use this plugin if the broker requires authentication. You can  brute-force the credentials.
-**Note: client ID and user name are not the same.**
+
+You should use this plugin if the broker requires authentication. You can 
+brute-force the credentials.
+
+**Note: The client ID and user name are not the same.**
 
 #### mqtt.generic.pub
-___
+
 **Description**
-```
+
+```bash
 ef> run mqtt.generic.pub -h
 ```
+
 **More information**
-During your assessment, you may want to write malicious data to a specific topic, check if you are able to write to specific topics, corrupt $SYS topics' data. This plugin can help you with that.
+
+During your assessment, you may want to write malicious data to a specific
+topic, check if you are able to write to specific topics, corrupt `$SYS`
+topic's data. This plugin can help you with that.
 
 #### mqtt.generic.sub
-___
+
 **Description**
-```
+
+```bash
 ef> run mqtt.generic.sub -h
 ```
+
 **More information**
-It is very common to check what topics we can subscribe to, what data do we receive for further analysis or get data from $SYS topics. If you are lucky you may end up reading sensitive data that can help you pwn the system. This simple plugin can help you in doing that.
+
+It is very common to check what topics we can subscribe to, what data do we
+receive for further analysis or get data from $SYS topics. If you are lucky
+you may end up reading sensitive data that can help you pwn the system. This
+simple plugin can help you in doing that.
 
 ### SPI
-___
-[Serial Peripheral Interface](https://en.wikipedia.org/wiki/Serial_Peripheral_Interface) (SPI) is a synchronous, serial hardware bus communication protocol used for intra-board (short distance) communication i.e. between two components on a circuit board. It is a *4-wire* bus. The communication is *full-duplex* as it has separate lines for master-to-slave and slave-to-master communication. In many devices, you may encounter flash memory chips, for example, that talk over SPI for data read/write and you may need a way to extract data from the chip for further analysis or write malicious data to the chip. 
+
+[Serial Peripheral Interface](https://en.wikipedia.org/wiki/Serial_Peripheral_Interface)
+(SPI) is a synchronous, serial hardware bus communication protocol used for
+intra-board (short distance) communication i.e. between two components on a
+circuit board. It is a *4-wire* bus. The communication is *full-duplex* as it
+has separate lines for master-to-slave and slave-to-master communication. In
+many devices, you may encounter flash memory chips, for example, that talk
+over SPI for data read/write and you may need a way to extract data from the
+chip for further analysis or write malicious data to the chip. 
 
 #### spi.generic.readflash
-___
+
 **Description**
-```
+
+```bash
 ef> run spi.generic.readflash -h
 ```
+
 **More information**
-The current implementation is dependent on *pyispiflash* package which in turn is dependent on *pyftdi* package. Note that there will be some extra info printed on the console, when the plugin executes, which comes from the *pyspiflash* package and is not part of the plugin code. To interface your PC with the SPI flash chip, you need a hardware connector or bridge. You can use any FTDI based device, that provides an SPI interface. We have created a multi-protocol connector called **EXPLIoT Nano** which is available at our online store on https://expliot.io. Although, the framework should work with any *pyftdi* compatible FTDI device.
+
+The current implementation is dependent on *pyispiflash* package which in
+turn is dependent on *pyftdi* package. Note that there will be some extra
+info printed on the console, when the plugin executes, which comes from the
+*pyspiflash* package and is not part of the plugin code. To interface your PC
+with the SPI flash chip, you need a hardware connector or bridge. You can use
+any FTDI based device, that provides an SPI interface. We have created a
+multi-protocol connector called **EXPLIoT Nano** which is available at our
+[online store](https://expliot.io). Although, the framework should work with
+any *pyftdi* compatible FTDI device.
 
 #### spi.generic.writeflash
-___
+
 **Description**
-```
+
+```bash
 ef> run spi.generic.writeflash -h
 ```
+
 **More information**
-Similar considerations as *spi.generic.readflash*
+
+Similar considerations as `spi.generic.readflash`.
 
 ### UART
-___
-[Universal Asynchronous Receiver/Transmitter](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter)(UART) is not a hardware bus protocol, but a physical circuit that is used for serial communication between two components. The speed (baud rate) and data format are configurable, as the communication is asynchronous. UART is one of the most famous mechanisms for devices to have an interface with the outside world. Typically, a shell or a console runs over the UART port, so developers, support staff can access the running device for troubleshooting etc. It is a very interesting opportunity, from a security perspective, to gain access to a UART port and be able to interact with a console or read data on the connection. 
+
+[Universal Asynchronous Receiver/Transmitter](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter)(UART)
+is not a hardware bus protocol, but a physical circuit that is used for
+serial communication between two components. The speed (baud rate) and data
+format are configurable, as the communication is asynchronous. UART is one
+of the most famous mechanisms for devices to have an interface with the
+outside world. Typically, a shell or a console runs over the UART port, so
+developers, support staff can access the running device for troubleshooting,
+etc. It is a very interesting opportunity, from a security perspective, to
+gain access to a UART port and be able to interact with a console or read
+data on the connection. 
 
 #### uart.generic.baudscan
-___
+
 **Description**
+
 ```
 ef> run uart.generic.baudscan -h
 ```
+
 **More information**
-Since, the communication is asynchronous, the baud rate/format must be pre-configured for the two UART devices to talk to each other. There are some well-known baud rates that are usually used. However, if you don't know the correct baudrate for communication, you will end up with garbage data due to a mismatch on baud rate at both the ends. Hence, to analyse a UART port, we still need to know the correct baud rate of the device. This plugin just enumerates over different baud rates and analyses the received data for valid ASCII characters to identify the correct baud rate of the UART port on the device. You will need a USB UART converter to enable your PC to talk to the device UART port. There are many connectors available in the market. We have created a multi-protocol (including UART) connector called **EXPLIoT Nano** which is available at our online store on https://expliot.io. Although, the framework should work with any *Linux* compatible USB-UART connector (also called USB-TTL).
+
+Since, the communication is asynchronous, the baud rate/format must be pre-
+configured for the two UART devices to talk to each other. There are some
+well-known baud rates that are usually used. However, if you don't know the
+correct baudrate for communication, you will end up with garbage data due to
+a mismatch on baud rate at both the ends. Hence, to analyse a UART port, we
+still need to know the correct baud rate of the device. This plugin just
+enumerates over different baud rates and analyses the received data for valid
+ASCII characters to identify the correct baud rate of the UART port on the
+device. You will need a USB UART converter to enable your PC to talk to the
+device UART port. There are many connectors available in the market. We have
+created a multi-protocol (including UART) connector called **EXPLIoT Nano**
+which is available at our [online store](https://expliot.io). Although, the
+framework should work with any *Linux* compatible USB-UART connector (also
+called USB-TTL).
 
 #### uart.generic.fuzzcmds
-___
+
 **Description**
-```
+
+```bash
 ef> run uart.generic.fuzzcmds -h
 ```
+
 **More information**
-When the devices have a custom console running on a UART port, this plugin can help you in identifying undocumented or hidden console commands as well as fuzz commands and their arguments. We have been able to crash as well as find hidden commands using the same technique. The basic idea behind this plugin is that the console with respond with different output for valid and invalid commands or their parameters and given the knowledge of a valid output you can fuzz/brute-force the commands. It allows you to specify a character set  (*-c* or *--chars* argument) and length (*-l* or *--length*) to generate random strings which it sends to the device and analyses the response. You can also specify a match criteria string (*-m* or *--match*) which means that it will be considered as a valid response if the response contains this string. Alternatively, you can also specify a no-match criteria string (*-n* or *--nomatch*) which will tell the plugin to ignore the response and treat it as invalid if the response contains this string. To fuzz specific parts of the commands string you can specify a prefix string (*-x* or *--prefix*) and an append string (*-a* or *--append*) which are prefixed and appended to the generated fuzz string and then sent to the device UART. You may need to toggle and play around with *-t* or *--timeout* and *-z* or *--buffsize* arguments for optimum speed execution and then use the best values for the final fuzzing. Note that printing on the terminal will make the execution slow, so avoid *-v* or *--verbose* option for the final execution. The *-v* option comes handy when you just start analyzing the responses.
+
+When the devices have a custom console running on a UART port, this plugin
+can help you in identifying undocumented or hidden console commands as well
+as fuzz commands and their arguments. We have been able to crash as well as
+find hidden commands using the same technique. The basic idea behind this
+plugin is that the console with respond with different output for valid and
+invalid commands or their parameters and given the knowledge of a valid
+output you can fuzz/brute-force the commands. It allows you to specify a
+character set  (*-c* or *--chars* argument) and length (*-l* or *--length*)
+to generate random strings which it sends to the device and analyses the
+response. You can also specify a match criteria string (*-m* or *--match*)
+which means that it will be considered as a valid response if the response
+contains this string. Alternatively, you can also specify a no-match criteria
+string (*-n* or *--nomatch*) which will tell the plugin to ignore the response
+and treat it as invalid if the response contains this string. To fuzz specific
+parts of the commands string you can specify a prefix string (*-x* or *--prefix*)
+and an append string (*-a* or *--append*) which are prefixed and appended to
+the generated fuzz string and then sent to the device UART. You may need to
+toggle and play around with *-t* or *--timeout* and *-z* or *--buffsize*
+arguments for optimum speed execution and then use the best values for the
+final fuzzing. Note that printing on the terminal will make the execution
+slow, so avoid *-v* or *--verbose* option for the final execution. The *-v*
+option comes handy when you just start analyzing the responses.
 
 ### UDP
-___
-As of now all, UDP based proprietary communication will be grouped here. Eventually, it will be changed to something else.
+
+As of now all, UDP based proprietary communication will be grouped here.
+Eventually, it will be changed to something else.
 
 #### udp.kankun.hijack
-___
+
 **Description**
-```
+
+```bash
 ef> run udp.kankun.hijack -h
 ```
-**More information**
-This is an exploit for a Smart plug called Kankun, manufactured by a Chinese vendor ikonke.com. It is out of production now. 
 
+**More information**
+
+This is an exploit for a Smart plug called Kankun, manufactured by a Chinese
+vendor ikonke.com. It is out of production now. 
 
 # Developer Guide
-EXPLIoT Framework is a brilliant choice for vendors, smart infrastructure admins, developers and security researchers for various reasons:
-1. It will streamline your security/regression testing
-2. You will be able to identify security loopholes prior to deployment on an IoT solution in your infrastructure.
-3. It will help you in automating time consuming test cases.
-4. If you fall under any compliance or regulatory requirements for the IoT product or Smart Infrastructure, it will help you in automating and performing compliance checks regularly.
-5. It will save a lot of time during IoT security research or assessments
-6. You can mold it to your needs by simply extending it with your own plugins.
 
-If you are interested in extending the framework i.e. writing new plugins, follow on :smiley:
+EXPLIoT Framework is a brilliant choice for vendors, smart infrastructure
+admins, developers and security researchers for various reasons:
+
+- It will streamline your security/regression testing
+- You will be able to identify security loopholes prior to deployment on an
+  IoT solution in your infrastructure.
+- It will help you in automating time consuming test cases.
+- If you fall under any compliance or regulatory requirements for the IoT
+  product or Smart Infrastructure, it will help you in automating and
+  performing compliance checks regularly.
+- It will save a lot of time during IoT security research or assessments
+- You can mold it to your needs by simply extending it with your own plugins.
+
+If you are interested in extending the framework i.e. writing new plugins,
+follow on :smiley:.
 
 ## History
-I started dreaming about an IoT vulnerability scanner way back in 2014. My idea was to automate the painful parts of an IoT penetration test. I figured that in our pen-tests, we were wasting a lot of time in setting up the test case environment and trying out different tools for specific purposes. Some tools were new, some were incomplete, buggy, some were proprietary with the hardware. After a while, we ended up writing our own scripts. Also, the nature of the IoT pentest projects is such that no two projects will be the same, today you might be pentesting a fleet management device and tomorrow you will get to test a smart vacuum cleaner or a gas sensor or something else, all of which have completely different use cases and physical interfaces i.e. attack surface. So, I started conceptualizing and implementing a framework that can encompass different functionality for an IoT pentest. I chose ruby as a language for implementing it as it is quite flexible. During the development, I realized that there was not much support for hardware and radio interfacing in ruby. The first version was written in ruby and after a lot of thought and stress I decided to rewrite it in python3. The current version is obviously in python3 :smiley:. 
+
+I started dreaming about an IoT vulnerability scanner way back in 2014. My
+idea was to automate the painful parts of an IoT penetration test. I figured
+that in our pen-tests, we were wasting a lot of time in setting up the test
+case environment and trying out different tools for specific purposes. Some
+tools were new, some were incomplete, buggy, some were proprietary with the
+hardware. After a while, we ended up writing our own scripts. Also, the nature
+of the IoT pentest projects is such that no two projects will be the same,
+today you might be pentesting a fleet management device and tomorrow you
+will get to test a smart vacuum cleaner or a gas sensor or something else,
+all of which have completely different use cases and physical interfaces
+i.e. attack surface. So, I started conceptualizing and implementing a
+framework that can encompass different functionality for an IoT pentest.
+I chose Ruby as a language for implementing it as it is quite flexible.
+During the development, I realized that there was not much support for
+hardware and radio interfacing in ruby. The first version was written in Ruby
+and after a lot of thought and stress I decided to rewrite it in Python. The
+current version is obviously in Python 3. 
 
 ## Design Goals
-I had three major design goals for the framework:
+
+There are three major design goals for the framework:
+
 1. It should be simple to use.
 2. It should be extendable.
 3. It should be easy to write new plugins (test cases).
 
 ## Architecture
-The architecture, as of now, is kept very simple. I assume as we include new functionality it may become slightly complex. I would like to think it is sufficiently object-oriented and component based. The below diagram explains the major components of the framework which are explained in detail component wise. Some design considerations are:
-1. There should be no external dependency for a plugin except for core python functionality which comes with the standard installation.
-2. All the protocol, interface etc. implementation must reside within the framework and is utilized by the plugins.
+
+The architecture, as of now, is kept very simple. I assume as we include new
+functionality it may become slightly complex. I would like to think it is
+sufficiently object-oriented and component based. The below diagram explains
+the major components of the framework which are explained in detail component
+wise. Some design considerations are:
+
+1. There should be no external dependency for a plugin except for core Python
+   functionality which comes with the standard installation.
+2. All the protocol, interface etc. implementation must reside within the
+   framework and is utilized by the plugins.
 
 ```mermaid
 graph LR
@@ -655,39 +959,55 @@ subgraph "EXPLIoT Framework"
 end
 ```
 ## Unified Interface
-I have created a unified interface for the plugins so they can utilize everything from within the framework. The benefits are:
-1. No external dependency
-2. Internal implementation may change at any time, but the framework wrapper classes and methods defined in the framework will remain same so plugins will not require any code changes.
 
-This is only true for external package. Anything that is part of [*the python standard library*](https://docs.python.org/3/library/index.html) can be used freely i.e. imported and used directly by the plugins.
+I have created a unified interface for the plugins so they can utilize
+everything from within the framework. The benefits are:
+
+1. No external dependency
+2. Internal implementation may change at any time, but the framework wrapper
+   classes and methods defined in the framework will remain same so plugins
+   will not require any code changes.
+
+This is only true for external package. Anything that is part of
+[*the Python standard library*](https://docs.python.org/3/library/index.html)
+can be used freely i.e. imported and used directly by the plugins.
 
 ## Coding style
-Please follow the below coding style, when writing new code, if you are used to some other style.
 
-1. Class names should be short, simple and define the purpose. It **must** be in [*CamelCase*](https://en.wikipedia.org/wiki/Camel_case).
-2. The method names **must not** use [*CamelCase*](https://en.wikipedia.org/wiki/Camel_case). It may use underscores ("\_") for a name with more than one word.
+Please follow the below coding style, when writing new code, if you are used
+to some other style.
+
+1. Class names should be short, simple and define the purpose. It **must**
+   be in [*CamelCase*](https://en.wikipedia.org/wiki/Camel_case).
+2. The method names **must not** use [*CamelCase*](https://en.wikipedia.org/wiki/Camel_case).
+   It may use underscores ("\_") for a name with more than one word.
 3. Class member names should follow the same convention as method names.
 4. More to come soon.  
 
 ## Contribute
+
 If you are interested in contributing to the project. Please follow these steps:
+
 1. You must have an idea or a bug fix.
-2. If this is your first time contributing to EXPLIoT, then please DO NOT submit
-a pull/merge request first thing. Instead please open an
-[issue](https://gitlab.com/expliot_framework/expliot/issues/new) describing your code changes.
-3. You will need to sign a contributor license agreement. Please sign, scan and email the same.
+2. If this is your first time contributing to EXPLIoT, then please DO NOT
+   submit a pull/merge request first thing. Instead please open an
+   [issue](https://gitlab.com/expliot_framework/expliot/issues/new) describing
+   your code changes.
+3. You will need to sign a contributor license agreement. Please sign, scan
+   and email the same.
 4. Send the merge request.
 
 
 ## Bin
-**Module Directory**
-`bin`
+
+**Module Directory**: `bin`
 
 This module contains the executable scripts for the framework.
 
 ### [expliot](bin/expliot)
-___
+
 This script starts the console for the user. It just initializes the [`Cli` class](expliot/core/ui/cli/__init__.py) as explained in the *ui* section below. The components of the script are:
+
 1. `class EfCli()` - It is responsible for running the Cli.
     1. Methods:
         1. `main(cls)` - Class method that starts the command loop.
@@ -696,15 +1016,14 @@ This script starts the console for the user. It just initializes the [`Cli` clas
         2. `cli` - Object of the [`Cli` class](expliot/core/ui/cli/__init__.py) 
 
 ## Core
-**Module Directory**
-`expliot/core`
+
+**Module Directory**: `expliot/core`
 
 The core of the framework provides all the functionality and object definitions required by the plugins. It contains all the modules that make up the framework. 
 
 ### Common
-___
-**Module Directory**
-`expliot/core/common`
+
+**Module Directory**: `expliot/core/common`
 
 This module contains the common utility methods and classes that perform generic/common tasks. As of now there is not much functionality in this module. Going forward all generic/repeated tasks will be added here. The current packages include:
 
@@ -715,16 +1034,14 @@ This module contains the common utility methods and classes that perform generic
     1. `readlines_both(file1, file2)` - Unused as of now. This method reads two files and yields each line from the second file for each line in the first file. Good for user and password enumeration/dictionary.
 
 ### Interfaces
-___
-**Module Directory**
-`expliot/core/interfaces`
+
+**Module Directory**: `expliot/core/interfaces`
 
 These are interface modules for any external hardware connected to the system. This can be utilized internally by protocols module for interfacing and communicating with the hardware.
 
 #### ftdi
-___
-**Module Directory**
-`expliot/core/interfaces/ftdi`
+
+**Module Directory**: `expliot/core/interfaces/ftdi`
 
 This module is an interface for any [Future Technology Devices International(FTDI)](https://en.wikipedia.org/wiki/FTDI) device connected to the system. It is a wrapper over *pyspiflash* and *pyi2cflash* which internally depend on the *pyftdi* package. Currently, it is utilized by *protocols.hardware.spi* and *protocols.hardware.i2c* modules.
 
@@ -737,9 +1054,8 @@ This module is an interface for any [Future Technology Devices International(FTD
     1. `close(device)` - Calls terminate() on the *I2cController* (in *pyi2cflash*) to release the resource.
 
 ### Protocols
-___
-**Module Directory**
-`expliot/core/protocols`
+
+**Module Directory**: `expliot/core/protocols`
 
 This module is the home for all the different protocol implementations. All plugins are strictly required to import protocol specific functionality from here and not import from any other package outside of the framework. The protocols are grouped into submodules based on their usage and implementation:
 1. *protocols.hardware* - Home for all hardware specific protocols
@@ -749,16 +1065,14 @@ This module is the home for all the different protocol implementations. All plug
 **Important Note: As per the unified Interface mentioned above, even though an EXPLIoT dependency package is installed, DO NOT import it in your plugins. All protocol imports *must* be from this module**
 
 #### protocols.hardware
-___
-**Module Directory**
-`expliot/core/protocols/hardware`
+
+**Module Directory**: `expliot/core/protocols/hardware`
 
 All the hardware based protocol implementations go inside this module. 
 
 ##### CAN
-___
-**Module Directory**
-`expliot/core/protocols/hardware/can`
+
+**Module Directory**: `expliot/core/protocols/hardware/can`
 
 The CAN implementation, currently, is a wrapper over *python-can* package.
 
@@ -769,21 +1083,21 @@ The CAN implementation, currently, is a wrapper over *python-can* package.
 **Note: If any other *python-can* class, method etc. is required for a plugin, it *must* be added here.**
 
 ##### I2C
-___
-**Module Directory**
-`expliot/core/protocols/hardware/i2c`
+
+**Module Directory**: `expliot/core/protocols/hardware/i2c`
 
 The I2C implementation, currently, is a wrapper over *pyi2cflash* package. The details of classes, methods etc. are given below.
 1. `__init__.py` - It just imports *I2cEepromManager* class from *expliot.core.interfaces.ftdi* module, which can be used to interact with an FTDI device for I2C communication.
 
 **Note: If any other *pyi2cflash* class, method etc. is required for a plugin, it *must* be added in *expliot.core.interfaces.ftdi* and then imported in to this module.**
 
-##### SERIAL
-___
-**Module Directory**
-`expliot/core/protocols/hardware/serial`
+##### serial
 
-The SERIAL implementation, currently, is a wrapper over *pyserial* package. The details of classes, methods etc. are given below.
+**Module Directory**: `expliot/core/protocols/hardware/serial`
+
+The serial implementation, currently, is a wrapper over *pyserial* package.
+The details of classes, methods etc. are given below.
+
 1. `__init__.py` - The serial wrapper implementation over *pyserial*. The details of classes, methods etc. are given below.
     1. `class Serial(Pserial)` - Wrapper over *pyserial* Serial class
         1. `readfull(self, bsize=1)` - reads *bsize* bytes of data from the serial connection.
@@ -791,35 +1105,34 @@ The SERIAL implementation, currently, is a wrapper over *pyserial* package. The 
 **Note: If any other *pyserial* class, method etc. is required for a plugin, it *must* be added here.**
 
 ##### SPI
-___
-**Module Directory**
-`expliot/core/protocols/hardware/spi`
 
-The SPI implementation, currently, is a wrapper over *pyspiflash* package. The details of classes, methods etc. are given below.
+**Module Directory**: `expliot/core/protocols/hardware/spi`
+
+The SPI implementation, currently, is a wrapper over *pyspiflash* package.
+The details of classes, methods etc. are given below.
+
 1. `__init__.py` - It just imports *SpiFlashManager* class from *expliot.core.interfaces.ftdi* module, which can be used to interact with an FTDI device for SPI communication.
 
 **Note: If any other *pyspiflash* class, method etc. is required for a plugin, it *must* be added in *expliot.core.interfaces.ftdi* and then imported in to this module.**
 
 #### protocols.internet
-___
-**Module Directory**
-`expliot/core/protocols/internet`
+
+**Module Directory**: `expliot/core/protocols/internet`
 
 All the TCP/IP network based protocol implementations go inside this module. 
 
 ##### COAP
-___
-**Module Directory**
-`expliot/core/protocols/internet/coap`
+
+**Module Directory**: `expliot/core/protocols/internet/coap`
 
 It is  not implemented yet but will be added soon.
 
 ##### DICOM
-___
-**Module Directory**
-`expliot/core/protocols/internet/dicom`
 
-The DICOM implementation, currently, is a wrapper over *pynetdicom* package. 
+**Module Directory**: `expliot/core/protocols/internet/dicom`
+
+The DICOM implementation, currently, is a wrapper over *pynetdicom* package.
+
 1. `__init__.py` - The DICOM wrapper implementation over *pynetdicom*. The details of classes, methods etc. are given below.
     1. `class AE(AppEntity)` - Wrapper over *pynetdicom* AE class.
     2. `class Dataset(DS)` - Wrapper over *pynetdicom* Dataset class.
@@ -828,20 +1141,21 @@ The DICOM implementation, currently, is a wrapper over *pynetdicom* package.
 **Note: If any other *pynetdicom* class, method etc. is required for a plugin, it *must* be added here.**
 
 ##### MODBUS
-___
-**Module Directory**
-`expliot/core/protocols/internet/modbus`
 
-The MODBUS implementation, currently, is a wrapper over *pymodbus* package. Currently, Modbus over TCP is supported. The other communication methods will be supported soon.
+**Module Directory**: `expliot/core/protocols/internet/modbus`
+
+The MODBUS implementation, currently, is a wrapper over *pymodbus* package.
+Currently, Modbus over TCP is supported. The other communication methods will
+be supported soon.
+
 1. `__init__.py` - The MODBUS wrapper implementation over *pymodbus*. The details of classes, methods etc. are given below.
     1. `class ModbusTcpClient(MBTClient)` - Wrapper over *pymodbus* ModbusTcpClient class.
 
 **Note: If any other *pymodbus* class, method etc. is required for a plugin, it *must* be added here.**
 
 ##### MQTT
-___
-**Module Directory**
-`expliot/core/protocols/internet/mqtt`
+
+**Module Directory**: `expliot/core/protocols/internet/mqtt`
 
 The MQTT implementation, currently, is a wrapper over *paho-mqtt* package. Currently, MQTT directly over TCP is supported. The other communication methods will be supported soon.
 1. `__init__.py` - The MQTT wrapper implementation over *paho-mqtt*. The details of classes, methods etc. are given below.
@@ -855,16 +1169,14 @@ The MQTT implementation, currently, is a wrapper over *paho-mqtt* package. Curre
 **Note: If any other *paho-mqtt* class, method etc. is required for a plugin, it *must* be added here.**
 
 #### protocols.radio
-___
-**Module Directory**
-`expliot/core/protocols/radio`
+
+**Module Directory**: `expliot/core/protocols/radio`
 
 All the radio based protocol implementations go inside this module.
 
 ##### BLE
-___
-**Module Directory**
-`expliot/core/protocols/radio/ble`
+
+**Module Directory**: `expliot/core/protocols/radio/ble`
 
 The BLE implementation, currently, is a wrapper over *bluepy* package. 
 1. `__init__.py` - The BLE wrapper implementation over *bluepy*. The details of classes, methods etc. are given below.
@@ -876,12 +1188,11 @@ The BLE implementation, currently, is a wrapper over *bluepy* package.
 **Note: If any other *bluepy* class, method etc. is required for a plugin, it *must* be added here.**
 
 ### tests
-___
 
 All the test case related implementation like base test case classes, plugin management etc. goes here.
 
 #### [test.py](expliot/core/tests/test.py)
-___
+
 This file has the interface definition for a test case. The plugins inherit from this base class. The details of classes, methods etc. are given below.
 
 1. `class TCategory(namedtuple("TCategory", "proto, iface, action"))` - This class provides the definition for the category of a test case (plugin) which includes the protocol used, interface and action. For details refer the code documentation.
@@ -920,28 +1231,32 @@ This file has the interface definition for a test case. The plugins inherit from
         13. `self.args` - Stores the values of the plugin arguments. It is a `namespace` object and is created by `parse_args()` method from `argparse` in `run(self, arglist)` method of `Test` class. The plugin code can use this to get the values of its arguments. More details on [`parse_args()` can be found here](https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.parse_args).
 
 #### [testsuite.py](expliot/core/tests/testsuite.py)
-___
-This file implements the collection to manage the plugins. This is used by both *list* and *run* commands.
+
+This file implements the collection to manage the plugins. This is used by both `list` and `run` commands.
 
 1. `class TestSuite(dict)` - This class basically imports all the plugin classes holds all the plugin IDs. It is instantiated by the `Cli` object and used for loading and executing the plugin requested by the user.
     1. `__init__(self, pkgname='expliot.plugins')` - Loads all the plugins. It internally calls `import_plugins()` to do the dirty work.
     2. `import_plugins(self, pkgname)`- Imports the plugins recursively from `pkgname` package.
 
 ### ui
-___
-**Module Directory**
-`expliot/core/ui`
 
-This is the home for all the different user interface implementations for the framework. As of now, we just have a command line interface for the framework.
+**Module Directory**: `expliot/core/ui`
+
+This is the home for all the different user interface implementations for the
+framework. As of now, we just have a command line interface for the framework.
 
 #### cli
-___
+
 **Module Directory**
 `expliot/core/ui/cli`
 
-This module is currently built over [`cmd2`](https://cmd2.readthedocs.io/en/latest/) python package for creating and managing the Command line interface.
+This module is currently built with the [`cmd2`](https://cmd2.readthedocs.io/en/latest/)
+Python package for creating and managing the Command line interface.
+
 Refer the code in [expliot/core/ui/cli/__init__.py](expliot/core/ui/cli/__init__.py) for more details.
-This file has the code for the Cli as of now.
+
+This file has the code for the CLI as of now.
+
 1. `class Cli(Cmd)` - The main class that implements the [`cmd2`](https://cmd2.readthedocs.io/en/latest/) cli logic. It loads all the plugins using the `tsuite` member object of class [`TestSuite`](expliot/core/tests/testsuite.py).
     1. `__init__(self, prompt=None, intro=None)` - The constructor of the class. This is used for initializing *cmd2* members.
     2. `del_defaultcmds(self)` - This method removes the [`cmd2`](https://cmd2.readthedocs.io/en/latest/) default commands that come along with it as we do not want to show it in [`expliot`](bin/expliot).
@@ -952,140 +1267,244 @@ This file has the code for the Cli as of now.
     7. `Cmd.do_exit` - This is an alias defined for `Cmd.do_quit` method provided by default in [`cmd2`](https://cmd2.readthedocs.io/en/latest/)
 
 ##### Adding a new command
-___
+
 To add a new command, we need to implement a callback method in [`Cli`](expliot/core/ui/cli/__init__.py) class as we have done for *run* and *list* commands. As per [`cmd2` documentation](https://cmd2.readthedocs.io/en/latest/) to add a new command, you need to implement a callback method in your code and the method name should be of the format `do_commandname()`. For example, to add a command *foobar* we will implement a callback method `do_foobar()`. 
 
 ## Plugins (Test Cases)
-Plugins are classes that inherit from *Test* base class and implement a specific test case which can be an exploit, analysis, recon, fuzzer etc. To extend the framework one can implement any no. of plugins. 
 
-### Sample Plugin *coap.generic.sample*
-___
-There is already a sample plugin implemented in the framework [*coap.generic.sample*](expliot/plugins/sample.py) that explains the implementation *How tos* for a plugin. It would be better to open the code of the plugin now and then follow the below documentation.
+Plugins are classes that inherit from *Test* base class and implement a
+specific test case which can be an exploit, analysis, recon, fuzzer etc.
+To extend the framework one can implement any no. of plugins. 
 
-**Note: The sample plugin does not do any operation. It is only implemented to show the features you can use to implement a plugin.
+### Sample Plugin `coap.generic.sample`
+
+There is already a sample plugin implemented in the framework
+[`coap.generic.sample`](expliot/plugins/sample.py) that explains the
+implementation *How tos* for a plugin. It would be better to open the code
+of the plugin now and then follow the below documentation.
+
+**Note: The sample plugin does not do any operation. It is only implemented to
+show the features you can use to implement a plugin.
 
 ### Plugin Directory
-___
-**Module Directory**
-`expliot/plugins`
 
-This is the home for all the plugins that are implemented in the framework. Any new plugin file **must** be created in its corresponding directory within the `plugins` directory.
-For example, any BLE based plugin will go in the directory `expliot/plugins/ble`. This is done to keep the directory structure clean and
-help develoipers find the relevant plugins.
+**Module Directory**: `expliot/plugins`
+
+This is the home for all the plugins that are implemented in the framework.
+Any new plugin file **must** be created in its corresponding directory within
+the `plugins` directory.
+For example, any BLE based plugin will go in the directory
+`expliot/plugins/ble`. This is done to keep the directory structure clean and
+help developers find the relevant plugins.
 
 ### Plugin sections
+
 The implementation of a plugin can be divided into three parts:
+
 1. Plugin information
 2. Plugin Arguments
 3. Plugin methods
 
-If you are reading this I'm guessing you want to create a new plugin. Well, it is pretty simple to implement and add a new plugin to the framework. You just need to be ready with the idea, logic and arguments. If you need a specific protocol which is not part of the framework yet, just send us an email describing your requirement and the reason why you think that the protocol is important for IoT and needs to be added and we will add it to the framework, if it looks like an interesting protocol.
+If you are reading this I'm guessing you want to create a new plugin. Well,
+it is pretty simple to implement and add a new plugin to the framework. You
+just need to be ready with the idea, logic and arguments. If you need a
+specific protocol which is not part of the framework yet, just send us an
+email describing your requirement and the reason why you think that the
+protocol is important for IoT and needs to be added and we will add it to the
+framework, if it looks like an interesting protocol.
 
 #### Plugin information
-___
-Plugin information can be thought of as an *About me* for the plugin which defines what category the plugin belongs to and what is the target of the plugin among other information. All this information goes in the `__init__()` method of the plugin as shown in the code below.
 
-```
-from expliot.core.tests.test import Test, TCategory, TTarget, TLog
+Plugin information can be thought of as an *About me* for the plugin which
+defines what category the plugin belongs to and what is the target of the
+plugin among other information. All this information goes in the `__init__()`
+method of the plugin as shown in the code below.
 
-class Sample(Test):
-def __init__(self):
-        super().__init__(name     = "Sample",
-                         summary  = "Sample Summary",
-                         descr    = "Sample Description",
-                         author   = "Sample author",
-                         email    = "email@example.com",
-                         ref      = ["https://example.com", "https://example.dom"],
-                         category = TCategory(TCategory.COAP, TCategory.SW, TCategory.EXPLOIT),
-                         target   = TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC))
-```
-Let's look at each parameter:
-1. `name` - This is the name of the plugin and is part of the plugin ID. Keep it short but descriptive about the action and **DO NOT** use white space in the name.
-2. `summary` - Summary of the plugin. This is displayed in the *list* command 
-`descr` - The description of the plugin. This is displayed when the plugin is run with the *-h* or *--help* argument. Please be as descriptive as possible assuming the user does not have much knowledge about the plugin and its features.
-3. `author` - Plugin author's name
-4. `email` - Plugin author's email ID
-5. `ref` - A *list* containing one or more reference or source URLs containing either the exploit details or relevant information used as the basis of the plugin. 
-6. `category` - The category of the plugin defined by TCategory's protocol, interface and action. For more details look at TCategory implementation in *test.py*
-7. `target` The (vulnerable) target of the Plugin defined by  name, version and vendor as a TTarget object. If it is a generic plugin then use generic for all. We may start defining names and vendors in TTarget class itself for standardization.
-
-**Other important parameters:**  
-1. `needroot` - If the plugin needs root privileges, set this to *True*. **DO NOT** specify this if root privilege is not required. As of now, the framework checks if it has root privileges, if not it fails with the relevant message.
-
-#### Plugin Arguments
-___
-
-The plugin can be configured to run based on the requirements. It is done via plugin arguments. For example, if a plugin needs to send payload to a server it needs to know the server host name/IP and the port. All these parameters can be assed with the arguments to the plugin. It is very simple to add and utilize the arguments within the plugin. The parsing logic for the arguments **must** be implemented in the `execute()` method. The argument implementation for EXPLIoT is based on python *argparse* module which is part of the [Python Standard Library](https://docs.python.org/3/library/). 
-
-After we define the plugin information in the `__init__()` method (as shown above), we have to populate the arguments for the plugin (also in the `__init__()` method). The *Test* base calls defines an *argparse* object and initializes it in its `__init__()` method as shown below (from `expliot/core/tests/test.py`):
-```
-self.argparser = argparse.ArgumentParser(prog=self.id, description=self.descr)
-```
-For the *argument parser* in the framework the *self.id*  and *self.descr* of the plugin become the name and the description respectively. Now, let's look at how to add and use the arguments.
-
-**Note: For more details on the API and how to use different methods like `add_argument()`, please refer [*argparse* documentation](https://docs.python.org/3/library/argparse.html).**
-
-Below is an excerpt from the *coap.generic.sample* plugin.
-```
+```python
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 
 class Sample(Test):
     def __init__(self):
-        super().__init__(name     = "Sample",
-                         summary  = "Sample Summary",
-                         descr    = "Sample Description",
-                         author   = "Sample author",
-                         email    = "email@example.com",
-                         ref      = ["https://example.com", "https://example.dom"],
-                         category = TCategory(TCategory.COAP, TCategory.SW, TCategory.EXPLOIT),
-                         target   = TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC))
+        super().__init__(
+            name="Sample",
+            summary="Sample Summary",
+            descr="Sample Description",
+            author="Sample author",
+            email="email@example.com",
+            ref=["https://example.com", "https://example.dom"],
+            category=TCategory(TCategory.COAP, TCategory.SW, TCategory.EXPLOIT),
+            target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC)
+        )
+```
+Let's look at each parameter:
+
+- `name`: This is the name of the plugin and is part of the plugin ID. Keep
+   it short but descriptive about the action and **DO NOT** use white space in
+   the name.
+- `summary`: Summary of the plugin. This is displayed in the `list` command
+- `descr`: The description of the plugin. This is displayed when the plugin
+   is run with the *-h* or *--help* argument. Please be as descriptive as
+   possible assuming the user does not have much knowledge about the plugin
+   and its features.
+- `author`: Plugin author's name
+- `email`: Plugin author's email ID
+- `ref`: A *list* containing one or more reference or source URLs containing
+   either the exploit details or relevant information used as the basis of the
+   plugin. 
+- `category`: The category of the plugin defined by TCategory's protocol,
+   interface and action. For more details look at TCategory implementation in
+   `test.py`.
+- `target`: The (vulnerable) target of the Plugin defined by name, version and
+   vendor as a `TTarget` object. If it is a generic plugin then use generic
+   for all. We may start defining names and vendors in TTarget class itself
+   for standardization.
+
+**Other important parameters:**  
+
+- `needroot`: If the plugin needs root privileges, set this to *True*.
+  **DO NOT** specify this if root privilege is not required. As of now, the
+  framework checks if it has root privileges, if not it fails with the
+  relevant message.
+
+#### Plugin Arguments
+
+The plugin can be configured to run based on the requirements. It is done via
+plugin arguments. For example, if a plugin needs to send payload to a server
+it needs to know the server host name/IP and the port. All these parameters
+can be assed with the arguments to the plugin. It is very simple to add and
+utilize the arguments within the plugin. The parsing logic for the arguments
+**must** be implemented in the `execute()` method. The argument implementation
+for EXPLIoT is based on python *argparse* module which is part of the
+[Python Standard Library](https://docs.python.org/3/library/). 
+
+After we define the plugin information in the `__init__()` method (as shown
+above), we have to populate the arguments for the plugin (also in the
+`__init__()` method). The *Test* base calls defines an *argparse* object and
+initializes it in its `__init__()` method as shown below
+(from `expliot/core/tests/test.py`):
+
+```python
+self.argparser = argparse.ArgumentParser(prog=self.id, description=self.descr)
+```
+For the *argument parser* in the framework the *self.id*  and *self.descr*
+of the plugin become the name and the description respectively. Now, let's
+look at how to add and use the arguments.
+
+**Note: For more details on the API and how to use different methods like
+`add_argument()`, please refer [*argparse* documentation](https://docs.python.org/3/library/argparse.html).**
+
+Below is an excerpt from the `coap.generic.sample` plugin.
+
+```python
+from expliot.core.tests.test import Test, TCategory, TTarget, TLog
+
+class Sample(Test):
+    def __init__(self):
+        super().__init__(
+            name="Sample",
+            summary="Sample Summary",
+            descr="Sample Description",
+            author="Sample author",
+            email="email@example.com",
+            ref=["https://example.com", "https://example.dom"],
+            category=TCategory(TCategory.COAP, TCategory.SW, TCategory.EXPLOIT),
+            target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC)
+        )
 
         self.argparser.add_argument("-r", "--rhost", required=True, help="IP address of the target")
         self.argparser.add_argument("-p", "--rport", default=80, type=int, help="Port number of the target. Default is 80")
         self.argparser.add_argument("-v", "--verbose", action="store_true", help="show verbose output")
 ```
-We have already discussed the information parameters above, let's focus on adding arguments. To add an argument, you need to call the `add_argument()` method on the *argparser* object and pass the parameters as per the argument's requirement. You can add as many arguments as required by the plugin by invoking `add_argument()` method that many no. of times.
-1. `"-r"` - First parameter is the single hyphen-character representation of the argument.
-2. `"--rhost"` - Second parameter is the double hyphen-word representation of the argument.
-3. `help="IP address of the target"` - Specify the help string. It is **mandatory** to fill this. This is displayed along with the argument when plugin is run with *-h* or *--help* argument.
-4. `required=True` - Set the* required* parameter to *True* the argument is mandatory. If it is optional, no need to specify this option.
-4. `default=80` - If you want you can specify a default value for an argument.
-5. `type=int` - You can specify the data type of the argument value. If not, specified, default data type is a *string*.
-6. `action="store_true"` - If an argument does not take any value. You can use this as a toggle to set the value of the argument to true (in this example) and decide your action based on whether the user specified this argument or not. As shown in the sample above it is used with the *verbose* argument.
-7. For any other requirements, not covered here refer to [*argparse* documentation here](https://docs.python.org/3/library/argparse.htm).
+
+We have already discussed the information parameters above, let's focus on
+adding arguments. To add an argument, you need to call the `add_argument()`
+method on the *argparser* object and pass the parameters as per the argument's
+requirement. You can add as many arguments as required by the plugin by
+invoking `add_argument()` method that many no. of times.
+
+- `"-r"`: First parameter is the single hyphen-character representation of
+   the argument.
+- `"--rhost": Second parameter is the double hyphen-word representation of
+   the argument.
+- `help="IP address of the target"`: Specify the help string. It is
+  **mandatory** to fill this. This is displayed along with the argument when
+  plugin is run with *-h* or *--help* argument.
+- `required=True`: Set the* required* parameter to *True* the argument is
+  mandatory. If it is optional, no need to specify this option.
+- `default=80`: If you want you can specify a default value for an argument.
+- `type=int`: You can specify the data type of the argument value. If not,
+  specified, default data type is a *string*.
+- `action="store_true"`: If an argument does not take any value. You can use
+  this as a toggle to set the value of the argument to true (in this example)
+  and decide your action based on whether the user specified this argument or
+  not. As shown in the sample above it is used with the *verbose* argument.
+- For any other requirements, not covered here refer to
+  [*argparse* documentation here](https://docs.python.org/3/library/argparse.htm).
 
 **Conventions for arguments:**
-1. Do not define *-h* and *--help* in the plugin as they are internally generated on the fly for help text of a plugin.
-2. Prefer to define *-r* and *--rhost* for remote server hostname or IP.
-3. Prefer to define *-p* and *--rport* for remote server port number.
-4. Prefer to define *-l* and *-lhost* for local server hostname or IP.
-5. Prefer to define *-q* and *--lport* for local server port number.
-6. Prefer to define *-v* and *--verbose* when you require verbose output option.
-7. Prefer to define *-a* and *--addr* for hardware addresses (MAC, BLE etc.).
+
+- Do not define *-h* and *--help* in the plugin as they are internally
+  generated on the fly for help text of a plugin.
+- Prefer to define *-r* and *--rhost* for remote server hostname or IP.
+- Prefer to define *-p* and *--rport* for remote server port number.
+- Prefer to define *-l* and *-lhost* for local server hostname or IP.
+- Prefer to define *-q* and *--lport* for local server port number.
+- Prefer to define *-v* and *--verbose* when you require verbose output option.
+- Prefer to define *-a* and *--addr* for hardware addresses (MAC, BLE etc.).
 
 #### Plugin methods
-___
-There are three methods defined in the *Test* base calls which the plugins will override for its execution. They are:
-1. `pre(self)` - This is an optional method. Any dependency/setup related logic for the plugin will go here. Please **DO NOT** add argument parsing logic in this method, that must go in the *execute()* method. The plugin author does not need to override this otherwise. As of now none of the plugins implement this (well, actually there are a few plugins, but the code will be changed soon).
-2. `post(self)` - This is an optional method. Any dependency/cleanup related logic for the plugin will go here. Please **DO NOT** add plugin fail/success logic in this method, that must go in the *execute()* method. The plugin author does not need to override this otherwise. As of now none of the plugins implement this (well, actually there are a few plugins, but the code will be changed soon).
-3. `execute(self)` - This method is **mandatory** to be overridden by the plugin class. This is where the exploit etc. logic will go. At the end of the method you need to set the status of the test case, if it failed as explained below. Also, the plugin needs to use *TLog* class methods for logging any output.
+
+There are three methods defined in the *Test* base calls which the plugins
+will override for its execution. They are:
+
+1. `pre(self)` - This is an optional method. Any dependency/setup related
+   logic for the plugin will go here. Please **DO NOT** add argument parsing
+   logic in this method, that must go in the *execute()* method. The plugin
+   author does not need to override this otherwise. As of now none of the
+   plugins implement this (well, actually there are a few plugins, but the
+   code will be changed soon).
+2. `post(self)` - This is an optional method. Any dependency/cleanup related
+   logic for the plugin will go here. Please **DO NOT** add plugin fail/success
+   logic in this method, that must go in the *execute()* method. The plugin
+   author does not need to override this otherwise. As of now none of the
+   plugins implement this (well, actually there are a few plugins, but the
+   code will be changed soon).
+3. `execute(self)` - This method is **mandatory** to be overridden by the
+   plugin class. This is where the exploit etc. logic will go. At the end of
+   the method you need to set the status of the test case, if it failed as
+   explained below. Also, the plugin needs to use *TLog* class methods for
+   logging any output.
 
 ### Result
-___
-The plugin's failure status or result (basically a Boolean and a message string) after execution needs to be determined and then set accordingly before returning from `execute()` method. The plugin does not need to set anything for successful execution. The status is stored in plugin's `self.result` object. There are two ways to set the status.
-1. *Set specific message* - When you know the exact reason, you can set it using `self.result.setstatus(passed=False, reason="Whatever reason")
-2. *Unknown/External Exception* - If there was an exception raised by another package and the plugin cannot handle all the cases, it can use `self.result.exception()` which basically sets the `reason` to the exception's message.
 
-Refer [*coap.generic.sample*](expliot/plugins/sample.py) plugin's `execute()` method
+The plugin's failure status or result (basically a Boolean and a message
+string) after execution needs to be determined and then set accordingly before
+returning from `execute()` method. The plugin does not need to set anything
+for successful execution. The status is stored in plugin's `self.result`
+object. There are two ways to set the status.
 
-**Note: It is mandatory to determine the fail criteria and call any of these methods in `execute()`.**
+1. *Set specific message*: When you know the exact reason, you can set it
+   using `self.result.setstatus(passed=False, reason="Whatever reason")
+2. *Unknown/External Exception*: If there was an exception raised by another
+   package and the plugin cannot handle all the cases, it can use
+   `self.result.exception()` which basically sets the `reason` to the
+   exception's message.
+
+Refer [`coap.generic.sample`](expliot/plugins/sample.py) plugin's `execute()`
+method.
+
+**Note: It is mandatory to determine the fail criteria and call any of these
+methods in `execute()`.**
 
 ### Logging
-___
-All the logging within the plugin must use `TLog` class methods based on why/what is being logged.
 
-Refer 
-1. [`TLog`](expliot/core/tests/test.py)  class details for methods.
-2. [*coap.generic.sample*](expliot/plugins/sample.py) plugin's `execute()` method for usage.
+All the logging within the plugin must use `TLog` class methods based on why/
+what is being logged.
 
-**Note: It is mandatory to use only `TLog` methods for logging. Please do not use any other python print style methods.**
+Refer
+1. [`TLog`](expliot/core/tests/test.py) class details for methods.
+2. [*coap.generic.sample*](expliot/plugins/sample.py) plugin's `execute()`
+   method for usage.
+
+**Note: It is mandatory to use only `TLog` methods for logging. Please do not
+use any other Python `print` style methods.**
