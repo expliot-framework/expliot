@@ -39,14 +39,14 @@ class KHijack(Test):
                          target   = TTarget("kankun", "1.0", "ikonke.com"))
 
         self.argparser.add_argument("-r", "--rhost", required=True,
-                                    help="IP address of kankun smartplug")
+                                    help="IP address of Kankun smartplug")
         self.argparser.add_argument("-p", "--rport", default=27431, type=int,
                                     help="Port number of the smartplug service. Default is 27431")
         self.argparser.add_argument("-m", "--rmac", required=True,
-                                    help="""MAC address of kankun smartplug. Use colon delimited
+                                    help="""MAC address of Kankun smartplug. Use colon delimited
                                             format with hex digits in small letters ex. ff:ee:dd:00:01:02""")
         self.argparser.add_argument("-w", "--passwd", default="nopassword",
-                                    help="The password (if any) for kankun. Default is the string \"nopassword\"")
+                                    help="The password (if any) for Kankun. Default is the string \"nopassword\"")
         self.argparser.add_argument('-c', '--cmd', required=True,
                                     help="The command to send to the smartplug. Valid commands are on / off")
 
@@ -91,7 +91,7 @@ class KHijack(Test):
             ret = s.recv(1024)
             ret = self.cipher(ret, encrypt=False)
         except:
-            TLog.fail("Couldnt receive/decrypt response")
+            TLog.fail("Couldn't receive/decrypt response")
         finally:
             s.close()
         return ret
@@ -127,7 +127,7 @@ class KHijack(Test):
             return None
 
     def execute(self):
-        TLog.generic("Sending Unauthorized command ({}) to kankun smartplug on ({}) port ({})".format(self.args.cmd,
+        TLog.generic("Sending Unauthorized command ({}) to Kankun smartplug on ({}) port ({})".format(self.args.cmd,
                                                                                                       self.args.rhost,
                                                                                                       self.args.rport))
         op = None

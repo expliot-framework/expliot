@@ -28,8 +28,8 @@ class TCategory(namedtuple("TCategory", "proto, iface, action")):
     """
     TCategory class
 
-    The class that defines thet category of the test case. It is part of the Test class
-    member _category. It can be used to identy the type of test or search for a specific
+    The class that defines the category of the test case. It is part of the Test class
+    member _category. It can be used to identify the type of test or search for a specific
     category. It is a namedtuple that defines three attributes (for categorizing test cases)
     1. proto  - What protocol does the test use
     2. iface  - Interface of the test i.e. whether it is for software or hardware
@@ -184,7 +184,7 @@ class TLog():
     @classmethod
     def fail(cls, msg):
         """
-        Write a message with faile prefix to the file
+        Write a message with fail prefix to the file
         :param msg: The message to be written
         :return: void
         """
