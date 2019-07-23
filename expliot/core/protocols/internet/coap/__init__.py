@@ -31,7 +31,7 @@
 #
 # # XXX Fixme
 # # CoAPthon3 (1.0.1) version creates file logging.conf and sets log level to debug
-# # They have fixed the issue but the pythin package is not yet released. Until then
+# # They have fixed the issue but the Python package is not yet released. Until then
 # # lets disable logging and delete file ourselves
 # #
 # logging.disable(logging.CRITICAL)

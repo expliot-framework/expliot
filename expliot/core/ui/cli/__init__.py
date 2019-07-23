@@ -28,7 +28,7 @@ class Cli(Cmd):
     """
     Cli - The main command line interpreter for Expliot console. It inherits Cmd2 package for commandline functionality
           and adds expliot specific commands. It also initializes the plugins for execution.
-          Current Expliot commmands defined are:
+          Current Expliot commands defined are:
           1. list - to list available plugins (test cases)
           2. run - Execute a specific plugin (test case)
           3. exit - An alias for Cmd2 quit command

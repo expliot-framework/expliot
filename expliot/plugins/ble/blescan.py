@@ -124,4 +124,4 @@ class BleScan(Test):
         finally:
             d.disconnect()
         if self.found is False and self.reason is None:
-            self.reason = "Couldnt find any devices"
+            self.reason = "Couldn't find any devices"

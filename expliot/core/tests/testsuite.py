@@ -31,7 +31,7 @@ from expliot.core.tests.test import Test
 
 class TestSuite(dict):
     """
-    TestSuite class inherites from dict and stores all the test cases
+    TestSuite class inherits from dict and stores all the test cases
     from plugins package name specified in __init__()
     """
 
@@ -48,7 +48,7 @@ class TestSuite(dict):
     def import_plugins(self, pkgname):
         """
         Imports all tests from the specified Package into a dict
-        :param pkgname: The packageto load all test case plugins from
+        :param pkgname: The package to load all test case plugins from
         :return: void
         """
         pkgs = [pkgname]
