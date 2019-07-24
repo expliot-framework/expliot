@@ -1,4 +1,8 @@
-**EXPLIoT Framework Documentation**
+# EXPLIoT Framework Documentation
+
+Table of Contents
+
+[TOC]
 
 
 # Introduction
