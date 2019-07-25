@@ -17,20 +17,19 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-
 from spiflash.serialflash import SerialFlashManager
 from i2cflash.serialeeprom import SerialEepromManager
 
 
 class SpiFlashManager(SerialFlashManager):
-    """
-    A wrapper around pyspiflash SerialFlashManager. More details can be found at https://github.com/eblot/pyspiflash
-    """
+    """A wrapper around pyspiflash SerialFlashManager.
 
-    """
-    Calls terminate() on the SpiController to close the ftdi device. As of now there is no close or terminate method
-    provided in pyspiflash.
-    XXX: Remove me when pyspiflash implements one.
+    More details can be found at https://github.com/eblot/pyspiflash
+
+    Calls terminate() on the SpiController to close the FTDI device. As of
+    now there is no close or terminate method provided in pyspiflash.
+
+    TODO: Remove me when pyspiflash implements one.
 
     :param device: The Flash device returned from get_flash_device()
     :return:
@@ -40,15 +39,16 @@ class SpiFlashManager(SerialFlashManager):
         if device:
             device._spi._controller.terminate()
 
-class I2cEepromManager(SerialEepromManager):
-    """
-    A wrapper around pyi2cflash SerialEepromManager. More details can be found at https://github.com/eblot/pyi2cflash
-    """
 
-    """
-    Calls terminate() on the I2cController to close the ftdi device. As of now there is no close or terminate method
-    provided in pyi2cflash.
-    XXX: Remove me when pyspiflash implements one.
+class I2cEepromManager(SerialEepromManager):
+    """A wrapper around pyi2cflash SerialEepromManager.
+
+    More details can be found at https://github.com/eblot/pyi2cflash
+
+    Calls terminate() on the I2cController to close the FTDI device. As of
+    now there is no close or terminate method provided in pyi2cflash.
+
+    TODO: Remove me when pyspiflash implements one.
 
     :param device: The Flash device returned from get_flash_device()
     :return:

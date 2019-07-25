@@ -19,6 +19,7 @@
 #
 
 class Expliot():
+    """Main class for expliot."""
     VMAJOR = 0
     VMINOR = 6
     VPATCH = 0
