@@ -1,7 +1,7 @@
 #
 #
 # expliot - Internet Of Things Security Testing and Exploitation Framework
-# 
+#
 # Copyright (C) 2018  Aseem Jakhar
 #
 # Email:   aseemjakhar@gmail.com
@@ -17,16 +17,14 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-
-
 # Common file utility methods that can be used across the framework
 
 
 def readlines(file):
     """
-    Helper method for reading one line at a time from a file and yielding it for loops.
-    The file is closed automatically even if the caller exits the loop early (break, exception
-    etc) Thanks to with statement :)
+    Helper method for reading one line at a time from a file and yielding it
+    for loops. The file is closed automatically even if the caller exits the
+    loop early (break, exception, etc).
 
     :param file: The file to read data from.
     :return: yield a line in a loop
@@ -38,11 +36,11 @@ def readlines(file):
 
 def readlines_both(file1, file2):
     """
-    Helper method for reading one line at a time from two files and yielding them for loops.
-    For each line in file1 it will also loop through all lines of file2. Total no. of yields is
-    lines in file1 x lines in file2
-    The files are closed automatically even if the caller exits the loop early (break, exception
-    etc) Thanks to with statement :)
+    Helper method for reading one line at a time from two files and yielding
+    them for loops. For each line in file1 it will also loop through all lines
+    of file2. Total no. of yields is lines in file1 x lines in file2.
+    The files are closed automatically even if the caller exits the loop early
+    (break, exception, etc).
 
     :param file1: The first file to read data from
     :param file2: The second file to read data from

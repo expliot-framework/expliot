@@ -20,10 +20,10 @@
 
 from bluepy import btle
 
+
 class Ble():
-    """
-    A wrapper around simple BLE operations
-    """
+    """A wrapper around simple BLE operations."""
+
 
 class Ble():
 
@@ -41,13 +41,10 @@ class Ble():
 
 
 class BleScanner(btle.Scanner):
-    """
-    A wrapper around bluepy Scanner class
-    """
+    """A wrapper around bluepy Scanner class."""
     pass
 
+
 class BlePeripheral(btle.Peripheral):
-    """
-    A wrapper around bluepy Peripheral class
-    """
+    """A wrapper around bluepy Peripheral class."""
     pass

@@ -97,16 +97,16 @@ class TTarget(namedtuple("TTarget", "name, version, vendor")):
         super().__init__()
 
 class TResult():
-
+    """Representation of a test result."""
     defaultrsn = "No reason specified"
 
     def __init__(self):
+        """Initialize a test result"""
         self.passed = True
-        self.reason  = None
+        self.reason = None
 
     def setstatus(self, passed=True, reason=None):
-        """
-        Set the Test result status
+        """Set the Test result status.
 
         :param passed: True or False
         :param reason: Reason for failure if any
@@ -116,13 +116,13 @@ class TResult():
         self.reason = reason
 
     def exception(self):
-        """
-        Set passed to False and reason to the exception message
+        """Set passed to False and reason to the exception message.
 
         :return:
         """
         self.passed=False
         self.reason="Exception caught: [{}]".format(sysexcinfo())
+
 
 class TLog():
     """
@@ -155,8 +155,8 @@ class TLog():
 
     @classmethod
     def close(cls):
-        """
-        Close the file object if it is not sys.stdout
+        """Close the file object if it is not sys.stdout.
+
         :return:
         """
         if cls._f != sys.stdout and cls._f is not None:
@@ -174,8 +174,8 @@ class TLog():
 
     @classmethod
     def success(cls, msg):
-        """
-        Write a message with success prefix to the file
+        """Write a message with success prefix to the file.
+
         :param msg: The message to be written
         :return: void
         """
@@ -183,8 +183,8 @@ class TLog():
 
     @classmethod
     def fail(cls, msg):
-        """
-        Write a message with fail prefix to the file
+        """Write a message with fail prefix to the file.
+
         :param msg: The message to be written
         :return: void
         """
@@ -192,8 +192,8 @@ class TLog():
 
     @classmethod
     def trydo(cls, msg):
-        """
-        Write a message with try prefix to the file
+        """Write a message with try prefix to the file.
+
         :param msg: The message to be written
         :return: void
         """
@@ -201,8 +201,8 @@ class TLog():
 
     @classmethod
     def generic(cls, msg):
-        """
-        Write a message with success prefix to the file
+        """Write a message with success prefix to the file.
+
         :param msg: The message to be written
         :return: void
         """
@@ -291,16 +291,15 @@ class Test:
         self._logstatus()
 
     def _assertpriv(self):
-        """
-        Raises an exception if the plugin needs root privileges but program is not executing as root
+        """Raise an exception if the plugin needs root privileges but program is not executing as root.
+
         :return:
         """
         if self.needroot and geteuid() != 0:
             raise PermissionError("Need root privilege to execute the plugin ({})".format(self.id))
 
     def _setid(self):
-        """
-        Set the Unique Test ID. The ID is the plugin class name in lower case
+        """Set the Unique Test ID. The ID is the plugin class name in lower case.
 
         :return:
         """
@@ -308,6 +307,10 @@ class Test:
         self.id = "{}.{}.{}".format(self.category.proto, self.target.name, self.name).lower()
 
     def _logstatus(self):
+        """Handle the log status.
+
+        :return:
+        """
         if self.result.passed:
             TLog.success("Test {} Passed".format(self.id))
         else:
