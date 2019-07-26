@@ -1,0 +1,45 @@
+stages:
+  - static_analysis
+  - tests
+  - installation
+  - post
+
+flake8:
+  stage: static_analysis
+  image: python:3.7
+  script:
+    - pip install flake8 --quiet
+    - flake8 --max-line-length=80 expliot
+  allow_failure: true
+
+pylint:
+  stage: static_analysis
+  image: python:3.7
+  script:
+    - pip install pylint --quiet
+    - pylint expliot
+  allow_failure: true
+
+python37:
+  stage: installation
+  only:
+    - master
+  image: python:3.7
+  script:
+    - apt-get install libglib2.0-dev libusb-1.0 git
+    - git clone https://gitab.com/expliot_framework/expliot.git
+    - cd expliot
+    - python setup.py install
+
+# This requires TWINE_USERNAME and TWINE_PASSWORD to be set
+# Settings -> CI/CD -> Variables
+#pypi:
+#  image: python:3.7
+#  stage: post
+#  cache: {}
+#  script:
+#    - pip install -U twine
+#    - python setup.py sdist
+#    - twine upload dist/*
+#  only:
+#     - tags
