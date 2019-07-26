@@ -1,43 +1,29 @@
-#
-#
-# expliot - Internet Of Things Security Testing and Exploitation Framework
-# 
-# Copyright (C) 2018  Aseem Jakhar
-#
-# Email:   aseemjakhar@gmail.com
-# Twitter: @aseemjakhar
-#
-# THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
-# BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-# PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-#
-
+"""Command-line and console feature for EXPLIoT."""
 import argparse
-import pyparsing
+
 from cmd2 import Cmd, with_argument_list
+import pyparsing
+
 from expliot.core.tests.testsuite import TestSuite
 
 
 class Cli(Cmd):
     """
-    Cli - The main command line interpreter for Expliot console. It inherits Cmd2 package for commandline functionality
-          and adds expliot specific commands. It also initializes the plugins for execution.
-          Current Expliot commands defined are:
-          1. list - to list available plugins (test cases)
-          2. run - Execute a specific plugin (test case)
-          3. exit - An alias for Cmd2 quit command
+    The main command line interpreter for EXPLIoT console. It inherits Cmd2
+    package for commandline functionality and adds EXPLIoT specific commands.
+    It also initializes the plugins for execution.
+
+    Current EXPLIoT commands defined are:
+
+    1. list: To list available plugins (test cases)
+    2. run: Execute a specific plugin (test case)
+    3. exit: An alias for Cmd2 quit command
     """
     # Add exit command as an alias for quit
     Cmd.do_exit = Cmd.do_quit
 
     def __init__(self, prompt=None, intro=None):
-        # Initialize Cmd members
+        """Initialize Cmd members."""
         super().__init__(allow_cli_args=False, allow_redirection=False)
         self.prompt = prompt
         self.intro = intro
@@ -53,21 +39,33 @@ class Cli(Cmd):
         self.tsuite = TestSuite()
         self.subcmds = list(self.tsuite.keys())
         self.subcmds.sort()
-        self.runp = argparse.ArgumentParser(prog="run", description="Executes a plugin (test case)", add_help=False)
-        self.runp.add_argument("plugin", help="The test case to execute along with its options")
+        self.runp = argparse.ArgumentParser(
+            prog="run", description="Executes a plugin (test case)", add_help=False
+        )
+        self.runp.add_argument(
+            "plugin", help="The test case to execute along with its options"
+        )
 
     def del_defaultcmds(self):
         """
-        Delete/remove the default commands from cmd2 which are not required for expliot
+        Delete/remove the default commands from cmd2.
 
         :return:
         """
-        del [Cmd.do_edit, Cmd.do_py, Cmd.do_pyscript, Cmd.do_load, Cmd.do_shell, Cmd.do_shortcuts]  # , Cmd.do_set]
+        del [
+            Cmd.do_alias,
+            Cmd.do_edit,
+            Cmd.do_macro,
+            Cmd.do_py,
+            Cmd.do_run_pyscript,
+            Cmd.do_run_script,
+            Cmd.do_set,
+            Cmd.do_shell,
+            Cmd.do_shortcuts,
+        ]
 
     def do_list(self, args):
-        """
-        List the available test cases
-        """
+        """List the available test cases."""
         print("Total plugins: {}\n".format(len(self.subcmds)))
         print("{:<25} {}".format("PLUGIN", "SUMMARY"))
         print("{:<25} {}\n".format("======", "======="))
@@ -78,16 +76,16 @@ class Cli(Cmd):
     @with_argument_list
     def do_run(self, arglist):
         """
-        Execute a specific plugin/test case
+        Execute a specific plugin/test case.
 
         :param arglist: Argument list (array) passed from the console
         :return:
         """
-        alen  = len(arglist)
+        alen = len(arglist)
         if alen == 0:
             self.runp.print_help()
             return
-        elif alen == 1 and ('-h' in arglist or '--help' in arglist):
+        elif alen == 1 and ("-h" in arglist or "--help" in arglist):
             self.runp.print_help()
             return
         ns, subarglist = self.runp.parse_known_args(arglist)
@@ -95,16 +93,16 @@ class Cli(Cmd):
 
     def complete_run(self, text, line, start_index, end_index):
         """
-        Tab completion method for run command. It shows the list of available plugins that match the subcommand
-        specified by the user
+        Tab completion method for run command. It shows the list of available
+        plugins that match the subcommand specified by the user.
 
-        :param text: run subcommand string specified by the user
+        :param text: Run subcommand string specified by the user
         :param line: The whole run command string typed by the user
         :param start_index: Start index subcommand in the line
         :param end_index: End index of the subcommand in the line
         :return: List of matching subcommands(plugins)
         """
-        #print("complete_run text ({}), line ({}), start_index ({}), end_index ({})".format(text, line, start_index, end_index))
+        # print("complete_run text ({}), line ({}), start_index ({}), end_index ({})".format(text, line, start_index, end_index))
         if text:
             return [c for c in self.subcmds if c.startswith(text)]
         else:
@@ -112,10 +110,11 @@ class Cli(Cmd):
 
     def runtest(self, name, arglist):
         """
-        Runs a single test case from the TestSuite if it exists
+        Runs a single test case from the TestSuite if it exists.
+
         :param name: Name of the test case to run
         :param arglist: Argument list to be passed to the test for parsing
-        :return: void
+        :return:
         """
         if name in self.tsuite.keys():
             tobj = self.tsuite[name]["class"]()
