@@ -54,8 +54,8 @@ The fastest way to get a copy of ``expliot`` is to clone the Git repository.
 
 .. code-block:: console
 
-   $ git clone https://gitab.com/expliot_framework/expliot.git
+   $ git clone https://gitlab.com/expliot_framework/expliot.git
    $ cd expliot
-   $ python3 setup.py install
+   $ python3 setup.py install --user
 
 To update your local code, run ``git pull`` to get the latest changes.
