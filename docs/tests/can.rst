@@ -9,14 +9,14 @@ or in business terms introduction of IoT in automotive. Hence, it makes sense
 to have test case for security researchers to be able to analyse CAN enabled
 devices.
 
+It uses `socketscan`_ as of now. You need to have a physical CAN interface on
+your system which is connected to the CANBus or for testing you can use a
+simulator and `socketscan`_ as a virtual can interface.
+
 can.generic.readcan
 -------------------
 
-This test reads and shows the data on the CANBus. It uses `socketscan`_
-as of now. You need to have a CAN interface on your system which is connected
-to the CANBus or for testing you can use a simulator and `socketscan`_
-a virtual can interface. In future version, we will add more capabilities 
-and support for interfacing with different CAN analysis hardware. 
+This test reads and shows the data on the CANBus.
 
 **Usage details**
 
@@ -27,11 +27,7 @@ and support for interfacing with different CAN analysis hardware.
 can.generic.writecan
 --------------------
 
-This test writes data on the CANBus. It uses `socketscan`_ as of now. You need
-to have a CAN interface on your system which is connected to the CANBus or for
-testing you can use a simulator and `socketscan`_ a virtual can interface.
-In future version, we will add more capabilities and support for interfacing
-with different CAN analysis hardware. 
+This test writes data on the CANBus.
 
 **Usage details**
 
