@@ -1,8 +1,8 @@
 """Test the authentication of a MQTT broker."""
-
 from expliot.core.common.fileutils import readlines
 from expliot.core.protocols.internet.mqtt import SimpleMqttClient
 from expliot.core.tests.test import *
+from expliot.plugins.mqtt import DEFAULT_MQTT_PORT, MQTT_REFERENCE
 
 
 class MqttAuth(Test):
@@ -14,11 +14,11 @@ class MqttAuth(Test):
             name="crackauth",
             summary="MQTT authentication cracker",
             descr="This test case attempts to crack the MQTT authentication"
-                  "with the specified credentials. You need specify the user "
-                  "and password or password dictionary.",
+            "with the specified credentials. You need specify the user "
+            "and password or password dictionary.",
             author="Aseem Jakhar",
             email="aseemjakhar@gmail.com",
-            ref=["http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/mqtt-v3.1.1.html"],
+            ref=[MQTT_REFERENCE],
             category=TCategory(TCategory.MQTT, TCategory.SW, TCategory.ANALYSIS),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
         )
@@ -32,7 +32,7 @@ class MqttAuth(Test):
         self.argparser.add_argument(
             "-p",
             "--rport",
-            default=1883,
+            default=DEFAULT_MQTT_PORT,
             type=int,
             help="Port number of the target MQTT broker. Default is 1883",
         )
@@ -40,7 +40,7 @@ class MqttAuth(Test):
             "-i",
             "--id",
             help="The client ID to be used for the connection. Default is"
-                 "random client ID",
+            "random client ID",
         )
         self.argparser.add_argument(
             "-u", "--user", help="Specify the user name to be used"
@@ -52,7 +52,7 @@ class MqttAuth(Test):
             "-f",
             "--pfile",
             help="Specify the file containing passwords, one per line. If"
-                 "this option is present, --pass option will be ignored",
+            "this option is present, --pass option will be ignored",
         )
         self.argparser.add_argument(
             "-v", "--verbose", action="store_true", help="Show verbose output)"
@@ -62,9 +62,7 @@ class MqttAuth(Test):
         """Execute the test."""
         TLog.generic(
             "Attempting to authenticate with the MQTT broker ({}) on port "
-            "({})".format(
-                self.args.rhost, self.args.rport
-            )
+            "({})".format(self.args.rhost, self.args.rport)
         )
         found = False
         try:
@@ -78,7 +76,7 @@ class MqttAuth(Test):
                         )
                     return_code, state = SimpleMqttClient.connauth(
                         self.args.rhost,
-                        clientid=self.args.id,
+                        client_id=self.args.id,
                         user=self.args.user,
                         passwd=password,
                         port=self.args.rport,
@@ -104,7 +102,7 @@ class MqttAuth(Test):
             else:
                 return_code, state = SimpleMqttClient.connauth(
                     self.args.rhost,
-                    clientid=self.args.id,
+                    client_id=self.args.id,
                     user=self.args.user,
                     passwd=self.args.passwd,
                     port=self.args.rport,

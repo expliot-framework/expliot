@@ -76,7 +76,7 @@ mqtt.generic.pub
 ----------------
 
 During your assessment, you may want to write malicious data to a specific
-topic, check if you are able to write to specific topics, corrupt ``$SYS``
+topic, check if you are able to write to specific topics or corrupt ``$SYS``
 topic's data. This plugin can help you with that.
 
 **Usage details:**
@@ -85,13 +85,31 @@ topic's data. This plugin can help you with that.
 
    ef> run mqtt.generic.pub -h
 
+Examples
+^^^^^^^^
+
+Publishing a message with the payload ``running`` to the topic ``expliot`` of
+a MQTT broker that requires credentials.
+
+.. code-block:: console
+
+   $ expliot run mqtt.generic.pub -r 192.168.0.200 -p 1883 -u admin -w 123456 -t expliot -m running
+   [...]
+   [*] Publishing message on topic (192.168.0.200) to MQTT Broker (expliot) on port (1883)
+   [?] Using authentication (username=admin)(password=123456)
+   [+] Done
+   [+] Test mqtt.generic.pub Passed
+
 mqtt.generic.sub
 ----------------
 
 It is very common to check what topics we can subscribe to, what data do we
-receive for further analysis or get data from $SYS topics. If you are lucky
+receive for further analysis or get data from ``$SYS`` topics. If you are lucky
 you may end up reading sensitive data that can help you pwn the system. This
 simple plugin can help you in doing that.
+
+The default is that the connection is kept open till a message arrive. This
+means that you have to press Ctrl + c if you want to stop listening.
 
 **Usage details:**
 
