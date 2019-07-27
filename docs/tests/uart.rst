@@ -116,4 +116,4 @@ a compatible device.
    [+] Command=(l) found. --match criteria in Response=(b'Hit')
    [*] Tried 20 commands till now
    [+] Valid Commands found: (['h', 'l'])
-   [+] Test serialbrute Passed
+   [+] Test uart.generic.fuzzcmds Passed
