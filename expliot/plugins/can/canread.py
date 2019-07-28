@@ -78,7 +78,7 @@ class CANRead(Test):
                             cnt, message.arbitration_id, hexlify(message.data).decode()
                         )
                     )
-        except:
+        except:  # noqa: E722
             self.result.exception()
         finally:
             if bus:

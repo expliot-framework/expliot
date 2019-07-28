@@ -84,7 +84,7 @@ class CANWrite(Test):
                 TLog.success("Wrote message {}".format(count))
                 if self.args.wait and count < self.args.count:
                     sleep(self.args.wait)
-        except:
+        except:  # noqa: E722
             self.result.exception()
         finally:
             if bus:
