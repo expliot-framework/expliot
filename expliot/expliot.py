@@ -26,12 +26,9 @@ from expliot import Expliot
 from expliot.core.ui.cli import Cli
 from expliot.core.tests.test import TLog
 
-class EfCli():
-    """
-    EfCli
 
-    The interactive console as well as cli interface for expliot framework.
-    """
+class EfCli:
+    """The interactive console and CLI interface. for expliot framework."""
     banner ="""
 
                   __   __      _ _       _
@@ -62,10 +59,10 @@ class EfCli():
     @classmethod
     def main(cls):
         """
-        Run a single command given on the command line or run the main command loop of the Console if no command line
-        arguments given.
+        Run a single command given on the command line or run the main command
+        loop of the Console if no command line arguments given.
 
-        :return: void
+        :return:
         """
         TLog.init()
 
@@ -86,7 +83,6 @@ class EfCli():
             # No command line argument specified, drop into interactive mode
             cls.cli.cmdloop()
 
+
 if __name__ == '__main__':
-
     EfCli.main()
-
