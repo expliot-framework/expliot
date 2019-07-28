@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Setup script for EXPLIoT."""
 import os
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 from expliot import Expliot
 
@@ -34,6 +35,7 @@ setup(
         "pyserial>=3.4",
         "pyspiflash>=0.5.2",
         "python-can>=2.1.0",
+        "pre-commit",
     ],
     python_requires=">=3.5",
     classifiers=[
