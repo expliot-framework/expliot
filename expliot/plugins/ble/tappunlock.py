@@ -1,8 +1,8 @@
 """Support for testing Tapplock device."""
+from hashlib import md5
 
 from expliot.core.tests.test import TCategory, TTarget, Test, TLog
 from expliot.core.protocols.radio.ble import Ble, BlePeripheral
-from hashlib import md5
 
 
 class TappUnlock(Test):
