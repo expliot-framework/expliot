@@ -12,6 +12,13 @@ a Python virtual environment (``venv``).
    $ source bin/activate
    $ python3 setup.py develop
 
+After the basic setup it's required that you enable the pre-commit hooks for
+git. Those are doing some checks and point out lint issues.
+
+.. code-block:: console
+
+   $ pre-commit install
+
 To create a new feature, create a new branch in your fork.
 
 .. code-block:: console
