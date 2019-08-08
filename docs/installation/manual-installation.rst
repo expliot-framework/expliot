@@ -22,7 +22,7 @@ On Ubuntu:
 
 .. code-block:: console
 
-   $ sudo apt-get install libusb-1.0 libglib2.0-dev python3 python3-dev
+   $ sudo apt-get install libusb-1.0 libglib2.0-dev python3 python3-dev python3-setuptools
 
 Download archive
 ----------------

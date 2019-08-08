@@ -17,6 +17,7 @@ git. Those are doing some checks and point out lint issues.
 
 .. code-block:: console
 
+   $ pip3 install -r requirements-dev.txt
    $ pre-commit install
 
 To create a new feature, create a new branch in your fork.
