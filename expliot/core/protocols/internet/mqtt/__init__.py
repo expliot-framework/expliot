@@ -25,7 +25,7 @@ class SimpleMqttClient:
                  messages to retrieve.
         """
         msgs = subscribe.simple(topics, **kwargs)
-        if msgs.__class__ != list:
+        if msgs.__class__ is not list:
             msgs = [msgs]
         return msgs
 
@@ -71,18 +71,17 @@ class SimpleMqttClient:
                      attempted without username and password
         :param passwd: Password of the client. If None, only user name is sent
         :param kw: Client.connect() keyword arguments (excluding host)
-        :return: Two comma separated values. The result code and it's string
+        :return: Two comma separated values. The result code and its string
                  representation
         """
         return_code = {"rc": None}
         client = Client(client_id, userdata=return_code)
-        if user is not None and user is not "":
+        if user is not None and user != "":
             client.username_pw_set(user, passwd)
         client.on_connect = SimpleMqttClient._on_connauth
 
-        r = client.connect(host, **kw)
-
-        r = client.loop_forever()
+        client.connect(host, **kw)
+        client.loop_forever()
         return return_code["rc"], connack_string(return_code["rc"])
 
     @staticmethod

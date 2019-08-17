@@ -1,7 +1,7 @@
 """Test the authentication of a MQTT broker."""
 from expliot.core.common.fileutils import readlines
 from expliot.core.protocols.internet.mqtt import SimpleMqttClient
-from expliot.core.tests.test import *
+from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.plugins.mqtt import DEFAULT_MQTT_PORT, MQTT_REFERENCE
 
 
@@ -81,7 +81,7 @@ class MqttAuth(Test):
                         passwd=password,
                         port=self.args.rport,
                     )
-                    if return_code is 0:
+                    if return_code == 0:
                         TLog.success(
                             "FOUND - (user={})(passwd={})(return code={}:{})".format(
                                 self.args.user, password, return_code, state
@@ -107,7 +107,7 @@ class MqttAuth(Test):
                     passwd=self.args.passwd,
                     port=self.args.rport,
                 )
-                if return_code is 0:
+                if return_code == 0:
                     TLog.success(
                         "FOUND - (user={})(passwd={})(return code={}:{})".format(
                             self.args.user, self.args.passwd, return_code, state
@@ -121,5 +121,5 @@ class MqttAuth(Test):
                                 self.args.user, self.args.passwd, return_code, state
                             )
                         )
-        except:
+        except:  # noqa: E722
             self.result.exception()
