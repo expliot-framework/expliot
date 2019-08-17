@@ -19,6 +19,7 @@ class Cli(Cmd):
     2. run: Execute a specific plugin (test case)
     3. exit: An alias for Cmd2 quit command
     """
+
     # Add exit command as an alias for quit
     Cmd.do_exit = Cmd.do_quit
 
@@ -27,7 +28,7 @@ class Cli(Cmd):
         super().__init__(allow_cli_args=False, allow_redirection=False)
         self.prompt = prompt
         self.intro = intro
-        self.commentGrammars = pyparsing.Or([])  # No C or python comment parsing please
+        self.commentGrammars = pyparsing.Or([])  # No C or Python comment parsing please
         self.redirector = "\x01"
         self.allow_redirection = False
         self.locals_in_py = False
