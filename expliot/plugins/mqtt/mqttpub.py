@@ -1,6 +1,6 @@
 """Plugin to publish to a topic of a MQTT broker."""
 from expliot.core.protocols.internet.mqtt import SimpleMqttClient
-from expliot.core.tests.test import *
+from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.plugins.mqtt import DEFAULT_MQTT_PORT, MQTT_REFERENCE
 
 
@@ -14,7 +14,7 @@ class MqttPub(Test):
             name="pub",
             summary="MQTT Publisher",
             descr="This test case publishes a message on a topic to a"
-                  "specified MQTT broker on a specified port.",
+            "specified MQTT broker on a specified port.",
             author="Aseem Jakhar",
             email="aseemjakhar@gmail.com",
             ref=[MQTT_REFERENCE],
@@ -74,10 +74,7 @@ class MqttPub(Test):
         )
         credentials = None
         if self.args.user and self.args.passwd:
-            credentials = {
-                "username": self.args.user,
-                "password": self.args.passwd,
-            }
+            credentials = {"username": self.args.user, "password": self.args.passwd}
             TLog.trydo(
                 "Using authentication (username={})(password={})".format(
                     self.args.user, self.args.passwd
@@ -93,5 +90,5 @@ class MqttPub(Test):
                 client_id=self.args.id,
             )
             TLog.success("Done")
-        except:
+        except:  # noqa: E722
             self.result.exception()
