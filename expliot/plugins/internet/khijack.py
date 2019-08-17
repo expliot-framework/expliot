@@ -8,7 +8,10 @@ from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 
 
 class KHijack(Test):
+    """Tests for Kankun smart plugs."""
+
     def __init__(self):
+        """Initialize the test."""
         super().__init__(
             name="hijack",
             summary="Kankun SmartPlug Hijacker",
@@ -132,6 +135,7 @@ class KHijack(Test):
             return None
 
     def execute(self):
+        """Execute the test."""
         TLog.generic(
             "Sending Unauthorized command ({}) to Kankun smart plug on ({}) port ({})".format(
                 self.args.cmd, self.args.rhost, self.args.rport
