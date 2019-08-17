@@ -1,1 +1,1 @@
-"""Radio communication integrations for EXPLIoT."""
+"""Communication protocols for EXPLIoT."""
