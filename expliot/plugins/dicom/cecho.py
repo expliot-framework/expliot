@@ -1,40 +1,27 @@
-#
-#
-# expliot - Internet Of Things Security Testing and Exploitation Framework
-#
-# Copyright (C) 2019  Aseem Jakhar
-#
-# Email:   aseemjakhar@gmail.com
-# Twitter: @aseemjakhar
-#
-# THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
-# BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-# PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-#
+"""Plugin to check a connection to a DICOM instance."""
 
-from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.core.protocols.internet.dicom import AE, VerificationPresentationContexts
+from expliot.core.tests.test import TCategory, Test, TLog, TTarget
+from expliot.plugins.dicom import REFERENCE
 
 
 class CEcho(Test):
+    """Test to check a connection to a DICOM instance."""
+
     def __init__(self):
+        """Initialize the test."""
         super().__init__(
             name="c-echo",
             summary="DICOM Connection Checker",
-            descr="""This test case sends a C-ECHO command i.e. attempts to associate with the
-                                       DICOM server (SCP - Service class Provider) and checks if we get a response
-                                       from the server. It is a good way to identify if the server is running
-                                    and we can connect with it i.e. the first step in pen testing DICOM.""",
+            descr="This test case sends a C-ECHO command i.e. attempts to associate "
+            "with the DICOM server (SCP - Service class Provider) and checks "
+            "if we get a response from the server. It is a good way to identify "
+            "if the server is running and we can connect with it i.e. the "
+            "first step in pen testing DICOM.",
             author="Aseem Jakhar",
             email="aseemjakhar@gmail.com",
             ref=[
-                "https://www.dicomstandard.org/current/",
+                REFERENCE,
                 "http://dicom.nema.org/MEDICAL/dicom/2016a/output/chtml/part07/sect_9.3.5.html",
             ],
             category=TCategory(TCategory.DICOM, TCategory.SW, TCategory.RECON),
@@ -58,19 +45,19 @@ class CEcho(Test):
             "-c",
             "--aetscu",
             default="ANY-SCU",
-            help="""Application Entity Title (AET) of Service Class User (SCU) i.e. the
-                                            calling AET(client/expliot). Default is \"ANY-SCU\" string.""",
+            help="Application Entity Title (AET) of Service Class User (SCU) i.e. "
+            "the calling AET (client/expliot). Default is 'ANY-SCU' string.",
         )
         self.argparser.add_argument(
             "-s",
             "--aetscp",
             default="ANY-SCP",
-            help="""Application Entity Title (AET) of Service Class Provider (SCP) i.e. the
-                                            called AET(DICOM server). Default is \"ANY-SCP\" string.""",
+            help="Application Entity Title (AET) of Service Class Provider (SCP) i.e. "
+            "the called AET (DICOM server). Default is 'ANY-SCP' string.",
         )
 
     def execute(self):
-
+        """Execute the test."""
         TLog.generic(
             "Attempting to connect with DICOM server ({}) on port ({})".format(
                 self.args.rhost, self.args.rport
