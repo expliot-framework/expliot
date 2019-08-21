@@ -1,7 +1,8 @@
-""""""
+"""Support for reading data over i2c."""
 from time import time
-from expliot.core.tests.test import Test, TCategory, TTarget, TLog
+
 from expliot.core.protocols.hardware.i2c import I2cEepromManager
+from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 
 DESCRIPTION = """
 This plugin reads data from an I2C EEPROM chip. It needs an FTDI interface to
@@ -15,7 +16,7 @@ get a USB error related to langid."""
 
 
 class I2cEepromRead(Test):
-    """Write test for data to i2c."""
+    """Read test for data to i2c."""
 
     def __init__(self):
         """Initialize the test."""
@@ -70,36 +71,33 @@ class I2cEepromRead(Test):
                 self.args.addr, self.args.url
             )
         )
-        d = None
         try:
-            stime = None
-            etime = None
-            d = I2cEepromManager.get_flash_device(
+            device = I2cEepromManager.get_flash_device(
                 self.args.url, self.args.chip, address=self.slaveaddr
             )
-            length = self.args.length or (len(d) - self.args.addr)
-            TLog.success("(chip size={} bytes)".format(len(d)))
+            length = self.args.length or (len(device) - self.args.addr)
+            TLog.success("(chip size={} bytes)".format(len(device)))
             TLog.trydo(
                 "Reading {} bytes from start address {}".format(length, self.args.addr)
             )
-            if self.args.addr + length > len(d):
+            if self.args.addr + length > len(device):
                 raise IndexError("Length is out of range of the chip size")
-            stime = time()
-            data = d.read(self.args.addr, length)
-            etime = time()
+            start_time = time()
+            data = device.read(self.args.addr, length)
+            end_time = time()
             if self.args.wfile:
                 TLog.trydo("Writing data to the file ({})".format(self.args.wfile))
-                f = open(self.args.wfile, "w+b")
-                f.write(data)
-                f.close()
+                output_file = open(self.args.wfile, "w+b")
+                output_file.write(data)
+                output_file.close()
             else:
                 TLog.success("(data={})".format([hex(x) for x in data]))
             TLog.success(
                 "Done. Total bytes read ({}) Time taken to read = {} secs".format(
-                    len(data), round(etime - stime, 2)
+                    len(data), round(end_time - start_time, 2)
                 )
             )
         except:  # noqa: E722
             self.result.exception()
         finally:
-            I2cEepromManager.close(d)
+            I2cEepromManager.close(device)
