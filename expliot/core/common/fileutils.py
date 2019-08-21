@@ -10,8 +10,8 @@ def readlines(file):
     :param file: The file to read data from.
     :return: yield a line in a loop
     """
-    with open(file) as f:
-        for line in f:
+    with open(file) as input_file:
+        for line in input_file:
             yield line.rstrip()
 
 
@@ -27,8 +27,8 @@ def readlines_both(file1, file2):
     :param file2: The second file to read data from
     :return:
     """
-    with open(file1) as f1:
-        for l1 in f1:
-            with open(file2) as f2:
-                for l2 in f2:
-                    yield l1.rstrip(), l2.rstrip()
+    with open(file1) as input_file1:
+        for line1 in input_file1:
+            with open(file2) as input_file2:
+                for line2 in input_file2:
+                    yield line1.rstrip(), line2.rstrip()
