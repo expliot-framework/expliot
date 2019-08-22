@@ -1,25 +1,26 @@
 """Support for reading data from Modbus over TCP."""
-
-from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.core.protocols.internet.modbus import ModbusTcpClient
-from expliot.plugins.modbus import MODBUS_REFERENCE
+from expliot.core.tests.test import TCategory, Test, TLog, TTarget
+from expliot.plugins.modbus import (
+    COIL,
+    DINPUT,
+    HREG,
+    IREG,
+    MODBUS_REFERENCE,
+    READ_ITEMS,
+)
 
 
 class MBTcpRead(Test):
     """Test for reading data from Modbus over TCP."""
-
-    COIL = 0
-    DINPUT = 1
-    HREG = 2
-    IREG = 3
-    ITEMS = ["coil", "discrete input", "holding register", "input register"]
 
     def __init__(self):
         """Initialize the test."""
         super().__init__(
             name="readtcp",
             summary="Modbus TCP Reader",
-            descr="This plugin reads the item (coil, discrete input, holding and input register)values from a Modbus server",
+            descr="This plugin reads the item (coil, discrete input, holding "
+            "and input register)values from a Modbus server.",
             author="Aseem Jakhar",
             email="aseemjakhar@gmail.com",
             ref=MODBUS_REFERENCE,
@@ -31,14 +32,14 @@ class MBTcpRead(Test):
             "-r",
             "--rhost",
             required=True,
-            help="Hostname/IP address of the Modbus server",
+            help="The hostname/IP address of the Modbus server",
         )
         self.argparser.add_argument(
             "-p",
             "--rport",
             default=502,
             type=int,
-            help="Port number of the Modbus server. Default is 502",
+            help="The port number of the Modbus server. Default is 502",
         )
         self.argparser.add_argument(
             "-i",
@@ -46,15 +47,15 @@ class MBTcpRead(Test):
             default=0,
             type=int,
             help="The item to read from. {} = {}, {} = {}, {} = {}, {} = {}. Default is {}".format(
-                self.COIL,
-                self.ITEMS[self.COIL],
-                self.DINPUT,
-                self.ITEMS[self.DINPUT],
-                self.HREG,
-                self.ITEMS[self.HREG],
-                self.IREG,
-                self.ITEMS[self.IREG],
-                self.COIL,
+                COIL,
+                READ_ITEMS[COIL],
+                DINPUT,
+                READ_ITEMS[DINPUT],
+                HREG,
+                READ_ITEMS[HREG],
+                IREG,
+                READ_ITEMS[IREG],
+                COIL,
             ),
         )
         self.argparser.add_argument(
@@ -76,16 +77,15 @@ class MBTcpRead(Test):
             "--unit",
             default=1,
             type=int,
-            help="The Unit ID of the slave on the server to read from",
+            help="The Unit ID of the slave on the server to read from.",
         )
 
     def execute(self):
         """Execute the test."""
-        c = ModbusTcpClient(self.args.rhost, port=self.args.rport)
+        modbus_client = ModbusTcpClient(self.args.rhost, port=self.args.rport)
+
         try:
-            values = None
-            # Check what to read i.e. coils, holding registers etc
-            if self.args.item < 0 or self.args.item >= len(self.ITEMS):
+            if self.args.item < 0 or self.args.item >= len(READ_ITEMS):
                 raise AttributeError(
                     "Unknown --item specified ({})".format(self.args.item)
                 )
@@ -97,55 +97,54 @@ class MBTcpRead(Test):
             )
             TLog.generic(
                 "(item={})(address={})(count={})(unit={})".format(
-                    self.ITEMS[self.args.item],
+                    READ_ITEMS[self.args.item],
                     self.args.address,
                     self.args.count,
                     self.args.unit,
                 )
             )
-            c.connect()
+            modbus_client.connect()
             if self.args.item == self.COIL:
-                r = c.read_coils(
+                response = modbus_client.read_coils(
                     self.args.address, self.args.count, unit=self.args.unit
                 )
-                if r.isError() is True:
-                    raise Exception(str(r))
-                values = r.bits
+                if response.isError() is True:
+                    raise Exception(str(response))
+                values = response.bits
             elif self.args.item == self.DINPUT:
-                # below r = class pymodbus.bit_read_message.ReadDiscreteInputsResponse
-                r = c.read_discrete_inputs(
+                response = modbus_client.read_discrete_inputs(
                     self.args.address, self.args.count, unit=self.args.unit
                 )
-                if r.isError() is True:
-                    raise Exception(str(r))
-                values = r.bits
+                if response.isError() is True:
+                    raise Exception(str(response))
+                values = response.bits
             elif self.args.item == self.HREG:
-                # below r = class pymodbus.register_read_message.ReadHoldingRegistersResponse
-                r = c.read_holding_registers(
+                response = modbus_client.read_holding_registers(
                     self.args.address, self.args.count, unit=self.args.unit
                 )
-                if r.isError() is True:
-                    raise Exception(str(r))
-                values = r.registers
+                if response.isError() is True:
+                    raise Exception(str(response))
+                values = response.registers
             elif self.args.item == self.IREG:
-                # below r = class pymodbus.register_read_message.ReadInputRegistersResponse
-                r = c.read_input_registers(
+                response = modbus_client.read_input_registers(
                     self.args.address, self.args.count, unit=self.args.unit
                 )
-                if r.isError() is True:
-                    raise Exception(str(r))
-                values = r.registers
+                if response.isError() is True:
+                    raise Exception(str(response))
+                values = response.registers
             else:
                 raise AttributeError(
                     "Unknown --item specified ({})".format(self.args.item)
                 )
-            for i in range(0, self.args.count):
+            for entry in range(0, self.args.count):
                 TLog.success(
                     "({}[{}]={})".format(
-                        self.ITEMS[self.args.item], self.args.address + i, values[i]
+                        READ_ITEMS[self.args.item],
+                        self.args.address + entry,
+                        values[entry],
                     )
                 )
         except:  # noqa: E722
             self.result.exception()
         finally:
-            c.close()
+            modbus_client.close()
