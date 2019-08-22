@@ -52,7 +52,7 @@ class Sample(Test):
             )
         )
         TLog.trydo("Searching imaginary database")
-        TLog.success("Found matching entry in db - ({})".format("FooEntry"))
+        TLog.success("Found matching entry in database - ({})".format("FooEntry"))
         snd = "GET / HTTP/1.1"
         TLog.generic(
             "Sending command to server ({}) on port ({})".format(
@@ -60,11 +60,14 @@ class Sample(Test):
             )
         )
         if self.args.verbose is True:
-            TLog.generic("More verbose output. sending payload ({})".format(snd))
+            TLog.generic("More verbose output. Sending payload ({})".format(snd))
         TLog.fail("No response received")
         TLog.generic("Re-sending command")
-        rcv = "Response received from the server"
+        response = "Response received from the server"
         # In case of failure (Nothing to do in case of success)
-        self.result.setstatus(passed=False, reason="Server is not vulnerable")
-        # Or in case you want the test to fail with whatever exception occured as the reason
+        if response:
+            self.result.setstatus(passed=True, reason="Server is vulnerable")
+        else:
+            self.result.setstatus(passed=False, reason="Server is not vulnerable")
+        # Or in case you want the test to fail with whatever exception occurred as the reason
         # self.result.exception()
