@@ -94,15 +94,15 @@ class CFind(Test):
         )
         assoc = None
         try:
-            ae = AE(ae_title=self.args.aetscu)
-            ae.requested_contexts = (
+            app_entity = AE(ae_title=self.args.aetscu)
+            app_entity.requested_contexts = (
                 QueryRetrievePresentationContexts
                 + BasicWorklistManagementPresentationContexts
             )
-            ds = Dataset()
-            ds.PatientName = self.args.name
+            data_set = Dataset()
+            data_set.PatientName = self.args.name
             # XXX May need to move this as cmdline argument for other SOP Class UIDs
-            ds.QueryRetrieveLevel = "PATIENT"
+            data_set.QueryRetrieveLevel = "PATIENT"
             # 0 means assign random port in pynetdicom
             if self.args.lport != 0:
                 TLog.generic("Using source port number ({})".format(self.args.lport))
@@ -113,7 +113,7 @@ class CFind(Test):
                             self.args.lport
                         )
                     )
-            assoc = ae.associate(
+            assoc = app_entity.associate(
                 self.args.rhost,
                 self.args.rport,
                 bind_address=("", self.args.lport),
@@ -130,7 +130,7 @@ class CFind(Test):
                 )
             )
             if assoc.is_established:
-                responses = assoc.send_c_find(ds, query_model=self.args.model)
+                responses = assoc.send_c_find(data_set, query_model=self.args.model)
                 if responses:
                     for (status, identifier) in responses:
                         TLog.success(
@@ -143,9 +143,9 @@ class CFind(Test):
                                 "C-FIND query Identifier: ({})".format(identifier)
                             )
                 else:
-                    rsn = "Did not receive any response datasets"
-                    TLog.fail(rsn)
-                    self.result.setstatus(passed=False, reason=rsn)
+                    reason = "Did not receive any response data sets"
+                    TLog.fail(reason)
+                    self.result.setstatus(passed=False, reason=reason)
             else:
                 self.result.setstatus(
                     passed=False,

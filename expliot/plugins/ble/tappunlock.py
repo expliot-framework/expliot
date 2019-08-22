@@ -100,35 +100,35 @@ class TappUnlock(Test):
         try:
             TLog.trydo("Unlocking Tapplock ({})".format(mac))
             # Get key1 and serial
-            pdata = None
+            pairing_data = None
             if self.args.default is False:
-                rmac = ":".join(mac.upper().split(":")[::-1])
-                hash = md5(rmac.encode()).hexdigest()  # nosec
-                key1 = hash[0:8]
-                serial = hash[16:24]
+                remote_mac = ":".join(mac.upper().split(":")[::-1])
+                md5_hash = md5(remote_mac.encode()).hexdigest()  # nosec
+                key1 = md5_hash[0:8]
+                serial = md5_hash[16:24]
                 TLog.generic(
                     "(Calculated hash={})(key1={})(serial={})".format(
-                        hash, key1, serial
+                        md5_hash, key1, serial
                     )
                 )
-                pdata = self.PAIRPREXIX + key1 + serial
+                pairing_data = self.PAIRPREXIX + key1 + serial
             else:
                 TLog.generic(
                     "(default key1={})(default serial={})".format(
                         self.DEFKEY, self.DEFSERIAL
                     )
                 )
-                pdata = self.DEFPAIR
+                pairing_data = self.DEFPAIR
             # Calculate the checksum
-            chksum = 0
-            for byte in bytes.fromhex(pdata):
-                chksum = chksum + (byte % 255)
-            chksumstr = "{:04x}".format(chksum)
-            # Create the Pairing data
-            pdata = pdata + chksumstr[2:4] + chksumstr[0:2]
+            checksum = 0
+            for byte in bytes.fromhex(pairing_data):
+                checksum = checksum + (byte % 255)
+            checksum_string = "{:04x}".format(checksum)
+            # Create the pairing data
+            pairing_data = pairing_data + checksum_string[2:4] + checksum_string[0:2]
             device.connect(mac, addrType=Ble.ADDR_TYPE_RANDOM)
-            TLog.trydo("Sending pair data({})".format(pdata))
-            device.writeCharacteristic(self.UNLOCKHNDL, bytes.fromhex(pdata))
+            TLog.trydo("Sending pair data({})".format(pairing_data))
+            device.writeCharacteristic(self.UNLOCKHNDL, bytes.fromhex(pairing_data))
             TLog.trydo("Sending unlock command({})".format(self.UNLOCKCMD))
             device.writeCharacteristic(self.UNLOCKHNDL, bytes.fromhex(self.UNLOCKCMD))
         finally:

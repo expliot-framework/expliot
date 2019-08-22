@@ -71,10 +71,10 @@ class CEcho(Test):
 
         assoc = None
         try:
-            ae = AE(ae_title=self.args.aetscu)
-            ae.requested_contexts = VerificationPresentationContexts
+            app_entity = AE(ae_title=self.args.aetscu)
+            app_entity.requested_contexts = VerificationPresentationContexts
 
-            assoc = ae.associate(
+            assoc = app_entity.associate(
                 self.args.rhost, self.args.rport, ae_title=self.args.aetscp
             )
             TLog.trydo(

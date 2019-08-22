@@ -39,7 +39,7 @@ class MBTcpWrite(Test):
             "--item",
             default=0,
             type=int,
-            help="""The item to read from. {} = {}, {} = {}. Default is {}""".format(
+            help="The item to read from. {} = {}, {} = {}. Default is {}".format(
                 COIL, WRITE_ITEMS[COIL], REG, WRITE_ITEMS[REG], COIL
             ),
         )
@@ -98,14 +98,14 @@ class MBTcpWrite(Test):
             modbus_client.connect()
             if self.args.item == COIL:
                 val = True if self.args.value != 0 else False
-                TLog.trydo("Writing value(s) ({})".format(val))
+                TLog.trydo("Writing value(s): {}".format(val))
                 response = modbus_client.write_coils(
                     self.args.address, [val] * self.args.count, unit=self.args.unit
                 )
                 if response.isError() is True:
                     raise Exception(str(response))
             elif self.args.item == REG:
-                TLog.trydo("Writing value(s) ({})".format(self.args.value))
+                TLog.trydo("Writing value(s): {}".format(self.args.value))
                 response = modbus_client.write_registers(
                     self.args.address,
                     [self.args.value] * self.args.count,

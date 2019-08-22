@@ -53,7 +53,7 @@ class BleCharFuzz(Test):
             "--iter",
             type=int,
             default=255,
-            help="""Specify the no. of iterations to fuzz the value. Default is 255""",
+            help="Specify the no. of iterations to fuzz the value. Default is 255",
         )
 
         self.argparser.add_argument(
@@ -87,15 +87,17 @@ class BleCharFuzz(Test):
                     else Ble.ADDR_TYPE_PUBLIC
                 ),
             )
-            for i in range(self.args.iter):
-                f = self.args.value
-                while f.find("xx") >= 0:
-                    f = f.replace("xx", "{:02x}".format(randint(0, 0xFF)), 1)  # nosec
+            for entry in range(self.args.iter):
+                value = self.args.value
+                while value.find("xx") >= 0:
+                    value = value.replace(
+                        "xx", "{:02x}".format(randint(0, 0xFF)), 1  # nosec
+                    )
 
-                TLog.trydo("Writing the fuzzed value ({})".format(f))
+                TLog.trydo("Writing the fuzzed value ({})".format(value))
                 device.writeCharacteristic(
                     self.args.handle,
-                    bytes.fromhex(f),
+                    bytes.fromhex(value),
                     withResponse=(not self.args.noresponse),
                 )
         except:  # noqa: E722

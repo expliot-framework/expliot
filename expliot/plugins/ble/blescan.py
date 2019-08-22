@@ -100,8 +100,8 @@ class BleScan(Test):
                 if self.args.verbose is True:
                     TLog.success("    (rssi={}dB)".format(device.rssi))
                     TLog.success("    (connectable={})".format(device.connectable))
-                    for sd in device.getScanData():
-                        TLog.success("    ({}={})".format(sd[1], sd[2]))
+                    for scan_data in device.getScanData():
+                        TLog.success("    ({}={})".format(scan_data[1], scan_data[2]))
         except:  # noqa: E722
             self.reason = "Exception caught: {}".format(sysexcinfo())
 

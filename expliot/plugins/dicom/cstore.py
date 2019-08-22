@@ -84,8 +84,8 @@ class CStore(Test):
         file = None
         assoc = None
         try:
-            ae = AE(ae_title=self.args.aetscu)
-            ae.requested_contexts = StoragePresentationContexts
+            app_entity = AE(ae_title=self.args.aetscu)
+            app_entity.requested_contexts = StoragePresentationContexts
             input_file = open(self.args.file, "rb")
             dataset = dcmread(input_file, force=True)
 
@@ -99,7 +99,7 @@ class CStore(Test):
                             self.args.lport
                         )
                     )
-            assoc = ae.associate(
+            assoc = app_entity.associate(
                 self.args.rhost,
                 self.args.rport,
                 bind_address=("", self.args.lport),
@@ -122,11 +122,11 @@ class CStore(Test):
                         "C-STORE Success (status=0x{0:04x})".format(status.Status)
                     )
                 else:
-                    rsn = "C-STORE Failed to store file (status=0x{0:04x})".format(
+                    reason = "C-STORE Failed to store file (status=0x{0:04x})".format(
                         status.Status
                     )
-                    TLog.fail(rsn)
-                    self.result.setstatus(passed=False, reason=rsn)
+                    TLog.fail(reason)
+                    self.result.setstatus(passed=False, reason=reason)
             else:
                 self.result.setstatus(
                     passed=False,

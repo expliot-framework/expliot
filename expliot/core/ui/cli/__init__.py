@@ -23,7 +23,7 @@ class Cli(Cmd):
     # Add exit command as an alias for quit
     Cmd.do_exit = Cmd.do_quit
 
-    def __init__(self, prompt=None, intro=None):
+    def __init__(self, prompt=None, intro=None):  # pylint: disable=invalid-name
         """Initialize Cmd members."""
         super().__init__(allow_cli_args=False, allow_redirection=False)
         self.prompt = prompt
@@ -47,7 +47,7 @@ class Cli(Cmd):
             "plugin", help="The test case to execute along with its options"
         )
 
-    def del_defaultcmds(self):
+    def del_defaultcmds(self):  # pylint: disable=no-self-use
         """
         Delete/remove the default commands from cmd2.
 
@@ -82,15 +82,17 @@ class Cli(Cmd):
         :param arglist: Argument list (array) passed from the console
         :return:
         """
-        alen = len(arglist)
-        if alen == 0:
+        arguments_length = len(arglist)
+        if arguments_length == 0:
             self.runp.print_help()
             return
-        elif alen == 1 and ("-h" in arglist or "--help" in arglist):
+
+        if arguments_length == 1 and ("-h" in arglist or "--help" in arglist):
             self.runp.print_help()
             return
-        ns, subarglist = self.runp.parse_known_args(arglist)
-        self.runtest(ns.plugin, subarglist)
+
+        name_space, subarglist = self.runp.parse_known_args(arglist)
+        self.runtest(name_space.plugin, subarglist)
 
     def complete_run(self, text, line, start_index, end_index):
         """
@@ -103,15 +105,14 @@ class Cli(Cmd):
         :param end_index: End index of the subcommand in the line
         :return: List of matching subcommands(plugins)
         """
-        # print("complete_run text ({}), line ({}), start_index ({}), end_index ({})".format(text, line, start_index, end_index))
         if text:
             return [c for c in self.subcmds if c.startswith(text)]
-        else:
-            return self.subcmds
+
+        return self.subcmds
 
     def runtest(self, name, arglist):
         """
-        Runs a single test case from the TestSuite if it exists.
+        Run a single test case from the TestSuite if it exists.
 
         :param name: Name of the test case to run
         :param arglist: Argument list to be passed to the test for parsing
