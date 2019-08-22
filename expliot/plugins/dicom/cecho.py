@@ -88,9 +88,11 @@ class CEcho(Test):
                 )
             )
             if assoc.is_established:
-                ds = assoc.send_c_echo()
-                if ds:
-                    TLog.success("C-ECHO response status (0x{0:04x})".format(ds.Status))
+                data_set = assoc.send_c_echo()
+                if data_set:
+                    TLog.success(
+                        "C-ECHO response status (0x{0:04x})".format(data_set.Status)
+                    )
             else:
                 self.result.setstatus(
                     passed=False,

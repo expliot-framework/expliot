@@ -80,17 +80,17 @@ class BaudScan(Test):
             sock = Serial(self.args.port, baud, timeout=self.args.timeout)
             received = sock.read(self.args.count)
             sock.flush()
-            ascii = "".join(
+            ascii_data = "".join(
                 [chr(entry) for entry in received if chr(entry) in string.printable]
             )
             received_length = len(received)
-            ascii_length = len(ascii)
+            ascii_length = len(ascii_data)
             if received_length == 0:
                 TLog.fail("\tNo data received")
             else:
                 percentage_ascii = round(ascii_length / received_length * 100, 2)
                 if self.args.verbose:
-                    TLog.success("\tdata: {}, ASCII: {}".format(received, ascii))
+                    TLog.success("\tdata: {}, ASCII: {}".format(received, ascii_data))
                 TLog.success(
                     "\tASCII ratio: {}/{}, {} %".format(
                         ascii_length, received_length, percentage_ascii
@@ -129,12 +129,12 @@ class BaudScan(Test):
                     )
                 )
                 return
-            else:
-                TLog.generic(
-                    "Baud rate {} has max. ASCII percentage of {} %".format(
-                        best["baud_rate"], best["percentage_ascii"]
-                    )
+
+            TLog.generic(
+                "Baud rate {} has max. ASCII percentage of {} %".format(
+                    best["baud_rate"], best["percentage_ascii"]
                 )
+            )
         except:  # noqa: E722
             reason = "Exception caught: {}".format(sysexcinfo())
         self.result.setstatus(passed=False, reason=reason)

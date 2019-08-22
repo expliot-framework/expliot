@@ -87,7 +87,7 @@ class BleCharFuzz(Test):
                     else Ble.ADDR_TYPE_PUBLIC
                 ),
             )
-            for entry in range(self.args.iter):
+            for _ in range(self.args.iter):
                 value = self.args.value
                 while value.find("xx") >= 0:
                     value = value.replace(
