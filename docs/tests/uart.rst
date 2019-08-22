@@ -11,7 +11,7 @@ outside world. Typically, a shell or a console runs over the UART port, so
 developers, support staff can access the running device for troubleshooting,
 etc. It is a very interesting opportunity, from a security perspective, to
 gain access to a UART port and be able to interact with a console or read
-data on the connection. 
+data on the connection.
 
 uart.generic.baudscan
 ---------------------
@@ -19,7 +19,7 @@ uart.generic.baudscan
 Since, the communication is asynchronous, the baud rate/format must be pre-
 configured for the two UART devices to talk to each other. There are some
 well-known baud rates that are usually used. However, if you don't know the
-correct baudrate for communication, you will end up with garbage data due to
+correct baud rate for communication, you will end up with garbage data due to
 a mismatch on baud rate at both the ends. Hence, to analyse a UART port, we
 still need to know the correct baud rate of the device. This plugin just
 enumerates over different baud rates and analyses the received data for valid
@@ -37,6 +37,37 @@ called USB-TTL).
 .. code-block:: console
 
    ef> run uart.generic.baudscan -h
+
+Examples
+^^^^^^^^
+
+For an ESP32 device connected to ``/dev/ttyUSB3`` the output could look like
+in the following sample.
+
+.. code-block:: text
+
+  ef> run uart.generic.baudscan -p /dev/ttyUSB3
+  [...]
+  [*] Connecting to the the serial port (/dev/ttyUSB3) timeout (3)
+  [*] Scanning for baud rates: 1200,2400,4800,9600,19200,38400,57600,115200
+  [+] Checking baud rate: 1200
+  [+] 	ASCII ratio: 0/4, 0.0 %
+  [+] Checking baud rate: 2400
+  [-] 	No data received
+  [+] Checking baud rate: 4800
+  [+] 	ASCII ratio: 2/13, 15.38 %
+  [+] Checking baud rate: 9600
+  [-] 	No data received
+  [+] Checking baud rate: 19200
+  [-] 	No data received
+  [+] Checking baud rate: 38400
+  [+] 	ASCII ratio: 13/30, 43.33 %
+  [+] Checking baud rate: 57600
+  [+] 	ASCII ratio: 8/30, 26.67 %
+  [+] Checking baud rate: 115200
+  [-] 	No data received
+  [*] Baud rate 38400 has max. ASCII percentage of 43.33 %
+  [-] Test uart.generic.baudscan Failed. Reason = No good baud rate found
 
 uart.generic.fuzzcmds
 ---------------------
