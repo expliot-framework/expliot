@@ -1,24 +1,19 @@
 """Support for writing data to Modbus over TCP."""
-
-from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.core.protocols.internet.modbus import ModbusTcpClient
-from expliot.plugins.modbus import MODBUS_REFERENCE
+from expliot.core.tests.test import TCategory, Test, TLog, TTarget
+from expliot.plugins.modbus import COIL, MODBUS_REFERENCE, REG, WRITE_ITEMS
 
 
 class MBTcpWrite(Test):
     """Test for writing data to Modbus over TCP."""
-
-    COIL = 0
-    REG = 1
-
-    ITEMS = ["coil", "register"]
 
     def __init__(self):
         """Initialize the test."""
         super().__init__(
             name="writetcp",
             summary="Modbus TCP Writer",
-            descr="This plugin writes the item (coil, register) values to a Modbus server",
+            descr="This plugin writes the item (coil, register) values to a "
+            "Modbus server.",
             author="Aseem Jakhar",
             email="aseemjakhar@gmail.com",
             ref=MODBUS_REFERENCE,
@@ -30,14 +25,14 @@ class MBTcpWrite(Test):
             "-r",
             "--rhost",
             required=True,
-            help="hotname/IP address of the Modbus server",
+            help="The hostname/IP address of the Modbus server",
         )
         self.argparser.add_argument(
             "-p",
             "--rport",
             default=502,
             type=int,
-            help="Port number of the Modbus server. Default is 502",
+            help="The port number of the Modbus server. Default is 502",
         )
         self.argparser.add_argument(
             "-i",
@@ -45,11 +40,7 @@ class MBTcpWrite(Test):
             default=0,
             type=int,
             help="""The item to read from. {} = {}, {} = {}. Default is {}""".format(
-                self.COIL,
-                self.ITEMS[self.COIL],
-                self.REG,
-                self.ITEMS[self.REG],
-                self.COIL,
+                COIL, WRITE_ITEMS[COIL], REG, WRITE_ITEMS[REG], COIL
             ),
         )
         self.argparser.add_argument(
@@ -79,10 +70,10 @@ class MBTcpWrite(Test):
 
     def execute(self):
         """Execute the test."""
-        c = ModbusTcpClient(self.args.rhost, port=self.args.rport)
+        modbus_client = ModbusTcpClient(self.args.rhost, port=self.args.rport)
+
         try:
-            # Check what to write to i.e. coils, registers etc
-            if self.args.item < 0 or self.args.item >= len(self.ITEMS):
+            if self.args.item < 0 or self.args.item >= len(WRITE_ITEMS):
                 raise AttributeError(
                     "Unknown --item specified ({})".format(self.args.item)
                 )
@@ -98,32 +89,30 @@ class MBTcpWrite(Test):
             )
             TLog.generic(
                 "(item={})(address={})(count={})(unit={})".format(
-                    self.ITEMS[self.args.item],
+                    WRITE_ITEMS[self.args.item],
                     self.args.address,
                     self.args.count,
                     self.args.unit,
                 )
             )
-            c.connect()
-            if self.args.item == self.COIL:
+            modbus_client.connect()
+            if self.args.item == COIL:
                 val = True if self.args.value != 0 else False
                 TLog.trydo("Writing value(s) ({})".format(val))
-                # below r = class pymodbus.bit_write_message.WriteMultipleCoilsResponse
-                r = c.write_coils(
+                response = modbus_client.write_coils(
                     self.args.address, [val] * self.args.count, unit=self.args.unit
                 )
-                if r.isError() is True:
-                    raise Exception(str(r))
-            elif self.args.item == self.REG:
+                if response.isError() is True:
+                    raise Exception(str(response))
+            elif self.args.item == REG:
                 TLog.trydo("Writing value(s) ({})".format(self.args.value))
-                # below r = class pymodbus.register_write_message.WriteMultipleRegistersResponse
-                r = c.write_registers(
+                response = modbus_client.write_registers(
                     self.args.address,
                     [self.args.value] * self.args.count,
                     unit=self.args.unit,
                 )
-                if r.isError() is True:
-                    raise Exception(str(r))
+                if response.isError() is True:
+                    raise Exception(str(response))
             else:
                 raise AttributeError(
                     "Unknown --item specified ({})".format(self.args.item)
@@ -132,4 +121,4 @@ class MBTcpWrite(Test):
         except:  # noqa: E722
             self.result.exception()
         finally:
-            c.close()
+            modbus_client.close()
