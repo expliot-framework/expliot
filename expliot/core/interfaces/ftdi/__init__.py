@@ -13,8 +13,10 @@ class SpiFlashManager(SerialFlashManager):
 
     TODO: Remove me when pyspiflash implements one.
     """
+
     @staticmethod
     def close(device):
+        """Close connection to device."""
         if device:
             device._spi._controller.terminate()
 
@@ -29,7 +31,9 @@ class I2cEepromManager(SerialEepromManager):
 
     TODO: Remove me when pyspiflash implements one.
     """
+
     @staticmethod
     def close(device):
+        """Close connection to device"""
         if device:
             device._slave._controller.terminate()
