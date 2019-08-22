@@ -45,7 +45,7 @@ class EfCli:
     def main(cls):
         """
         Run a single command given on the command line or run the main command
-        loop of the Console if no command line arguments given.
+        loop of the console if no command line arguments given.
 
         :return:
         """
@@ -61,7 +61,7 @@ class EfCli:
             nargs="?",
             help="Command to execute. If no command is given, it enters an "
             "interactive console. To see the list of available commands "
-            "use help command",
+            "use the help command",
         )
         parser.add_argument(
             "cmd_args",
