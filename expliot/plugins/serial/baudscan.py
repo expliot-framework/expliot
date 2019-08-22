@@ -14,7 +14,14 @@ class BaudScan(Test):
         super().__init__(
             name="baudscan",
             summary="Baud rate scanner for serial connection",
-            descr="This test helps in identifying the correct baud rate of the serial connection to a UART port on the hardware. It enumerates over a list of baud rates and analyzes the date read over a serial connection for ascii to identify the correct baud  rate. You need to connect the UART port of the device using a USBTTL connector (Expliot Nano supports UART too) to your machine running expliot. This test is inspired by devttys0's baudrate.py and the percent idea taken from IoTSecFuzz tool. Thank you devttys0 and IoTSecFuzz Team!",
+            descr="This test helps in identifying the correct baud rate of the "
+            "serial connection to a UART port on the hardware. It enumerates "
+            "over a list of baud rates and analyzes the date read over a serial "
+            "connection for ascii to identify the correct baud  rate. You need "
+            "to connect the UART port of the device using a USBTTL connector "
+            "(Expliot Nano supports UART too) to your machine running expliot. "
+            "This test is inspired by devttys0's baudrate.py and the percent idea "
+            "taken from IoTSecFuzz tool. Thank you devttys0 and IoTSecFuzz Team!",
             author="Aseem Jakhar",
             email="aseemjakhar@gmail.com",
             ref=[
@@ -28,13 +35,14 @@ class BaudScan(Test):
             "-b",
             "--bauds",
             default="1200,2400,4800,9600,19200,38400,57600,115200",
-            help="A comma separated list of baud rates that you want to scan. If not specified, it will scan for default baud rates (1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200).",
+            help="A comma separated list of baud rates that you want to scan. If "
+            "not specified, it will scan for default baud rates (1200, 2400, "
+            "4800, 9600, 19200, 38400, 57600 and 115200).",
         )
         self.argparser.add_argument(
             "-p",
             "--port",
             default="/dev/ttyUSB0",
-            required=True,
             help="The device port on the system. Default is /dev/ttyUSB0",
         )
         self.argparser.add_argument(
@@ -60,34 +68,40 @@ class BaudScan(Test):
 
     def check_baud(self, baud):
         """
-        Scan a serial connection for ascii data with a given baud rate.
+        Scan a serial connection for ASCII data with a given baud rate.
 
         :param baud: The baud rate to use for the serial connection
-        :return: Percentage of ascii characters present in the received data
+        :return: Percentage of ASCII characters present in the received data
         """
         sock = None
-        pc = -1
-        TLog.success("(baud={})".format(baud))
+        percentage_ascii = -1
+        TLog.success("Checking baud rate: {}".format(baud))
         try:
             sock = Serial(self.args.port, baud, timeout=self.args.timeout)
-            rcv = sock.read(self.args.count)
+            received = sock.read(self.args.count)
             sock.flush()
-            asci = "".join([chr(c) for c in rcv if chr(c) in string.printable])
-            rlen = len(rcv)
-            alen = len(asci)
-            if rlen == 0:
-                TLog.fail("  No data received")
+            ascii = "".join(
+                [chr(entry) for entry in received if chr(entry) in string.printable]
+            )
+            received_length = len(received)
+            ascii_length = len(ascii)
+            if received_length == 0:
+                TLog.fail("\tNo data received")
             else:
-                pc = alen / rlen * 100
+                percentage_ascii = round(ascii_length / received_length * 100, 2)
                 if self.args.verbose:
-                    TLog.success("  (data={})(ascii={})".format(rcv, asci))
-                TLog.success("  (ascii ratio={}/{} {}%)".format(alen, rlen, pc))
+                    TLog.success("\tdata: {}, ASCII: {}".format(received, ascii))
+                TLog.success(
+                    "\tASCII ratio: {}/{}, {} %".format(
+                        ascii_length, received_length, percentage_ascii
+                    )
+                )
         except:  # noqa: E722
-            TLog.fail("  (error={})".format(sysexcinfo()))
+            TLog.fail("\tError: {}".format(sysexcinfo()))
         finally:
             if sock:
                 sock.close()
-        return pc
+        return percentage_ascii
 
     def execute(self):
         """Execute the test."""
@@ -97,30 +111,30 @@ class BaudScan(Test):
             )
         )
         TLog.generic("Scanning for baud rates: {}".format(self.args.bauds))
-        rsn = "No good baud rate found"
-        best = {"b": 0, "pc": 0}
+        reason = "No good baud rate found"
+        best = {"baud_rate": 0, "percentage_ascii": 0}
         try:
-            for b in self.args.bauds.split(","):
-                pc = self.check_baud(int(b))
-                if pc == 100:
-                    TLog.success("Found correct baud rate - {}".format(b))
+            for baud in self.args.bauds.split(","):
+                percentage_ascii = self.check_baud(int(baud))
+                if percentage_ascii == 100:
+                    TLog.success("Found correct baud rate: {}".format(baud))
                     return
-                if pc > best["pc"]:
-                    best["pc"] = pc
-                    best["b"] = int(b)
-            if best["pc"] > 90:
+                if percentage_ascii > best["percentage_ascii"]:
+                    best["percentage_ascii"] = percentage_ascii
+                    best["baud_rate"] = int(baud)
+            if best["percentage_ascii"] > 90:
                 TLog.success(
-                    "Found good baud rate - {} with {}% ascii data".format(
-                        best["b"], best["pc"]
+                    "Found good baud rate {} with {}% ASCII data".format(
+                        best["baud_rate"], best["percentage_ascii"]
                     )
                 )
                 return
             else:
                 TLog.generic(
-                    "Baud rate - {} has max ascii percentage - {}%".format(
-                        best["b"], best["pc"]
+                    "Baud rate {} has max. ASCII percentage of {} %".format(
+                        best["baud_rate"], best["percentage_ascii"]
                     )
                 )
         except:  # noqa: E722
-            rsn = "Exception caught: {}".format(sysexcinfo())
-        self.result.setstatus(passed=False, reason=rsn)
+            reason = "Exception caught: {}".format(sysexcinfo())
+        self.result.setstatus(passed=False, reason=reason)
