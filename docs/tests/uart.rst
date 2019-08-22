@@ -1,8 +1,7 @@
 UART
 ====
 
-`Python <http://www.python.org/>`_
-[Universal Asynchronous Receiver/Transmitter](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter)(UART)
+`Universal Asynchronous Receiver/Transmitter <https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter>`_ (UART)
 is not a hardware bus protocol, but a physical circuit that is used for
 serial communication between two components. The speed (baud rate) and data
 format are configurable, as the communication is asynchronous. UART is one
@@ -27,8 +26,8 @@ ASCII characters to identify the correct baud rate of the UART port on the
 device. You will need a USB UART converter to enable your PC to talk to the
 device UART port. There are many connectors available in the market. We have
 created a multi-protocol (including UART) connector called **EXPLIoT Nano**
-which is available at our `Python <http://www.python.org/>`_
-[online store](https://expliot.io). Although, the
+which is available at our `online store <https://expliot.io>`_.
+Although, the
 framework should work with any *Linux* compatible USB-UART connector (also
 called USB-TTL).
 
