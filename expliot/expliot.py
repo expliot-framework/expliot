@@ -36,7 +36,7 @@ class EfCli:
                      By Aseem Jakhar
 
             """.format(
-        Expliot.version(), Expliot.vname()
+        Expliot.version(), Expliot.version_name()
     )
 
     cli = Cli(prompt="ef> ", intro=banner)

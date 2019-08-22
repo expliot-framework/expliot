@@ -3,6 +3,7 @@
 
 class Expliot:
     """Main class for EXPLIoT."""
+
     VMAJOR = 0
     VMINOR = 6
     VPATCH = 0
@@ -17,6 +18,6 @@ class Expliot:
         return "{}.{}.{}{}".format(cls.VMAJOR, cls.VMINOR, cls.VPATCH, cls.SUB)
 
     @classmethod
-    def vname(cls):
+    def version_name(cls):
         """Return the current version name."""
         return cls.VNAME
