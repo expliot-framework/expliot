@@ -77,15 +77,15 @@ class TappUnlock(Test):
                 )
                 self.unlock(self.args.addr)
             else:
-                TLog.generic("Scanning for Tapplocks")
-                devs = Ble.scan(iface=self.args.iface, tout=self.args.timeout)
-                for d in devs:
-                    name = d.getValueText(Ble.ADTYPE_NAME)
+                TLog.generic("Scanning for Tapplocks...")
+                devices = Ble.scan(iface=self.args.iface, tout=self.args.timeout)
+                for device in devices:
+                    name = device.getValueText(Ble.ADTYPE_NAME)
                     if name is not None and name[0:6] == self.TNAMEPREFIX:
                         TLog.success(
-                            "Found Tapplock (name={})(mac={})".format(name, d.addr)
+                            "Found Tapplock (name={})(mac={})".format(name, device.addr)
                         )
-                        self.unlock(d.addr)
+                        self.unlock(device.addr)
         except:  # noqa: E722
             self.result.exception()
 
@@ -93,10 +93,10 @@ class TappUnlock(Test):
         """
         Unlock the specified Tapplock.
 
-        :param mac: BLE address of the Tapplock
+        :param mac: The BLE address of the Tapplock
         :return:
         """
-        p = BlePeripheral()
+        device = BlePeripheral()
         try:
             TLog.trydo("Unlocking Tapplock ({})".format(mac))
             # Get key1 and serial
@@ -126,10 +126,10 @@ class TappUnlock(Test):
             chksumstr = "{:04x}".format(chksum)
             # Create the Pairing data
             pdata = pdata + chksumstr[2:4] + chksumstr[0:2]
-            p.connect(mac, addrType=Ble.ADDR_TYPE_RANDOM)
+            device.connect(mac, addrType=Ble.ADDR_TYPE_RANDOM)
             TLog.trydo("Sending pair data({})".format(pdata))
-            p.writeCharacteristic(self.UNLOCKHNDL, bytes.fromhex(pdata))
+            device.writeCharacteristic(self.UNLOCKHNDL, bytes.fromhex(pdata))
             TLog.trydo("Sending unlock command({})".format(self.UNLOCKCMD))
-            p.writeCharacteristic(self.UNLOCKHNDL, bytes.fromhex(self.UNLOCKCMD))
+            device.writeCharacteristic(self.UNLOCKHNDL, bytes.fromhex(self.UNLOCKCMD))
         finally:
-            p.disconnect()
+            device.disconnect()

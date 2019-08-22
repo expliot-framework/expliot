@@ -1,30 +1,14 @@
-#
-#
-# expliot - Internet Of Things Security Testing and Exploitation Framework
-#
-# Copyright (C) 2018  Aseem Jakhar
-#
-# Email:   aseemjakhar@gmail.com
-# Twitter: @aseemjakhar
-#
-# THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
-# BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-# PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-#
-
+"""Support to scan for BLE devices."""
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.core.common.exceptions import sysexcinfo
 from expliot.core.protocols.radio.ble import Ble, BlePeripheral
 
 
 class BleScan(Test):
+    """Scan for BLE devices."""
+
     def __init__(self):
+        """Initialize the test."""
         super().__init__(
             name="scan",
             summary="BLE Scanner",
@@ -105,18 +89,18 @@ class BleScan(Test):
         """
         TLog.generic("Scanning BLE devices for {} second(s)".format(self.args.timeout))
         try:
-            devs = Ble.scan(iface=self.args.iface, tout=self.args.timeout)
-            for d in devs:
+            devices = Ble.scan(iface=self.args.iface, tout=self.args.timeout)
+            for device in devices:
                 self.found = True
                 TLog.success(
                     "(name={})(address={})".format(
-                        d.getValueText(Ble.ADTYPE_NAME) or "Unknown", d.addr
+                        device.getValueText(Ble.ADTYPE_NAME) or "Unknown", device.addr
                     )
                 )
                 if self.args.verbose is True:
-                    TLog.success("    (rssi={}dB)".format(d.rssi))
-                    TLog.success("    (connectable={})".format(d.connectable))
-                    for sd in d.getScanData():
+                    TLog.success("    (rssi={}dB)".format(device.rssi))
+                    TLog.success("    (connectable={})".format(device.connectable))
+                    for sd in device.getScanData():
                         TLog.success("    ({}={})".format(sd[1], sd[2]))
         except:  # noqa: E722
             self.reason = "Exception caught: {}".format(sysexcinfo())
@@ -144,9 +128,9 @@ class BleScan(Test):
                 self.args.addr
             )
         )
-        d = BlePeripheral()
+        device = BlePeripheral()
         try:
-            d.connect(
+            device.connect(
                 self.args.addr,
                 addrType=(
                     Ble.ADDR_TYPE_RANDOM
@@ -156,29 +140,29 @@ class BleScan(Test):
             )
             self.found = True
             if self.args.services is True:
-                svcs = d.getServices()
-                for s in svcs:
+                services = device.getServices()
+                for service in services:
                     TLog.success(
                         "(service uuid={})(handlestart={})(handleend={})".format(
-                            s.uuid, hex(s.hndStart), hex(s.hndEnd)
+                            service.uuid, hex(service.hndStart), hex(service.hndEnd)
                         )
                     )
             if self.args.chars is True:
-                chrs = d.getCharacteristics()
-                for c in chrs:
+                chars = device.getCharacteristics()
+                for char in chars:
                     TLog.success(
                         "(characteristic uuid={})(handle={})".format(
-                            c.uuid, hex(c.getHandle())
+                            char.uuid, hex(char.getHandle())
                         )
                     )
                     if self.args.verbose is True:
-                        sr = c.supportsRead()
-                        TLog.success("    (supports_read={})".format(sr))
-                        if sr is True:
-                            TLog.success("    (value={})".format(c.read()))
+                        support_read = char.supportsRead()
+                        TLog.success("    (supports_read={})".format(support_read))
+                        if support_read is True:
+                            TLog.success("    (value={})".format(char.read()))
         except:  # noqa: E722
             self.reason = "Exception caught: {}".format(sysexcinfo())
         finally:
-            d.disconnect()
+            device.disconnect()
         if self.found is False and self.reason is None:
             self.reason = "Couldn't find any devices"

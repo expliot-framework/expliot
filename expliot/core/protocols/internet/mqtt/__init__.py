@@ -105,4 +105,6 @@ class SimpleMqttClient:
 
 
 class MqttClient(Client):
+    """Representation of a MQTT client class."""
+
     pass

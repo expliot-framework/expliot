@@ -1,30 +1,11 @@
-#
-#
-# expliot - Internet Of Things Security Testing and Exploitation Framework
-#
-# Copyright (C) 2018  Aseem Jakhar
-#
-# Email:   aseemjakhar@gmail.com
-# Twitter: @aseemjakhar
-#
-# THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
-# BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-# PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-#
-
+"""Support for testing BLE devices with fuzzing."""
 from random import randint
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.core.protocols.radio.ble import Ble, BlePeripheral
 
 
 class BleCharFuzz(Test):
-    """Test Bluetooth LE device ith fuzzing."""
+    """Test Bluetooth LE device with fuzzing."""
 
     def __init__(self):
         """Initialize the test."""
@@ -59,11 +40,10 @@ class BleCharFuzz(Test):
             "-w",
             "--value",
             required=True,
-            help="""Specify the value to fuzz and write. Mark the bytes as xx
-                                            in the value that you want to fuzz. For ex. if the valid value is
-                                            bd0ace and you want to fuzz the 2nd byte, specify the value as
-                                            bdxxce. You can also fuzz the whole value just mark all bytes as
-                                            xxxxxx""",
+            help="Specify the value to fuzz and write. Mark the bytes as xx in "
+            "the value that you want to fuzz. For ex. if the valid value is "
+            "bd0ace and you want to fuzz the 2nd byte, specify the value as "
+            "bdxxce. You can also fuzz the whole value just mark all bytes as xxxxxx",
         )
         # self.argparser.add_argument("-f", "--fuzz", type=int, default=0,
         #                            help="""Specify the type of fuzzing to be performed i.e. how to change the marked
@@ -98,8 +78,8 @@ class BleCharFuzz(Test):
             )
         )
         try:
-            d = BlePeripheral()
-            d.connect(
+            device = BlePeripheral()
+            device.connect(
                 self.args.addr,
                 addrType=(
                     Ble.ADDR_TYPE_RANDOM
@@ -113,7 +93,7 @@ class BleCharFuzz(Test):
                     f = f.replace("xx", "{:02x}".format(randint(0, 0xFF)), 1)  # nosec
 
                 TLog.trydo("Writing the fuzzed value ({})".format(f))
-                d.writeCharacteristic(
+                device.writeCharacteristic(
                     self.args.handle,
                     bytes.fromhex(f),
                     withResponse=(not self.args.noresponse),
@@ -121,4 +101,4 @@ class BleCharFuzz(Test):
         except:  # noqa: E722
             self.result.exception()
         finally:
-            d.disconnect()
+            device.disconnect()

@@ -57,9 +57,9 @@ class BleCharWrite(Test):
                 self.args.value, hex(self.args.handle), self.args.addr
             )
         )
-        d = BlePeripheral()
+        device = BlePeripheral()
         try:
-            d.connect(
+            device.connect(
                 self.args.addr,
                 addrType=(
                     Ble.ADDR_TYPE_RANDOM
@@ -67,7 +67,7 @@ class BleCharWrite(Test):
                     else Ble.ADDR_TYPE_PUBLIC
                 ),
             )
-            d.writeCharacteristic(
+            device.writeCharacteristic(
                 self.args.handle,
                 bytes.fromhex(self.args.value),
                 withResponse=(not self.args.noresponse),
@@ -75,4 +75,4 @@ class BleCharWrite(Test):
         except:  # noqa: E722
             self.result.exception()
         finally:
-            d.disconnect()
+            device.disconnect()
