@@ -15,12 +15,11 @@ class Serial(Pserial):
         :param bsize: Size of buffer to pass to read() method
         :return: bytes containing the complete response from the serial device
         """
-        ret = B""
+        read_data = b""
         while True:
-            r = self.read(bsize)
-            if not r:
+            reading = self.read(bsize)
+            if not reading:
                 break
-            ret += r
+            read_data += reading
         self.flush()
-        return ret
-
+        return read_data
