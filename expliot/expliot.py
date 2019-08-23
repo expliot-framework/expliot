@@ -1,45 +1,16 @@
 """Main part to start """
-import sys
 import argparse
 
-from expliot import Expliot
 from expliot.core.ui.cli import Cli
 from expliot.core.tests.test import TLog
 
-sys.path.append("..")
+from expliot.constants import BANNER
 
 
 class EfCli:
     """The interactive console and CLI interface for EXPLIoT framework."""
 
-    banner = """
-
-                  __   __      _ _       _
-                  \\ \\ / /     | (_)     | |
-               ___ \\ V / _ __ | |_  ___ | |_
-              / _ \\/   \\| '_ \\| | |/ _ \\| __|
-              | __/ /^\\ \\ |_) | | | (_) | |_
-              \\___\\/   \\/ .__/|_|_|\\___/ \\__|
-                         | |
-                         |_|
-
-
-                        EXPLIoT
-                    version: {}
-                    version name: {}
-                    web: www.expliot.io
-
-                    Internet Of Things
-                    Security Testing and
-                    Exploitation Framework
-
-                     By Aseem Jakhar
-
-            """.format(
-        Expliot.version(), Expliot.version_name()
-    )
-
-    cli = Cli(prompt="ef> ", intro=banner)
+    cli = Cli(prompt="ef> ", intro=BANNER)
 
     @classmethod
     def main(cls):
