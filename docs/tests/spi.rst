@@ -8,12 +8,12 @@ circuit board. It is a *4-wire* bus. The communication is *full-duplex* as it
 has separate lines for master-to-slave and slave-to-master communication. In
 many devices, you may encounter flash memory chips, for example, that talk
 over SPI for data read/write and you may need a way to extract data from the
-chip for further analysis or write malicious data to the chip. 
+chip for further analysis or write malicious data to the chip.
 
 spi.generic.readflash
 ---------------------
 
-The current implementation is dependent on *pyispiflash* package which in
+The current implementation is dependent on *pyspiflash* package which in
 turn is dependent on *pyftdi* package. Note that there will be some extra
 info printed on the console, when the plugin executes, which comes from the
 *pyspiflash* package and is not part of the plugin code. To interface your PC
