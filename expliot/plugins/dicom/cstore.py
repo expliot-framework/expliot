@@ -3,7 +3,6 @@ import os
 
 from expliot.core.protocols.internet.dicom import (
     AE,
-    Dataset,
     StoragePresentationContexts,
     dcmread,
 )

@@ -1,4 +1,5 @@
 """Command-line and console feature for EXPLIoT."""
+# pylint: disable=invalid-name
 import argparse
 
 from cmd2 import Cmd, with_argument_list
@@ -23,7 +24,7 @@ class Cli(Cmd):
     # Add exit command as an alias for quit
     Cmd.do_exit = Cmd.do_quit
 
-    def __init__(self, prompt=None, intro=None):  # pylint: disable=invalid-name
+    def __init__(self, prompt=None, intro=None):
         """Initialize Cmd members."""
         super().__init__(allow_cli_args=False, allow_redirection=False)
         self.prompt = prompt

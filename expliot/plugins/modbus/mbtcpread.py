@@ -46,8 +46,7 @@ class MBTcpRead(Test):
             "--item",
             default=0,
             type=int,
-            help="The item to read from. {} = {}, {} = {}, {} = {}, {} = {}. Default is {}".format(
-                COIL,
+            help="The item to read from. {coil} = {}, {} = {}, {} = {}, {} = {}. Default is {coil}".format(
                 READ_ITEMS[COIL],
                 DINPUT,
                 READ_ITEMS[DINPUT],
@@ -55,7 +54,7 @@ class MBTcpRead(Test):
                 READ_ITEMS[HREG],
                 IREG,
                 READ_ITEMS[IREG],
-                COIL,
+                coil=COIL,
             ),
         )
         self.argparser.add_argument(
