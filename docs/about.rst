@@ -18,9 +18,9 @@ i.e. attack surface. So, I started conceptualizing and implementing a
 framework that can encompass different functionality for an IoT pentest.
 I chose Ruby as a language for implementing it as it is quite flexible.
 During the development, I realized that there was not much support for
-hardware and radio interfacing in ruby. The first version was written in Ruby
+hardware and radio interfacing in Ruby. The first version was written in Ruby
 and after a lot of thought and stress I decided to rewrite it in Python. The
-current version is obviously in Python 3. 
+current version is obviously in Python 3.
 
 License
 -------
@@ -30,13 +30,15 @@ EXPLIoT Framework is under the GNU AGPLv3 license.
 Author
 ------
 
-EXPLIoT Framework is conceptualized, designed and implemented by Aseem Jakhar.
+EXPLIoT Framework is conceptualized, designed and implemented by
+`Aseem Jakhar <https://gitlab.com/aseemj>`_.
 
-Reach out: aseem  ___a__t___ expliot D0t io
+Contributors
+------------
 
-* `LinkedIn <https://www.linkedin.com/in/aseemjakhar/>`_
-* `Twitter <https://twitter.com/aseemjakhar>`_
-
+* `Arun Magesh <https://gitlab.com/arun.m>`_
+* `Fabian Affolter <https://gitlab.com/fabaff>`_
+* `Sneha Rajguru <https://twitter.com/Sneharajguru>`_
 
 Thank you
 ---------
@@ -49,4 +51,3 @@ Thank you
 * `Payatu Bandits <http://www.payatu.com/>`_
 * `Hardwear.io Conference <https://hardwear.io/>`_
 * `nullcon Conference <http://nullcon.net/>`_
-
