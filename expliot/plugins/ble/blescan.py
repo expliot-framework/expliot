@@ -1,4 +1,5 @@
 """Support to scan for BLE devices."""
+# pylint: disable=too-many-nested-blocks
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.core.common.exceptions import sysexcinfo
 from expliot.core.protocols.radio.ble import Ble, BlePeripheral
@@ -114,8 +115,8 @@ class BleScan(Test):
 
         :return:
         """
-        # documentation is wrong, the first keyword argument is deviceAddr instead of deviceAddress as per the doc
-        # Doc: http://ianharvey.github.io/bluepy-doc/
+        # Documentation is wrong, the first keyword argument is deviceAddr instead of
+        # deviceAddress. http://ianharvey.github.io/bluepy-doc/
         if self.args.services is False and self.args.chars is False:
             TLog.fail(
                 "Specify the enumerations option(s). Either or both - services, chars"

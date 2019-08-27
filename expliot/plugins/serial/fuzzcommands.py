@@ -1,4 +1,5 @@
 """Support for fuzzing command over a serial connection."""
+# pylint: disable=too-many-nested-blocks
 import itertools
 
 from expliot.core.common.exceptions import sysexcinfo
@@ -116,7 +117,7 @@ class FuzzCommands(Test):
             "Using chars({}) and length({})".format(self.args.chars, self.args.length)
         )
         found = False
-        rsn = "Couldn't find a valid command"
+        reason = "Couldn't find a valid command"
         commands = []
         tries = 0
         sock = None
@@ -158,11 +159,11 @@ class FuzzCommands(Test):
                         if self.args.stop is True:
                             break
         except:  # noqa: E722
-            rsn = "Exception caught: {}".format(sysexcinfo())
+            reason = "Exception caught: {}".format(sysexcinfo())
         finally:
             if sock:
                 sock.close()
         if found is True:
             TLog.success("Valid commands found: ({})".format(commands))
         else:
-            self.result.setstatus(passed=False, reason=rsn)
+            self.result.setstatus(passed=False, reason=reason)

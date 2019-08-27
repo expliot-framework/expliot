@@ -1,4 +1,5 @@
 """Support for finding data on a DICOM instance."""
+# pylint: disable=too-many-nested-blocks
 import os
 
 from expliot.core.protocols.internet.dicom import (
@@ -101,7 +102,7 @@ class CFind(Test):
             )
             data_set = Dataset()
             data_set.PatientName = self.args.name
-            # XXX May need to move this as cmdline argument for other SOP Class UIDs
+            # May need to move this as cmdline argument for other SOP Class UIDs
             data_set.QueryRetrieveLevel = "PATIENT"
             # 0 means assign random port in pynetdicom
             if self.args.lport != 0:

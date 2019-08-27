@@ -1,4 +1,5 @@
 """Wrapper for FDTI."""
+# pylint: disable=protected-access
 from spiflash.serialflash import SerialFlashManager
 from i2cflash.serialeeprom import SerialEepromManager
 
