@@ -1,4 +1,5 @@
 """Wrapper for the serial interface."""
+# pylint: disable=too-many-ancestors
 from serial import Serial as Pserial
 
 
