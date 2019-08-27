@@ -18,6 +18,7 @@ pylint:
   image: python:3.7
   script:
     - pip install pylint --quiet
+    - pip install -r requirements.txt
     - pylint expliot
   allow_failure: true
 
