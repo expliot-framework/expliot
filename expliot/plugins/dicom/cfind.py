@@ -38,14 +38,14 @@ class CFind(Test):
             "-r",
             "--rhost",
             required=True,
-            help="Hostname/IP address of the target DICOM Server (SCP)",
+            help="The hostname/IP address of the target DICOM Server (SCP)",
         )
         self.argparser.add_argument(
             "-p",
             "--rport",
             default=104,
             type=int,
-            help="Port number of the target DICOM Server (SCP). Default is 104",
+            help="The port number of the target DICOM Server (SCP). Default is 104",
         )
         self.argparser.add_argument(
             "-q",
