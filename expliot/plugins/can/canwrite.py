@@ -4,6 +4,7 @@ from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.core.protocols.hardware.can import CanBus, CanMessage
 
 
+# pylint: disable=bare-except
 class CANWrite(Test):
     """Test for writing from the CAN bus."""
 

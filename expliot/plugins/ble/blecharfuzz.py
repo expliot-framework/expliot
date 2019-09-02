@@ -4,6 +4,7 @@ from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.core.protocols.radio.ble import Ble, BlePeripheral
 
 
+# pylint: disable=bare-except
 class BleCharFuzz(Test):
     """Test Bluetooth LE device with fuzzing."""
 

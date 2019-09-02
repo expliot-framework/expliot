@@ -5,6 +5,7 @@ from expliot.core.tests.test import TCategory, TTarget, Test, TLog
 from expliot.core.protocols.radio.ble import Ble, BlePeripheral
 
 
+# pylint: disable=bare-except
 class TappUnlock(Test):
     """Test for Tapplock device."""
 

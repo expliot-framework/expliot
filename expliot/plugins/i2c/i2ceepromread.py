@@ -15,6 +15,7 @@ you Emmanuel Blot for pyi2cflash. You may want to run it as root in case you
 get a USB error related to langid."""
 
 
+# pylint: disable=bare-except
 class I2cEepromRead(Test):
     """Read test for data to i2c."""
 

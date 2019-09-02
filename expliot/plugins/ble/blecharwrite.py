@@ -3,6 +3,7 @@ from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.core.protocols.radio.ble import Ble, BlePeripheral
 
 
+# pylint: disable=bare-except
 class BleCharWrite(Test):
     """Write test of chars to Bluetooth LE devices."""
 

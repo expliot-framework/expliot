@@ -4,6 +4,7 @@ from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.plugins.mqtt import DEFAULT_MQTT_PORT, MQTT_REFERENCE
 
 
+# pylint: disable=bare-except
 class MqttPub(Test):
     """Publish a MQTT message to a given MQTT broker."""
 

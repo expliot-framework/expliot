@@ -11,7 +11,6 @@ flake8:
   script:
     - pip install flake8 --quiet
     - flake8 --max-line-length=80 expliot
-  allow_failure: true
 
 pylint:
   stage: static_analysis
@@ -20,7 +19,6 @@ pylint:
     - pip install pylint --quiet
     - pip install -r requirements.txt
     - pylint expliot
-  allow_failure: true
 
 ubuntu1904:
   stage: installation

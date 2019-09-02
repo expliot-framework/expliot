@@ -4,6 +4,7 @@ from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 from expliot.plugins.modbus import COIL, MODBUS_REFERENCE, REG, WRITE_ITEMS
 
 
+# pylint: disable=bare-except
 class MBTcpWrite(Test):
     """Test for writing data to Modbus over TCP."""
 

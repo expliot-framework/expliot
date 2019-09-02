@@ -1,10 +1,10 @@
 """Support to scan for BLE devices."""
-# pylint: disable=too-many-nested-blocks
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.core.common.exceptions import sysexcinfo
 from expliot.core.protocols.radio.ble import Ble, BlePeripheral
 
 
+# pylint: disable=bare-except, too-many-nested-blocks
 class BleScan(Test):
     """Scan for BLE devices."""
 

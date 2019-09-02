@@ -1,5 +1,4 @@
 """Support for finding data on a DICOM instance."""
-# pylint: disable=too-many-nested-blocks
 import os
 
 from expliot.core.protocols.internet.dicom import (
@@ -12,6 +11,7 @@ from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 from expliot.plugins.dicom import REFERENCE
 
 
+# pylint: disable=bare-except, too-many-nested-blocks
 class CFind(Test):
     """Test to find data on a DICOM instance."""
 
