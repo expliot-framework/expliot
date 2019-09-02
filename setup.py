@@ -4,7 +4,7 @@ import os
 
 from setuptools import find_packages, setup
 
-from expliot import Expliot
+import expliot.constants as expliot_const
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -13,7 +13,7 @@ with open(os.path.join(here, "README.md"), encoding="utf-8") as readme_file:
 
 setup(
     name="expliot",
-    version=Expliot.version(),
+    version=expliot_const.__version__,
     url="https://expliot.io",
     license="AGPLv3+",
     author="Aseem Jakhar",
