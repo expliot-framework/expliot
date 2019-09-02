@@ -4,6 +4,7 @@ from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 from expliot.plugins.dicom import REFERENCE
 
 
+# pylint: disable=bare-except
 class CEcho(Test):
     """Test to check a connection to a DICOM instance."""
 

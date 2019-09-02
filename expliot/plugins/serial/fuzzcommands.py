@@ -1,5 +1,4 @@
 """Support for fuzzing command over a serial connection."""
-# pylint: disable=too-many-nested-blocks
 import itertools
 
 from expliot.core.common.exceptions import sysexcinfo
@@ -7,6 +6,7 @@ from expliot.core.protocols.hardware.serial import Serial
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 
 
+# pylint: disable=too-many-nested-blocks, bare-except
 class FuzzCommands(Test):
     """Test to fuzz commands."""
 

@@ -5,6 +5,7 @@ from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.plugins.mqtt import DEFAULT_MQTT_PORT, MQTT_REFERENCE
 
 
+# pylint: disable=bare-except
 class MqttAuth(Test):
     """Test the authentication of a MQTT broker."""
 

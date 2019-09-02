@@ -6,6 +6,7 @@ from expliot.core.protocols.hardware.serial import Serial
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 
 
+# pylint: disable=bare-except
 class BaudScan(Test):
     """Test the available baud rate of a device."""
 

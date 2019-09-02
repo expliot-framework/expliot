@@ -5,6 +5,7 @@ from expliot.core.protocols.hardware.i2c import I2cEepromManager
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 
 
+# pylint: disable=bare-except
 class I2cEepromWrite(Test):
     """Write test for data to i2c."""
 

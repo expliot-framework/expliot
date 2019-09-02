@@ -5,6 +5,7 @@ from expliot.core.protocols.hardware.spi import SpiFlashManager
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 
 
+# pylint: disable=bare-except
 class SPIFlashRead(Test):
     """Test to read data from SPI."""
 

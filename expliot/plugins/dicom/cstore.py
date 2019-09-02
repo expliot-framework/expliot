@@ -10,6 +10,7 @@ from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 from expliot.plugins.dicom import REFERENCE
 
 
+# pylint: disable=bare-except
 class CStore(Test):
     """Test the possibility to store on a DICOM instance."""
 
