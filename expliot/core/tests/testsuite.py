@@ -12,7 +12,7 @@ sys.path.append("..")
 class TestSuite(dict):
     """
     Test Suite class inherits from dict and stores all the test cases
-    from plugins package name specified in __init__()
+    from plugins package name specified in __init__().
     """
 
     testcls = [Test]
@@ -28,7 +28,7 @@ class TestSuite(dict):
 
     def import_plugins(self, pkgname):
         """
-        Import all tests from the specified Package into a dict.
+        Import all tests from the specified package into a dict.
 
         :param pkgname: The package to load all test case plugins from
         :return:
