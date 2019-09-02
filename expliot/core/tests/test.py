@@ -21,13 +21,14 @@ class TCategory(namedtuple("TCategory", "proto, iface, action")):
     3. action: What action does the test perform i.e. is it an exploit or a
                recon test for example.
     """
+
     # Protocol category. The protocol used by the test
     # Internet protocols
     COAP = "coap"
+    DICOM = "dicom"
+    MODBUS = "modbus"
     MQTT = "mqtt"
     UDP = "udp"
-    MODBUS = "modbus"
-    DICOM = "dicom"
 
     # Radio protocols
     BLE = "ble"
@@ -35,53 +36,50 @@ class TCategory(namedtuple("TCategory", "proto, iface, action")):
 
     # Hardware protocols
     CAN = "can"
-    UART = "uart"
-    JTAG = "jtag"
     I2C = "i2c"
+    JTAG = "jtag"
     SPI = "spi"
+    UART = "uart"
 
     _protocols = [
-        COAP,
-        MQTT,
-        UDP,
-        MODBUS,
-        DICOM,
         BLE,
-        ZIGBEE,
         CAN,
-        UART,
-        JTAG,
+        COAP,
+        DICOM,
         I2C,
+        JTAG,
+        MODBUS,
+        MQTT,
         SPI,
+        UART,
+        UDP,
+        ZIGBEE,
     ]
 
     # Interface category. Whether the test is for software, hardware or radio
-    SW = "software"
     HW = "hardware"
     RD = "radio"
+    SW = "software"
 
     _interfaces = [SW, HW, RD]
 
     # Action category. The type of test
-    RECON = "recon"
-    DISCOVERY = "discovery"
     ANALYSIS = "analysis"
-    FUZZ = "fuzz"
+    DISCOVERY = "discovery"
     EXPLOIT = "exploit"
+    FUZZ = "fuzz"
+    RECON = "recon"
 
     _actions = [RECON, DISCOVERY, ANALYSIS, FUZZ, EXPLOIT]
 
     def __init__(self, proto, iface, action):
         """Initialize the test category."""
         if proto not in TCategory._protocols:
-            raise AttributeError(
-                "Unknown Protocol for Category - ({})".format(proto))
+            raise AttributeError("Unknown protocol for category - ({})".format(proto))
         if iface not in TCategory._interfaces:
-            raise AttributeError(
-                "Unknown Interface for Category - ({})".format(iface))
+            raise AttributeError("Unknown interface for category - ({})".format(iface))
         if action not in TCategory._actions:
-            raise AttributeError(
-                "Unknown Action for Category - ({})".format(action))
+            raise AttributeError("Unknown action for category - ({})".format(action))
         super().__init__()
 
 
@@ -99,6 +97,7 @@ class TTarget(namedtuple("TTarget", "name, version, vendor")):
     Please note, in case it is a generic test case that can be used for
     multiple products use Target.GENERIC for all attributes.
     """
+
     GENERIC = "generic"
 
     def __init__(self, name, version, vendor):
@@ -243,12 +242,10 @@ class Test:
         self.ref = kwargs["ref"]
         self.category = kwargs["category"]
         self.target = kwargs["target"]
-        self.needroot = kwargs["needroot"] if ("needroot" in kwargs.keys())\
-            else False
+        self.needroot = kwargs["needroot"] if ("needroot" in kwargs.keys()) else False
 
         self._setid()
-        self.argparser = argparse.ArgumentParser(
-            prog=self.id, description=self.descr)
+        self.argparser = argparse.ArgumentParser(prog=self.id, description=self.descr)
         self.result = TResult()
 
         # Namespace returned by self.argparser.parser_args()
@@ -285,8 +282,7 @@ class Test:
         )
         TLog.generic(
             "{:<13} Name={}|Version={}|Vendor={}".format(
-                "Target:", self.target.name, self.target.version,
-                self.target.vendor
+                "Target:", self.target.name, self.target.version, self.target.vendor
             )
         )
         TLog.generic("")
@@ -347,7 +343,6 @@ class Test:
         :return:
         """
         if self.result.passed:
-            TLog.success("Test {} Passed".format(self.id))
+            TLog.success("Test {} passed".format(self.id))
         else:
-            TLog.fail("Test {} Failed. Reason = {}".format(
-                self.id, self.result.reason))
+            TLog.fail("Test {} failed. Reason = {}".format(self.id, self.result.reason))
