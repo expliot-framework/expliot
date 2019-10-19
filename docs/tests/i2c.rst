@@ -58,7 +58,7 @@ For further details check the `pin layout <https://drive.google.com/file/d/1291L
    ef> run i2c.generic.scan
    [...]
    [*] Scanning for I2C devices...
-   0x76
+   [+] Address found: 0x76
    [+] Done. Found 1 and not found 120
    [+] Test i2c.generic.scan Passed
 
