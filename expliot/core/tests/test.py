@@ -7,7 +7,7 @@ import sys
 from expliot.core.common.exceptions import sysexcinfo
 
 
-class TCategory(namedtuple("TCategory", "proto, iface, action")):
+class TCategory(namedtuple("TCategory", "tech, iface, action")):
     """
     Representation of Test Category.
 
@@ -16,14 +16,14 @@ class TCategory(namedtuple("TCategory", "proto, iface, action")):
     or search for a specific category. It is a namedtuple that defines three
     attributes (for categorizing test cases).
 
-    1. proto: What protocol does the test use
+    1. tech: What technology does the test use
     2. iface: Interface of the test i.e. whether it is for software or hardware
     3. action: What action does the test perform i.e. is it an exploit or a
                recon test for example.
     """
 
-    # Protocol category. The protocol used by the test
-    # Internet protocols
+    # Tech category. The technology used by the test
+    # Network Protocols
     COAP = "coap"
     DICOM = "dicom"
     MODBUS = "modbus"
@@ -33,6 +33,7 @@ class TCategory(namedtuple("TCategory", "proto, iface, action")):
     # Radio protocols
     BLE = "ble"
     ZIGBEE = "zigbee"
+    IEEE802154 = "802154"
 
     # Hardware protocols
     CAN = "can"
@@ -41,12 +42,18 @@ class TCategory(namedtuple("TCategory", "proto, iface, action")):
     SPI = "spi"
     UART = "uart"
 
-    _protocols = [
+    # Auditors
+    ZB_AUDITOR = "zbauditor"
+    BUS_AUDITOR = "busauditor"
+    FW_AUDITOR = "fwauditor"
+
+    _tech = [
         BLE,
         CAN,
         COAP,
         DICOM,
         I2C,
+        IEEE802154,
         JTAG,
         MODBUS,
         MQTT,
@@ -54,6 +61,9 @@ class TCategory(namedtuple("TCategory", "proto, iface, action")):
         UART,
         UDP,
         ZIGBEE,
+        ZB_AUDITOR,
+        BUS_AUDITOR,
+        FW_AUDITOR,
     ]
 
     # Interface category. Whether the test is for software, hardware or radio
@@ -72,10 +82,10 @@ class TCategory(namedtuple("TCategory", "proto, iface, action")):
 
     _actions = [RECON, DISCOVERY, ANALYSIS, FUZZ, EXPLOIT]
 
-    def __init__(self, proto, iface, action):
+    def __init__(self, tech, iface, action):
         """Initialize the test category."""
-        if proto not in TCategory._protocols:
-            raise AttributeError("Unknown protocol for category - ({})".format(proto))
+        if tech not in TCategory._tech:
+            raise AttributeError("Unknown technology for category - ({})".format(tech))
         if iface not in TCategory._interfaces:
             raise AttributeError("Unknown interface for category - ({})".format(iface))
         if action not in TCategory._actions:
@@ -273,9 +283,9 @@ class Test:
         TLog.generic("{:<13} {}".format("Author Email:", self.email))
         TLog.generic("{:<13} {}".format("Reference(s):", self.ref))
         TLog.generic(
-            "{:<13} Protocol={}|Interface={}|Action={}".format(
+            "{:<13} technology={}|Interface={}|Action={}".format(
                 "Category:",
-                self.category.proto,
+                self.category.tech,
                 self.category.iface,
                 self.category.action,
             )
@@ -334,7 +344,7 @@ class Test:
         """
         # self.id = self.__class__.__name__.lower()
         self.id = "{}.{}.{}".format(
-            self.category.proto, self.target.name, self.name
+            self.category.tech, self.target.name, self.name
         ).lower()
 
     def _logstatus(self):

@@ -86,8 +86,8 @@ Let's look at each parameter:
 - ``email``: Plugin author's email ID
 - ``ref``: A *list* containing one or more reference or source URLs containing
   either the exploit details or relevant information used as the basis of the
-  plugin. 
-- ``category``: The category of the plugin defined by TCategory's protocol,
+  plugin.
+- ``category``: The category of the plugin defined by TCategory's technology,
   interface and action. For more details look at TCategory implementation in
   ``test.py``.
 - ``target``: The (vulnerable) target of the Plugin defined by name, version and
