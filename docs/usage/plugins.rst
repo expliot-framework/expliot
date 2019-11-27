@@ -19,7 +19,7 @@ components.
 - Product that it targets.
 - Name of the of the plugin itself that describes its action.
 
-The format of the ID is ``protocol.product.plugin_name``.
+The format of the ID is ``technology.product.plugin_name``.
 
 For example, the ID of the BLE scanner plugin is ``ble.generic.scan``. Since it
 is a generic BLE scanner and not specific to any BLE product, the product 

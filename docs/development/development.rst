@@ -342,9 +342,9 @@ This file has the interface definition for a test case. The plugins
 inherit from this base class. The details of classes, methods etc. are
 given below.
 
-#. ``class TCategory(namedtuple("TCategory", "proto, iface, action"))``
+#. ``class TCategory(namedtuple("TCategory", "tech, iface, action"))``
    - This class provides the definition for the category of a test case
-   (plugin) which includes the protocol used, interface and action. For
+   (plugin) which includes the technology used, interface and action. For
    details refer the code documentation.
 #. ``class TTarget(namedtuple("TTarget", "name, version, vendor"))`` -
    This class defines the target of the test case (plugin). The plugins
