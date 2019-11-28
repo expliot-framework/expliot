@@ -48,7 +48,7 @@ class ZbAuditorSniffer(Test):
             default=65535,
             type=int,
             help="Number of packets to be captured before plugin stop. "
-            "Default is 65535",
+            "Default is 65535 packets.",
         )
 
         self.argparser.add_argument(
