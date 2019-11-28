@@ -6,6 +6,7 @@ from pyftdi.i2c import I2cController, I2cNackError
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 
 
+# pylint: disable=bare-except
 class I2cScan(Test):
     """Scan the I2C bus for connected units."""
 

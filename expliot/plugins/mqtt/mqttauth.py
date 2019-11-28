@@ -89,7 +89,6 @@ class MqttAuth(Test):
                             )
                         )
                         found = True
-                        break
                     elif self.args.verbose:
                         TLog.fail(
                             "Auth failed - (user={})(passwd={})(return code={}:{})".format(
