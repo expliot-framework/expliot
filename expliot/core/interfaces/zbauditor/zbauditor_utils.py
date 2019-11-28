@@ -1,4 +1,4 @@
-"""Utility for ZB Auditor class."""
+"""Utility for Zigbee Auditor class."""
 
 # from struct import pack
 

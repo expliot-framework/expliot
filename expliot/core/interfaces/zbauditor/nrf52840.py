@@ -1,10 +1,11 @@
 """nRF52840 usb driver."""
-
+import array
 import struct
 import time
-import array
+
 import usb.core
 import usb.util
+
 from expliot.core.interfaces.common_services import ZbAuditorServices
 
 
@@ -17,9 +18,9 @@ class NRF52840(ZbAuditorServices):
 
     # Vendor ID and Product code of Zigbee Auditor
     USB_VID = 0x1915
-    USB_PID = 0x521a
+    USB_PID = 0x521A
 
-    USB_READ_TIMEOUT_MIN = 100   # ms
+    USB_READ_TIMEOUT_MIN = 100  # ms
     USB_READ_TIMEOUT_MAX = 2000  # ms
 
     USB_MAX_BYTE_READ = 64  # 64Bytes
@@ -40,10 +41,10 @@ class NRF52840(ZbAuditorServices):
     SERVICE_RESP_MASK = 0x80
 
     # Service response byte
-    SRV_GET_FW_VER_RESP = (SERVICE_RESP_MASK | SRV_GET_FW_VER)
-    SRV_GET_FW_SRV_RESP = (SERVICE_RESP_MASK | SRV_GET_FW_SRV)
-    SRV_GET_POWER_STATUS_RESP = (SERVICE_RESP_MASK | SRV_GET_POWER_STATUS)
-    SRV_ZB_NWKSCAN_RESP = (SERVICE_RESP_MASK | SRV_ZB_NWKSCAN_REQ)
+    SRV_GET_FW_VER_RESP = SERVICE_RESP_MASK | SRV_GET_FW_VER
+    SRV_GET_FW_SRV_RESP = SERVICE_RESP_MASK | SRV_GET_FW_SRV
+    SRV_GET_POWER_STATUS_RESP = SERVICE_RESP_MASK | SRV_GET_POWER_STATUS
+    SRV_ZB_NWKSCAN_RESP = SERVICE_RESP_MASK | SRV_ZB_NWKSCAN_REQ
 
     # Response len for services
     SRV_GET_FW_VER_RESP_LEN = 5
@@ -93,7 +94,8 @@ class NRF52840(ZbAuditorServices):
     USB_OPERATION_TIMEOUT = 110
 
     def __init__(self, channel=0, page=0):
-        """ Driver for NRF52840 based Zigbee Auditor Device
+        """Driver for NRF52840 based Zigbee Auditor Device.
+
         Search, initialized Zigbee Auditor Device and related driver
         Initialized flags related to driver
         Read supported services
@@ -101,7 +103,6 @@ class NRF52840(ZbAuditorServices):
         :param channel : 802.15.4 frequency channel
         :param page :  802.15.4 Page
         """
-
         super().__init__()
 
         self.__data_ep = self.USB_DATA_EP
@@ -113,13 +114,12 @@ class NRF52840(ZbAuditorServices):
         self.rxcount = 0
         self.txcount = 0
 
-        self.dev = usb.core.find(idVendor=self.USB_VID,
-                                 idProduct=self.USB_PID)
+        self.dev = usb.core.find(idVendor=self.USB_VID, idProduct=self.USB_PID)
 
         if self.dev is None:
             raise OSError("Device not found")
 
-        # must call this to establish the USB's "Config"
+        # Must call this to establish the USB's "Config"
         self.dev.reset()
         self.dev.set_configuration()
 
@@ -139,26 +139,23 @@ class NRF52840(ZbAuditorServices):
 
         :return: Firmware version array (3 bytes)
         """
+        pdata = self.usb_cntrl_read(
+            self.SRV_GET_FW_VER, data_or_wlength=self.SRV_GET_FW_VER_RESP_LEN
+        )
 
-        pdata = self.usb_cntrl_read(self.SRV_GET_FW_VER,
-                                    data_or_wlength=self.SRV_GET_FW_VER_RESP_LEN)
-
-        if (len(pdata) == self.SRV_GET_FW_VER_RESP_LEN
-                and pdata[0] == self.SRV_GET_FW_VER_RESP):
+        if (
+            len(pdata) == self.SRV_GET_FW_VER_RESP_LEN
+            and pdata[0] == self.SRV_GET_FW_VER_RESP
+        ):
             self.set_base_serivce(self.GET_FW_REV, True)
             return pdata[2:]
 
         raise NotImplementedError("Invalid response for Get FW Version")
 
     def get_device_fw_rev_str(self):
-        """"Returns firmware revision in string formate."""
-
+        """"Return firmware revision in string format."""
         ver = self.get_device_fw_rev()
-        self.__fw_version = (str(ver[0])
-                             + "."
-                             + str(ver[1])
-                             + "."
-                             + str(ver[2]))
+        self.__fw_version = str(ver[0]) + "." + str(ver[1]) + "." + str(ver[2])
 
         return self.__fw_version
 
@@ -167,12 +164,12 @@ class NRF52840(ZbAuditorServices):
 
         :return: Firmware Capability
         """
+        resp = self.usb_cntrl_read(self.SRV_GET_FW_SRV, data_or_wlength=6)
 
-        resp = self.usb_cntrl_read(self.SRV_GET_FW_SRV,
-                                   data_or_wlength=6)
-
-        if (len(resp) == self.SRV_GET_FW_SRV_RESP_LEN
-                and resp[0] == self.SRV_GET_FW_SRV_RESP):
+        if (
+            len(resp) == self.SRV_GET_FW_SRV_RESP_LEN
+            and resp[0] == self.SRV_GET_FW_SRV_RESP
+        ):
 
             self.set_base_serivce(self.GET_FW_SERV, True)
 
@@ -198,27 +195,28 @@ class NRF52840(ZbAuditorServices):
         raise ValueError("Invalid response for Get Services")
 
     def _device_set_channel(self):
-        """ Set the channel in the device MAC hardware."""
-
+        """Set the channel in the device MAC hardware."""
         # Note: Check is radio is On and Sniffing is OFF before calling this function
+        self.usb_cntrl_write(
+            self.SRV_SET_CHANNEL, windex=0, data_or_wlength=[self.__channel]
+        )
 
-        self.usb_cntrl_write(self.SRV_SET_CHANNEL,
-                             windex=0,
-                             data_or_wlength=[self.__channel])
-
-        self.usb_cntrl_write(self.SRV_SET_CHANNEL,
-                             windex=1,
-                             data_or_wlength=[self.MAC_24GHZ_DEFAULT_PAGE])
+        self.usb_cntrl_write(
+            self.SRV_SET_CHANNEL,
+            windex=1,
+            data_or_wlength=[self.MAC_24GHZ_DEFAULT_PAGE],
+        )
 
     def device_set_channel(self, channel, page=0):
-        """Set Channel local & in device hardware."""
+        """Set channel locally and of device hardware."""
 
         # Check set channel service is supported
         if not self.is_service_active(self.SET_CH_CHNG):
             raise NotImplementedError("Service not implemented")
 
-        if not (channel < self.MAC_24GHZ_CHANNEL_11
-                or channel > self.MAC_24GHZ_CHANNEL_26):
+        if not (
+            channel < self.MAC_24GHZ_CHANNEL_11 or channel > self.MAC_24GHZ_CHANNEL_26
+        ):
 
             self.__channel = channel
 
@@ -241,8 +239,7 @@ class NRF52840(ZbAuditorServices):
             raise ValueError("Invalid Channel")
 
     def device_radio_on(self):
-        """Turn on Radio and MAC layer."""
-
+        """Turn on radio and MAC layer."""
         # Check raw packet inject service is supported
         if not self.is_service_active(self.SET_MAC_POWER):
             raise NotImplementedError("Service not active")
@@ -253,8 +250,9 @@ class NRF52840(ZbAuditorServices):
 
             while True:
                 # Check if radio is powered up
-                status = self.usb_cntrl_read(self.SRV_GET_POWER_STATUS,
-                                             data_or_wlength=3)
+                status = self.usb_cntrl_read(
+                    self.SRV_GET_POWER_STATUS, data_or_wlength=3
+                )
 
                 if status[self.SRV_RESP_BYTE_1] == self.MAC_POWER_ON_STATUS:
                     self.__radio_on = True
@@ -262,9 +260,8 @@ class NRF52840(ZbAuditorServices):
                 time.sleep(0.1)
 
     def device_sniffer_on(self, channel=None, page=0):
-        """Start Sniffer Service."""
-
-        # Check Packet Capture service is supported
+        """Start sniffer service."""
+        # Check packet capture service is supported
         if not self.is_service_active(self.RAW_CAPTURE):
             raise NotImplementedError("Service not active")
 
@@ -280,30 +277,29 @@ class NRF52840(ZbAuditorServices):
 
     @staticmethod
     def calculate_crc(data):
-        """Returns CRC of data
+        """Return CRC of data.
+
         CRC algorithm implementation is based on pseudo code from
         Frank da Cruz (June 1986), Kermit Protocol Manual, Sixth Edition
         Refer: http://reveng.sourceforge.net/crc-catalogue/16.htm#crc.cat.crc-16-kermit
 
         :return: a CRC that is the FCS for the frame, as two hex bytes in little-endian order.
         """
-
         crc = 0
         for i, dummy in enumerate(data):
             tmp = data[i]
-            quot = (crc ^ tmp) & 15				# Do low-order 4 bits
+            quot = (crc ^ tmp) & 15  # Do low-order 4 bits
             crc = (crc // 16) ^ (quot * 4225)
-            quot = (crc ^ (tmp // 16)) & 15		# And high 4 bits
+            quot = (crc ^ (tmp // 16)) & 15  # And high 4 bits
             crc = (crc // 16) ^ (quot * 4225)
-        return struct.pack("<H", crc)                  # return as bytes in little endian order
+        return struct.pack("<H", crc)  # return as bytes in little endian order
 
     def _process_sniffer_response(self, rxframe):
-        """Returns dictionary of Zigbee packet and timestamp.
+        """Return dictionary of Zigbee packet and timestamp.
 
         :param array: Frame data array
         :return: dictionary {"packet": zbpacket, "timestamp": 32bit timestamp}
         """
-
         # Get Start of Frame byte & encap len
         # Start of Frame @ 0th byte = 00
         # Frame Length @ 1st byte of frame
@@ -341,24 +337,26 @@ class NRF52840(ZbAuditorServices):
             return ret
 
     def device_read(self, timeout=100):
-        """Read packet from usb interface.
-        If zigbee packet length is less than 56 bytes process the packet
-        If zigbee packet length is more than 56 bytes, waits for next chunk
+        """Read packet from USB interface.
+
+        If Zigbee packet length is less than 56 bytes process the packet
+        If Zigbee packet length is more than 56 bytes, waits for next chunk
 
         :param timeout: Time out for read operation
         :return: Zigbee packet and timestamp as {"packet": packet, "timestamp": timestamp (32bit) }
         """
 
         if not self.__sniffer_on:
-            self.device_sniffer_on(self.__channel)    # start sniffing
+            self.device_sniffer_on(self.__channel)  # start sniffing
 
         rxframe = array.array("B")
 
         while True:
-            frame_chunk = None    # This will receive chunk of 64 bytes
+            frame_chunk = None  # This will receive chunk of 64 bytes
             try:
-                frame_chunk = self.usb_read(size_or_buffer=self._maxpacketsize,
-                                            timeout=timeout)
+                frame_chunk = self.usb_read(
+                    size_or_buffer=self._maxpacketsize, timeout=timeout
+                )
 
             except usb.core.USBError as err:
                 # Raise exceptions other than time out
@@ -402,13 +400,12 @@ class NRF52840(ZbAuditorServices):
                 raise BufferError("Frame length greater than 64")
 
     def process_scan_response(self, response):
-        """Returns dictionary of number of deivces found in scan
+        """Return dictionary of number of deivces found in scan
         and device zigbee beacon info.
 
         :param array: Frame data array
         :return: Result of Network scan as {"Device Count": 1, "Beacons": [{ ... }]}
         """
-
         numdevices = response[0]
         framedata = response[1:]
 
@@ -418,7 +415,9 @@ class NRF52840(ZbAuditorServices):
         # Parsed device info
         for i in range(numdevices):
             offset = i * self.BEACON_INFO_LEN
-            beacondata = array.array("B", framedata[offset:offset + self.BEACON_INFO_LEN])
+            beacondata = array.array(
+                "B", framedata[offset : offset + self.BEACON_INFO_LEN]
+            )
 
             data_list = ["", "", "", "", "", "", "", "", "", "", "", [], "", "", ""]
             data_list = struct.unpack_from("<HHBBBBBBBBBB8sIbB", beacondata)
@@ -469,13 +468,13 @@ class NRF52840(ZbAuditorServices):
         return nwk_data
 
     def device_scan_zigbee_network(self, mask=0x07FFF800):
-        """This method set device in IEEE802.15.4 network scan mode,
-        IEEE 802.15.4 channels are scan for beacon and data
+        """Set device in IEEE802.15.4 network scan mode.
+
+        Also, the IEEE 802.15.4 channels are scan for beacon and data
 
         :param mask: channel mask, channel 25 => 0x07000000 .. channel 11 => 0x00000800
         :return: network scan data
         """
-
         # Check network scan service is supported
         if not self.is_service_active(self.NWK_SCAN):
             raise NotImplementedError("Service not active")
@@ -488,8 +487,7 @@ class NRF52840(ZbAuditorServices):
         mask_bytes = mask.to_bytes(4, byteorder="big", signed=False)
 
         # Send Network Scan command
-        self.usb_cntrl_write(self.SRV_ZB_NWKSCAN_REQ, 0, 0,
-                             data_or_wlength=mask_bytes)
+        self.usb_cntrl_write(self.SRV_ZB_NWKSCAN_REQ, 0, 0, data_or_wlength=mask_bytes)
 
         # Read network scan data
         scan_resp = []
@@ -498,8 +496,10 @@ class NRF52840(ZbAuditorServices):
         while True:
             pdata = None
             try:
-                pdata = self.usb_read(size_or_buffer=self._maxpacketsize,
-                                      timeout=self.USB_READ_TIMEOUT_MIN)
+                pdata = self.usb_read(
+                    size_or_buffer=self._maxpacketsize,
+                    timeout=self.USB_READ_TIMEOUT_MIN,
+                )
             # Raise exceptions other than timeout
             except usb.core.USBError as err:
                 if err.errno != self.USB_OPERATION_TIMEOUT:  # not timed out
@@ -510,7 +510,7 @@ class NRF52840(ZbAuditorServices):
             if len(pdata) == self.SRV_ZB_NWKSCAN_RESP_MIN_LEN:
                 (service, data_len, status) = struct.unpack_from("<BBB", pdata)
 
-                # check returned data is command response
+                # Check returned data is command response
                 if service == self.SRV_ZB_NWKSCAN_RESP:
                     if data_len == self.SRV_ZB_NWKSCAN_RESP_DATA_LEN:
                         # If response is 3 byte then it must be scan start or end
@@ -523,7 +523,10 @@ class NRF52840(ZbAuditorServices):
                             self.device_radio_off()
 
                             # Network Scan finished, Process response data
-                            if len(scan_resp) == dev_data_len + self.SRV_ZB_NWKSCAN_RESP_MIN_LEN:
+                            if (
+                                len(scan_resp)
+                                == dev_data_len + self.SRV_ZB_NWKSCAN_RESP_MIN_LEN
+                            ):
                                 ret = self.process_scan_response(scan_resp[3:])
                                 return ret
                             return None
@@ -537,7 +540,9 @@ class NRF52840(ZbAuditorServices):
                 data_len = scan_resp[self.SRV_ZB_NWKSCAN_RESP_LEN_INDEX]
                 numdev = scan_resp[self.SRV_ZB_NWKSCAN_RESP_NUM_DEV_INDEX]
 
-                dev_data_len = (numdev * self.BEACON_INFO_LEN) + self.SRV_ZB_NWKSCAN_RESP_DEV_NUM_LEN
+                dev_data_len = (
+                    numdev * self.BEACON_INFO_LEN
+                ) + self.SRV_ZB_NWKSCAN_RESP_DEV_NUM_LEN
 
             if len(scan_resp) < dev_data_len + self.SRV_ZB_NWKSCAN_RESP_MIN_LEN:
                 continue
@@ -545,7 +550,7 @@ class NRF52840(ZbAuditorServices):
             continue
 
     def device_inject_packet(self, packet):
-        """Inject Packet too device.
+        """Inject packet too device.
 
         :param packet: byte array
         """
@@ -556,30 +561,28 @@ class NRF52840(ZbAuditorServices):
 
         # Append two bytes to be replaced with FCS by firmware.
         # packet += b"\x00\x00"
-        self.usb_cntrl_write(self.SRV_SEND_PACKET_INJECT,
-                             0, 0, data_or_wlength=packet)
+        self.usb_cntrl_write(self.SRV_SEND_PACKET_INJECT, 0, 0, data_or_wlength=packet)
         self.txcount += 1
 
     def device_sniffer_off(self):
-        """Turn OFF Sniffer service."""
-
+        """Turn off sniffer service."""
         if self.__sniffer_on:
             self.usb_cntrl_write(self.SRV_SET_SNIFF_STOP)
             self.__sniffer_on = False
 
     def device_radio_off(self):
-        """Turn OFF Sniffer and Radio."""
-
-        # First Stop Sniffer
+        """Turn off sniffer and radio."""
+        # First stop sniffer
         self.device_sniffer_off()
 
-        # Turn off Radio & MAC
+        # Turn off radio & MAC
         if self.__radio_on:
             self.usb_cntrl_write(self.SRV_POWER_ON, windex=0)
             self.__radio_on = False
 
-    def usb_cntrl_read(self, brequest, wvalue=0, windex=0,
-                       data_or_wlength=None, timeout=100):
+    def usb_cntrl_read(
+        self, brequest, wvalue=0, windex=0, data_or_wlength=None, timeout=100
+    ):
         """USB Control Transfer, EP0 DIR IN.
 
         :param brequest: usb bRequest
@@ -589,14 +592,18 @@ class NRF52840(ZbAuditorServices):
         :param timeout: timeout for write transaction
         :return: bytes read from driver (array object)
         """
+        return self.dev.ctrl_transfer(
+            self.USB_DIR_IN,
+            bRequest=brequest,
+            wValue=wvalue,
+            wIndex=windex,
+            data_or_wLength=data_or_wlength,
+            timeout=timeout,
+        )
 
-        return self.dev.ctrl_transfer(self.USB_DIR_IN, bRequest=brequest,
-                                      wValue=wvalue, wIndex=windex,
-                                      data_or_wLength=data_or_wlength,
-                                      timeout=timeout)
-
-    def usb_cntrl_write(self, brequest, wvalue=0, windex=0,
-                        data_or_wlength=None, timeout=200):
+    def usb_cntrl_write(
+        self, brequest, wvalue=0, windex=0, data_or_wlength=None, timeout=200
+    ):
         """USB Control Transfer, EP0 DIR OUT.
 
         :param brequest: usb bRequest
@@ -606,11 +613,14 @@ class NRF52840(ZbAuditorServices):
         :param timeout: timeout for write transaction
         :return: number of bytes written
         """
-
-        return self.dev.ctrl_transfer(self.USB_DIR_OUT, bRequest=brequest,
-                                      wValue=wvalue, wIndex=windex,
-                                      data_or_wLength=data_or_wlength,
-                                      timeout=timeout)
+        return self.dev.ctrl_transfer(
+            self.USB_DIR_OUT,
+            bRequest=brequest,
+            wValue=wvalue,
+            wIndex=windex,
+            data_or_wLength=data_or_wlength,
+            timeout=timeout,
+        )
 
     def usb_read(self, size_or_buffer, timeout=200):
         """USB Bulk read for EP3.
@@ -619,12 +629,10 @@ class NRF52840(ZbAuditorServices):
         :param timeout: Timeout for read transaction
         :return: bytes read from driver (array object)
         """
-
         return self.dev.read(self.__data_ep, size_or_buffer, timeout)
 
     def get_device_name(self):
-        """Returns device name."""
-
+        """Return the device name."""
         return self._dev_name
 
     def get_radio_on_flag(self):
@@ -637,23 +645,20 @@ class NRF52840(ZbAuditorServices):
 
         :param flag: True or False
         """
-
         self.__radio_on = flag
 
     def get_sniffer_on_flag(self):
-        """Returns sniffer_on flag value."""
-
+        """Return the sniffer_on flag value."""
         return self.__sniffer_on
 
     def set_sniffer_on_flag(self, flag):
         """Set sniffer_on flag value."""
-
         self.__sniffer_on = flag
 
     def close(self):
-        """Turn OFF Sniffer and Radio before cloasing."""
-
+        """Turn off sniffer and radio before closing."""
         self.device_radio_off()
 
     def __del__(self):
+        """Close device."""
         self.close()
