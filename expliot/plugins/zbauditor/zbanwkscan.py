@@ -1,5 +1,4 @@
 """Support for Zigbee network Scanner for zigbee auditor."""
-
 import json
 import time
 from expliot.core.common.exceptions import sysexcinfo
@@ -20,7 +19,9 @@ class ZbAuditorNwkScan(Test):
             "selected channels.",
             author="Dattatray Hinge",
             email="dattatray@expliot.io",
-            ref=["https://www.zigbee.org/wp-content/uploads/2014/11/docs-05-3474-20-0csg-zigbee-specification.pdf"],
+            ref=[
+                "https://www.zigbee.org/wp-content/uploads/2014/11/docs-05-3474-20-0csg-zigbee-specification.pdf"
+            ],
             category=TCategory(TCategory.ZB_AUDITOR, TCategory.RD, TCategory.RECON),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
             needroot=True,
@@ -45,9 +46,7 @@ class ZbAuditorNwkScan(Test):
         )
 
         self.argparser.add_argument(
-            "-f",
-            "--filepath",
-            help="file name to store network scan result as a log.",
+            "-f", "--filepath", help="file name to store network scan result as a log."
         )
 
         self.found = False
@@ -73,47 +72,60 @@ class ZbAuditorNwkScan(Test):
                 TLog.generic("{:<17}: {}".format("Source PAN ID", dev["source_panid"]))
 
                 if "extn_panid" in dev:
-                    TLog.generic("{:<17}: {}".format("Extended PAN ID (Device Address)", dev["extn_panid"]))
+                    TLog.generic(
+                        "{:<17}: {}".format(
+                            "Extended PAN ID (Device Address)", dev["extn_panid"]
+                        )
+                    )
 
-                TLog.generic("{:<17}: {}".format("Pan Coordinator", dev["pan_coordinator"]))
-                TLog.generic("{:<17}: {}".format("Permit Joining", dev["permit_joining"]))
+                TLog.generic(
+                    "{:<17}: {}".format("Pan Coordinator", dev["pan_coordinator"])
+                )
+                TLog.generic(
+                    "{:<17}: {}".format("Permit Joining", dev["permit_joining"])
+                )
 
                 if "router_capacity" in dev:
-                    TLog.generic("{:<17}: {}".format("Router Capacity", dev["router_capacity"]))
+                    TLog.generic(
+                        "{:<17}: {}".format("Router Capacity", dev["router_capacity"])
+                    )
 
                 if "device_capacity" in dev:
-                    TLog.generic("{:<17}: {}".format("Device Capacity", dev["device_capacity"]))
+                    TLog.generic(
+                        "{:<17}: {}".format("Device Capacity", dev["device_capacity"])
+                    )
 
                 if "protocol_version" in dev:
-                    TLog.generic("{:<17}: {}".format("Protocol Version", dev["protocol_version"]))
+                    TLog.generic(
+                        "{:<17}: {}".format("Protocol Version", dev["protocol_version"])
+                    )
 
                 if "stack_profile" in dev:
-                    TLog.generic("{:<17}: {}".format("Stack Profile", dev["stack_profile"]))
+                    TLog.generic(
+                        "{:<17}: {}".format("Stack Profile", dev["stack_profile"])
+                    )
 
                 TLog.generic("{:<17}: {}".format("LQI", dev["lqi"]))
-                TLog.generic("{:<17}: {}".format("rssi", dev["rssi"]))
+                TLog.generic("{:<17}: {}".format("RSSI", dev["rssi"]))
                 TLog.generic("")
 
     def write_result_to_logfile(self, result_dict):
-        """Write resultin file with json format."""
-
+        """Write results in a file as JSON."""
         with open(self.filename, "w") as write_file:
             result_json_str = json.dumps(result_dict)
             json.dump(json.loads(result_json_str), write_file, indent=4)
 
     def get_channel_mask(self):
-        """Validate start and end scan channels and retutns channel mask."""
-
-        mask = 0x80000000       # MSB one indicate its mask
+        """Validate start and end scan channels and returns channel mask."""
+        mask = 0x80000000  # MSB one indicate its mask
         # Calculate channel mask for scanning
         for i in range(self.args.start, self.args.end + 1):
-            mask |= 1 << i       # shift 1 by channel number
+            mask |= 1 << i  # shift 1 by channel number
 
         return mask
 
     def execute(self):
         """Execute the test."""
-
         if self.args.start < 11 or self.args.start > 26:
             self.result.setstatus(passed=False, reason="Invalid start channel")
             return
@@ -130,10 +142,10 @@ class ZbAuditorNwkScan(Test):
             self.filename = self.args.filepath
 
         # Print user input
-        TLog.generic("{:<13}: ({})".format("Start Channel", self.args.start))
-        TLog.generic("{:<13}: ({})".format("End Channel", self.args.end))
+        TLog.generic("{:<13}: ({})".format("Start channel", self.args.start))
+        TLog.generic("{:<13}: ({})".format("End channel", self.args.end))
         if self.filename is not None:
-            TLog.generic("{:<13}: ({})".format("Log File", self.filename))
+            TLog.generic("{:<13}: ({})".format("Log file", self.filename))
 
         TLog.generic("")
 
@@ -168,7 +180,7 @@ class ZbAuditorNwkScan(Test):
                 self.found = False
                 self.reason = "Couldn't find any Zigbee device on network"
 
-        except:   # noqa: E722
+        except:  # noqa: E722
             self.found = False
             self.reason = "Exception caught: {}".format(sysexcinfo())
 
