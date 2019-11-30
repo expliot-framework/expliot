@@ -1,7 +1,6 @@
 """Support for Zigbee Auditor Device Information."""
-
-from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.core.interfaces.zbauditor import ZbAuditor
+from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 
 
 # pylint: disable=bare-except
@@ -11,11 +10,11 @@ class ZbAuditorDevInfo(Test):
     def __init__(self):
         super().__init__(
             name="devinfo",
-            summary="Displays ZigBee Auditor device informations",
-            descr="This plugin displays information about ZigBee Auditor.",
+            summary="Displays Zigbee Auditor device informations",
+            descr="This plugin displays information about Zigbee Auditor.",
             author="Dattatray Hinge",
             email="dattatray@expliot.io",
-            ref=["Reference: ZigBee Auditor user manual"],
+            ref=["Reference: Zigbee Auditor user manual"],
             category=TCategory(TCategory.ZB_AUDITOR, TCategory.RD, TCategory.RECON),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
             needroot=True,
@@ -47,6 +46,6 @@ class ZbAuditorDevInfo(Test):
             auditor = ZbAuditor()
             dev_info_dict = auditor.get_interface_info()
             self.display_device_info(dev_info_dict)
-        except:   # noqa: E722
+        except:  # noqa: E722
             self.result.exception()
             return

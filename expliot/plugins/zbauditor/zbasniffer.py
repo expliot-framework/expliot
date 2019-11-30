@@ -1,12 +1,9 @@
-"""Support for IEEE 802.15.4 packet sniff amd packet dump for zigbee auditor."""
-
-# import os
-# from datetime import datetime
-from expliot.core.tests.test import Test, TCategory, TTarget, TLog
-from expliot.core.protocols.radio.dot154 import Dot154Radio
+"""Support for IEEE 802.15.4 packet sniff amd packet dump for Zigbee auditor."""
 from expliot.core.common.pcapdlt import PCAP_DLT_IEEE802_15_4
 from expliot.core.common.pcaphelper import PcapDumper, PcapFrame
 from expliot.core.common.timer import Timer
+from expliot.core.protocols.radio.dot154 import Dot154Radio
+from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 
 
 # pylint: disable=bare-except
@@ -16,12 +13,14 @@ class ZbAuditorSniffer(Test):
     def __init__(self):
         super().__init__(
             name="sniffer",
-            summary="IEEE 802.15.4 Packet Sniffer",
+            summary="IEEE 802.15.4 packet sniffer",
             descr="This plugin captures IEEE 802.15.4 packets on a specified "
             "channel and saves them in pcap format.",
             author="Dattatray Hinge",
             email="dattatray@expliot.io",
-            ref=["https://www.zigbee.org/wp-content/uploads/2014/11/docs-05-3474-20-0csg-zigbee-specification.pdf"],
+            ref=[
+                "https://www.zigbee.org/wp-content/uploads/2014/11/docs-05-3474-20-0csg-zigbee-specification.pdf"
+            ],
             category=TCategory(TCategory.ZB_AUDITOR, TCategory.RD, TCategory.RECON),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
             needroot=True,
@@ -32,7 +31,7 @@ class ZbAuditorSniffer(Test):
             "--channel",
             type=int,
             required=True,
-            help="IEEE 802.15.4 2.4 GHz Channel to Sniff for zigbee packets",
+            help="IEEE 802.15.4 2.4 GHz channel to sniff for Zigbee packets",
         )
 
         self.argparser.add_argument(
@@ -104,12 +103,20 @@ class ZbAuditorSniffer(Test):
                         break
             finally:
                 TLog.generic("")
-                TLog.generic("{:<13}: ({})".format("Packet Received", radio.get_received_packets()))
-                TLog.generic("{:<13}: ({})".format("Packet Transmit", radio.get_transmitted_packets()))
+                TLog.generic(
+                    "{:<13}: ({})".format(
+                        "Packet received", radio.get_received_packets()
+                    )
+                )
+                TLog.generic(
+                    "{:<13}: ({})".format(
+                        "Packet transmit", radio.get_transmitted_packets()
+                    )
+                )
 
                 # Turn OFF radio sniffer and exit
                 pcap_writer.close()
                 radio.sniffer_off()
 
-        except:   # noqa: E722
+        except:  # noqa: E722
             self.result.exception()
