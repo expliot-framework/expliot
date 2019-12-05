@@ -7,6 +7,7 @@ from Crypto.Cipher import AES  # nosec
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 
 
+# pylint: disable=bare-except
 class KHijack(Test):
     """Tests for Kankun smart plugs."""
 
@@ -75,12 +76,12 @@ class KHijack(Test):
                 string = string + " "
             if encrypt is True:
                 return aesobj.encrypt(string)
-            else:
-                return aesobj.decrypt(string)
-        else:
-            return None
 
-    def send_recv(self, ip, port, message):
+            return aesobj.decrypt(string)
+
+        return None
+
+    def send_recv(self, ip_addr, port, message):
         """
         Send and then receive encrypted data to/from the smart plug.
 
@@ -92,7 +93,7 @@ class KHijack(Test):
         ret = None
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:
-            sock.connect((ip, port))
+            sock.connect((ip_addr, port))
             sock.send(self.cipher(message))
             ret = sock.recv(1024)
             ret = self.cipher(ret, encrypt=False)
@@ -119,20 +120,21 @@ class KHijack(Test):
             msg = "{}%confirm#{}%request".format(msg, cid)
         return msg
 
-    def get_confirmid(self, m):
+    @staticmethod
+    def get_confirmid(msg):
         """
         Extract the confirmation id from the response message
         :param self:
         :param m: The response message
         :return: The confirmation id
         """
-        p = re.search(
-            r"confirm#(\w+)", m.decode("utf-8")
+        cid = re.search(
+            r"confirm#(\w+)", msg.decode("utf-8")
         )  # get the confirmation ID number only!!
-        if p is not None:
-            return p.group(1)
-        else:
-            return None
+        if cid is not None:
+            return cid.group(1)
+
+        return None
 
     def execute(self):
         """Execute the test."""
@@ -141,28 +143,28 @@ class KHijack(Test):
                 self.args.cmd, self.args.rhost, self.args.rport
             )
         )
-        op = None
+        cmd_op = None
         print(
             "--cmd ({}) cmd is on? ({})".format(self.args.cmd, (self.args.cmd == "on"))
         )
         if self.args.cmd.lower() == "on":
-            op = "open"
+            cmd_op = "open"
         elif self.args.cmd.lower() == "off":
-            op = "close"
+            cmd_op = "close"
         else:
             self.result.setstatus(
                 passed=False, reason="Unknown --cmd ({})".format(self.args.cmd)
             )
             return
-        m = self.createmsg(op)
+        msg = self.createmsg(cmd_op)
         ret = None
-        TLog.trydo("Sending {} command: ({})".format(op, m))
+        TLog.trydo("Sending {} command: ({})".format(cmd_op, msg))
         # Step 1: Send command and receive the confirmation ID response
-        ret = self.send_recv(self.args.rhost, self.args.rport, m)
+        ret = self.send_recv(self.args.rhost, self.args.rport, msg)
         if ret is None:
             self.result.setstatus(
                 passed=False,
-                reason="Communication error while sending message({})".format(m),
+                reason="Communication error while sending message({})".format(msg),
             )
             return
 
@@ -176,14 +178,14 @@ class KHijack(Test):
             )
             return
         TLog.success("Received Confirmation ID: ({})".format(cid))
-        m = self.createmsg("confirm", cid)
-        TLog.trydo("Sending confirm command: ({})".format(m))
+        msg = self.createmsg("confirm", cid)
+        TLog.trydo("Sending confirm command: ({})".format(msg))
         # Step 2: Send Confirmation command with the confirmation ID and receive ack response
-        ret = self.send_recv(self.args.rhost, self.args.rport, m)
+        ret = self.send_recv(self.args.rhost, self.args.rport, msg)
         if ret is None:
             self.result.setstatus(
                 passed=False,
-                reason="Communication error while sending message({})".format(m),
+                reason="Communication error while sending message({})".format(msg),
             )
             return
         TLog.success("Received response: ({})".format(ret.decode("utf-8")))

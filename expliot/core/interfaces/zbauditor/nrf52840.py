@@ -35,7 +35,6 @@ class NRF52840(ZbAuditorServices):
     SRV_SET_SNIFF_STOP = 0x24
     SRV_SEND_PACKET_INJECT = 0x25
     SRV_ZB_NWKSCAN_REQ = 0x31
-    SRV_ACK_ATTACK_PANID = 0x32
 
     # Response mask for service
     SERVICE_RESP_MASK = 0x80
