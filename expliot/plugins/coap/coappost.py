@@ -44,6 +44,7 @@ class CoapPost(Test):
             "-l", "--payload", required=True, help="Payload of the POST request"
         )
 
+    # pylint: disable=protected-access
     def execute(self):
         """Execute the test."""
         TLog.generic(
