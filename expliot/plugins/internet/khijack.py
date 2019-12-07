@@ -84,14 +84,14 @@ class KHijack(Test):
             encryptor = cipher.encryptor()
             cipher_text = encryptor.update(padded_string) + encryptor.finalize()
             return cipher_text
-        else:
-            decryptor = cipher.decryptor()
-            decrypted_text = decryptor.update(string) + decryptor.finalize()
 
-            unpadder = padding.PKCS7(128).unpadder()
-            data = unpadder.update(decrypted_text)
-            clear_text = data + unpadder.finalize()
-            return clear_text
+        decryptor = cipher.decryptor()
+        decrypted_text = decryptor.update(string) + decryptor.finalize()
+
+        unpadder = padding.PKCS7(128).unpadder()
+        data = unpadder.update(decrypted_text)
+        clear_text = data + unpadder.finalize()
+        return clear_text
 
     def send_receive(self, ip_address, port, message):
         """
