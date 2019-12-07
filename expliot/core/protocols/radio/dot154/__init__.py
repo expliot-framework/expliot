@@ -52,11 +52,6 @@ class Dot154Radio:
             return packet["packet"]
         return None
 
-        # while True:
-        #     packet = self.__zbauditor.packet_read()
-        #     if packet is not None:
-        #         return packet["packet"]
-
     def sniffer_off(self):
         """Turn OFF Sniffer."""
 
