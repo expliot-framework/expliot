@@ -26,11 +26,12 @@ class TCategory(namedtuple("TCategory", "tech, iface, action")):
     # Network Protocols
     COAP = "coap"
     DICOM = "dicom"
+    MDNS = "mdns"
     MODBUS = "modbus"
     MQTT = "mqtt"
     UDP = "udp"
 
-    # Radio protocols
+# Radio protocols
     BLE = "ble"
     ZIGBEE = "zigbee"
     IEEE802154 = "802154"
@@ -49,24 +50,25 @@ class TCategory(namedtuple("TCategory", "tech, iface, action")):
 
     _tech = [
         BLE,
+        BUS_AUDITOR,
         CAN,
         COAP,
         DICOM,
+        FW_AUDITOR,
         I2C,
         IEEE802154,
         JTAG,
+        MDNS,
         MODBUS,
         MQTT,
         SPI,
         UART,
         UDP,
-        ZIGBEE,
         ZB_AUDITOR,
-        BUS_AUDITOR,
-        FW_AUDITOR,
+        ZIGBEE,
     ]
 
-    # Interface category. Whether the test is for software, hardware or radio
+# Interface category. Whether the test is for software, hardware or radio
     HW = "hardware"
     RD = "radio"
     SW = "software"
