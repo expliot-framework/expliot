@@ -20,6 +20,7 @@ setup(
     author_email="aseemjakhar@gmail.com",
     description="Expliot - IoT security testing and exploitation framework",
     long_description=long_description,
+    long_description_content_type="text/markdown",
     packages=find_packages(),
     entry_points={"console_scripts": ["expliot=expliot.expliot:EfCli.main"]},
     install_requires=[
