@@ -95,7 +95,7 @@ class MqttSub(Test):
             )
             for message in messages:
                 TLog.success(
-                    "(topic={})(payload={})".format(message.topic, str(message.payload))
+                    "(topic={})(payload={})".format(message.topic, message.payload)
                 )
         except:  # noqa: E722
             self.result.exception()
