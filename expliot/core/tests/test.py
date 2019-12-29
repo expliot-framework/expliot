@@ -30,6 +30,8 @@ class TCategory(namedtuple("TCategory", "tech, iface, action")):
     MODBUS = "modbus"
     MQTT = "mqtt"
     UDP = "udp"
+    TCP = "tcp"
+    HTTP = "http"
 
 # Radio protocols
     BLE = "ble"
@@ -43,6 +45,8 @@ class TCategory(namedtuple("TCategory", "tech, iface, action")):
     SPI = "spi"
     UART = "uart"
 
+    # Other
+    CRYPTO = "crypto"
     # Auditors
     ZB_AUDITOR = "zbauditor"
     BUS_AUDITOR = "busauditor"
@@ -64,6 +68,9 @@ class TCategory(namedtuple("TCategory", "tech, iface, action")):
         SPI,
         UART,
         UDP,
+        TCP,
+        HTTP,
+        CRYPTO,
         ZB_AUDITOR,
         ZIGBEE,
     ]

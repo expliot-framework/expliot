@@ -38,5 +38,3 @@ class Discovery(Test):
             details.scan()
             for device in details.devices:
                 TLog.success(device)
-
-        self.result.setstatus(passed=True)
