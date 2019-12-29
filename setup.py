@@ -37,6 +37,7 @@ setup(
         "pyspiflash>=0.5.2",
         "python-can>=2.1.0",
         "zeroconf>=0.23.0",
+        "AWSIoTPythonSDK>=1.4.7",
     ],
     python_requires=">=3.5",
     classifiers=[

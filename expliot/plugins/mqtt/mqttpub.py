@@ -1,4 +1,4 @@
-"""Plugin to publish to a topic of a MQTT broker."""
+"""Plugin to publish to a topic on an MQTT broker."""
 from expliot.core.protocols.internet.mqtt import SimpleMqttClient
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.plugins.mqtt import DEFAULT_MQTT_PORT, MQTT_REFERENCE

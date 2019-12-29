@@ -112,6 +112,20 @@ class TTarget(namedtuple("TTarget", "name, version, vendor")):
 
     GENERIC = "generic"
 
+    # Target name
+    AWS = "aws"
+    _name = [
+        AWS,
+    ]
+
+    # Target version
+
+    # Target vendor
+    AMAZON = "amazon"
+    _vendor = [
+        AMAZON,
+    ]
+
     def __init__(self, name, version, vendor):
         """Initialize the test target."""
         super().__init__()
@@ -285,7 +299,7 @@ class Test:
         TLog.generic("{:<13} {}".format("Author Email:", self.email))
         TLog.generic("{:<13} {}".format("Reference(s):", self.ref))
         TLog.generic(
-            "{:<13} technology={}|Interface={}|Action={}".format(
+            "{:<13} Technology={}|Interface={}|Action={}".format(
                 "Category:",
                 self.category.tech,
                 self.category.iface,
