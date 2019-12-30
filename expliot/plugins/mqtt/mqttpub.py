@@ -71,7 +71,7 @@ class MqttPub(Test):
         """Execute the test."""
         TLog.generic(
             "Publishing message on topic ({}) to MQTT Broker ({}) on port "
-            "({})".format(self.args.rhost, self.args.topic, self.args.rport)
+            "({})".format(self.args.topic, self.args.rhost, self.args.rport)
         )
         credentials = None
         if self.args.user and self.args.passwd:
