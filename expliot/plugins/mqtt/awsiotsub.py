@@ -92,7 +92,7 @@ class AwsIotSub(Test):
             default=DEFAULT_AWSIOT_TIMEOUT,
             type=int,
             help="Time, in seconds, it will keep waiting/reading messages. "
-            "Default is {} 5 secs".format(DEFAULT_AWSIOT_TIMEOUT),
+            "Default is {} secs".format(DEFAULT_AWSIOT_TIMEOUT),
         )
 
     @classmethod
