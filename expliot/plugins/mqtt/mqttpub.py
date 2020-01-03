@@ -1,7 +1,9 @@
 """Plugin to publish to a topic on an MQTT broker."""
-from expliot.core.protocols.internet.mqtt import SimpleMqttClient
+from expliot.core.protocols.internet.mqtt import \
+    MqttClient, DEFAULT_MQTT_PORT, MQTT_ERR_SUCCESS
+
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
-from expliot.plugins.mqtt import DEFAULT_MQTT_PORT, MQTT_REFERENCE
+from expliot.plugins.mqtt import MQTT_REFERENCE
 
 
 # pylint: disable=bare-except
@@ -68,28 +70,28 @@ class MqttPub(Test):
         )
 
     def execute(self):
-        """Execute the test."""
+        """Execute the plugin."""
         TLog.generic(
             "Publishing message on topic ({}) to MQTT Broker ({}) on port "
             "({})".format(self.args.topic, self.args.rhost, self.args.rport)
         )
-        credentials = None
-        if self.args.user and self.args.passwd:
-            credentials = {"username": self.args.user, "password": self.args.passwd}
-            TLog.trydo(
-                "Using authentication (username={})(password={})".format(
-                    self.args.user, self.args.passwd
-                )
-            )
         try:
-            SimpleMqttClient.pub(
-                self.args.topic,
-                payload=self.args.msg,
-                hostname=self.args.rhost,
-                port=self.args.rport,
-                auth=credentials,
-                client_id=self.args.id,
+            client = MqttClient(client_id=self.args.id)
+            client.easy_config(
+                user=self.args.user,
+                passwd=self.args.passwd,
+                on_connect=client.on_connectcb,
+                on_publish=client.on_publishcb,
             )
-            TLog.success("Done")
+            client.connect(self.args.rhost, self.args.rport)
+            client.publish(self.args.topic, self.args.msg, 1)
+            client.loop_forever()
+            if client.connect_rc != MQTT_ERR_SUCCESS:
+                self.result.setstatus(passed=False, reason=client.rcstr(client.connect_rc))
+                TLog.fail("MQTT Connection Failed. Return code ({}:{})".format(
+                    client.connect_rc, client.rcstr(client.connect_rc))
+                )
+            else:
+                TLog.success("Message published")
         except:  # noqa: E722
             self.result.exception()
