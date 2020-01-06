@@ -12,7 +12,7 @@ class BleCharRead(Test):
         super().__init__(
             name="readchar",
             summary="BLE Characteristic Reader",
-            descr="This test allows you to read a value to a characteristic on a BLE peripheral device",
+            descr="This test allows you to read a value to a characteristic from a BLE peripheral device",
             author="Aseem Jakhar",
             email="aseemjakhar@gmail.com",
             ref=["https://en.wikipedia.org/wiki/Bluetooth_Low_Energy"],
