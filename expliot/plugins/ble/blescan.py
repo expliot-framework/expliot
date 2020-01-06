@@ -157,9 +157,10 @@ class BleScan(Test):
                         )
                     )
                     if self.args.verbose is True:
-                        support_read = char.supportsRead()
-                        TLog.success("    (supports_read={})".format(support_read))
-                        if support_read is True:
+                        support_property = char.propertiesToString()
+                        supports_read = char.supportsRead()
+                        TLog.success("    (supported_properties={})".format(support_property))
+                        if supports_read is True:
                             TLog.success("    (value={})".format(char.read()))
         except:  # noqa: E722
             self.reason = "Exception caught: {}".format(sysexcinfo())
