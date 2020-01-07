@@ -24,7 +24,7 @@ setup(
     packages=find_packages(),
     entry_points={"console_scripts": ["expliot=expliot.expliot:EfCli.main"]},
     install_requires=[
-        "bluepy>=1.1.4",
+        "bluepy>=1.3.0",
         "cmd2>=0.9.15",
         "coapthon3>=1.0.1",
         "paho-mqtt>=1.3.1",

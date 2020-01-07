@@ -43,7 +43,7 @@ class BlePeripheral(Peripheral):
                 sending only write request (for which there is no response
                 from the peripheral). Default is False.
         """
-        self.delegate(delegate)
+        self.withDelegate(delegate)
         self.writeCharacteristic(handle + 1, b"\x01\x00", withResponse=write_response)
 
 
