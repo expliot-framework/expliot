@@ -1,6 +1,8 @@
 """Test the possibility to read data to a Bluetooth LE device."""
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
-from expliot.core.protocols.radio.ble import Ble, BlePeripheral
+from expliot.core.protocols.radio.ble import BlePeripheral, \
+    ADDR_TYPE_RANDOM, ADDR_TYPE_PUBLIC
+from expliot.plugins.ble import BLE_REF
 
 
 # pylint: disable=bare-except
@@ -13,9 +15,9 @@ class BleCharRead(Test):
             name="readchar",
             summary="BLE Characteristic Reader",
             descr="This test allows you to read a value to a characteristic from a BLE peripheral device",
-            author="Aseem Jakhar",
-            email="aseemjakhar@gmail.com",
-            ref=["https://en.wikipedia.org/wiki/Bluetooth_Low_Energy"],
+            author="Arun Magesh",
+            email="arun.m@payatu.com",
+            ref=[BLE_REF],
             category=TCategory(
                 TCategory.BLE,
                 TCategory.RD,
@@ -59,9 +61,9 @@ class BleCharRead(Test):
             device.connect(
                 self.args.addr,
                 addrType=(
-                    Ble.ADDR_TYPE_RANDOM
+                    ADDR_TYPE_RANDOM
                     if self.args.randaddrtype
-                    else Ble.ADDR_TYPE_PUBLIC
+                    else ADDR_TYPE_PUBLIC
                 ),
             )
             TLog.success(

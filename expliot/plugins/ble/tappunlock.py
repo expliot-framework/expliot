@@ -2,7 +2,8 @@
 from hashlib import md5
 
 from expliot.core.tests.test import TCategory, TTarget, Test, TLog
-from expliot.core.protocols.radio.ble import Ble, BlePeripheral
+from expliot.core.protocols.radio.ble import Ble, BlePeripheral, \
+    ADDR_TYPE_RANDOM
 
 
 # pylint: disable=bare-except
@@ -127,7 +128,7 @@ class TappUnlock(Test):
             checksum_string = "{:04x}".format(checksum)
             # Create the pairing data
             pairing_data = pairing_data + checksum_string[2:4] + checksum_string[0:2]
-            device.connect(mac, addrType=Ble.ADDR_TYPE_RANDOM)
+            device.connect(mac, addrType=ADDR_TYPE_RANDOM)
             TLog.trydo("Sending pair data({})".format(pairing_data))
             device.writeCharacteristic(self.UNLOCKHNDL, bytes.fromhex(pairing_data))
             TLog.trydo("Sending unlock command({})".format(self.UNLOCKCMD))
