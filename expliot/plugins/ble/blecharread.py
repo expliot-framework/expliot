@@ -1,4 +1,4 @@
-"""Test the possibility to read data to a Bluetooth LE device."""
+"""Test the possibility to read characteristic data from a Bluetooth LE device."""
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.core.protocols.radio.ble import BlePeripheral, \
     ADDR_TYPE_RANDOM, ADDR_TYPE_PUBLIC
@@ -7,7 +7,7 @@ from expliot.plugins.ble import BLE_REF
 
 # pylint: disable=bare-except
 class BleCharRead(Test):
-    """Read test of chars to Bluetooth LE devices."""
+    """PLugin to read characteristic data from a Bluetooth LE device."""
 
     def __init__(self):
         """Initialize the test."""

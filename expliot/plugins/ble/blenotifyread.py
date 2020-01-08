@@ -1,4 +1,4 @@
-"""Test the possibility to read notify data to a Bluetooth LE device."""
+"""Test the possibility of enabling notification for a characteristic on a Bluetooth LE device."""
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.core.protocols.radio.ble import BlePeripheral, \
     BleNotifyDelegate, ADDR_TYPE_RANDOM, ADDR_TYPE_PUBLIC, \
@@ -9,7 +9,7 @@ from expliot.plugins.ble import BLE_REF
 
 # pylint: disable=bare-except
 class BleNotifyRead(Test):
-    """Read test of chars notify to Bluetooth LE devices."""
+    """Plugin to enable notification and read characteristic data from a Bluetooth LE device."""
 
     def __init__(self):
         """Initialize the plugin."""
@@ -64,6 +64,11 @@ class BleNotifyRead(Test):
     def notifycb(handle, data):
         """Notification data read callback.
 
+        Args:
+            handle (int): The handle of the characteristic whose data is received.
+            data (bytes): The data that is received from the BLE device.
+        Returns:
+            Nothing
         """
         TLog.success(data.hex())
 
