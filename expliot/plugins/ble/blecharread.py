@@ -7,14 +7,14 @@ from expliot.plugins.ble import BLE_REF
 
 # pylint: disable=bare-except
 class BleCharRead(Test):
-    """PLugin to read characteristic data from a Bluetooth LE device."""
+    """Plugin to read characteristic data from a Bluetooth LE device."""
 
     def __init__(self):
         """Initialize the test."""
         super().__init__(
             name="readchar",
             summary="BLE Characteristic Reader",
-            descr="This test allows you to read a value to a characteristic from a BLE peripheral device",
+            descr="This plugin allows you to read a characteristic value from a BLE peripheral device",
             author="Arun Magesh",
             email="arun.m@payatu.com",
             ref=[BLE_REF],
