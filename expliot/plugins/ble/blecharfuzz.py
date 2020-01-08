@@ -1,7 +1,9 @@
 """Support for testing BLE devices with fuzzing."""
 from random import randint
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
-from expliot.core.protocols.radio.ble import Ble, BlePeripheral
+from expliot.core.protocols.radio.ble import BlePeripheral, \
+    ADDR_TYPE_RANDOM, ADDR_TYPE_PUBLIC
+from expliot.plugins.ble import BLE_REF
 
 
 # pylint: disable=bare-except
@@ -19,7 +21,7 @@ class BleCharFuzz(Test):
             "improper input handling code for values usually crash/reboot.",
             author="Arun Magesh",
             email="arun.m@payatu.com",
-            ref=["https://en.wikipedia.org/wiki/Bluetooth_Low_Energy"],
+            ref=[BLE_REF],
             category=TCategory(TCategory.BLE, TCategory.RD, TCategory.FUZZ),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
         )
@@ -83,9 +85,9 @@ class BleCharFuzz(Test):
             device.connect(
                 self.args.addr,
                 addrType=(
-                    Ble.ADDR_TYPE_RANDOM
+                    ADDR_TYPE_RANDOM
                     if self.args.randaddrtype
-                    else Ble.ADDR_TYPE_PUBLIC
+                    else ADDR_TYPE_PUBLIC
                 ),
             )
             for _ in range(self.args.iter):

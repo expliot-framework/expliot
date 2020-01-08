@@ -1,7 +1,9 @@
 """Support to scan for BLE devices."""
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 from expliot.core.common.exceptions import sysexcinfo
-from expliot.core.protocols.radio.ble import Ble, BlePeripheral
+from expliot.core.protocols.radio.ble import Ble, BlePeripheral, \
+    ADDR_TYPE_RANDOM, ADDR_TYPE_PUBLIC
+from expliot.plugins.ble import BLE_REF
 
 
 # pylint: disable=bare-except, too-many-nested-blocks
@@ -19,7 +21,7 @@ class BleScan(Test):
             "root privileges. You may run it as $ sudo expliot.",
             author="Aseem Jakhar",
             email="aseemjakhar@gmail.com",
-            ref=["https://en.wikipedia.org/wiki/Bluetooth_Low_Energy"],
+            ref=[BLE_REF],
             category=TCategory(TCategory.BLE, TCategory.RD, TCategory.RECON),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
             needroot=True,
@@ -134,9 +136,9 @@ class BleScan(Test):
             device.connect(
                 self.args.addr,
                 addrType=(
-                    Ble.ADDR_TYPE_RANDOM
+                    ADDR_TYPE_RANDOM
                     if self.args.randaddrtype
-                    else Ble.ADDR_TYPE_PUBLIC
+                    else ADDR_TYPE_PUBLIC
                 ),
             )
             self.found = True
@@ -157,9 +159,10 @@ class BleScan(Test):
                         )
                     )
                     if self.args.verbose is True:
-                        support_read = char.supportsRead()
-                        TLog.success("    (supports_read={})".format(support_read))
-                        if support_read is True:
+                        support_property = char.propertiesToString()
+                        supports_read = char.supportsRead()
+                        TLog.success("    (supported_properties={})".format(support_property))
+                        if supports_read is True:
                             TLog.success("    (value={})".format(char.read()))
         except:  # noqa: E722
             self.reason = "Exception caught: {}".format(sysexcinfo())

@@ -1,11 +1,13 @@
 """Test the possibility to write data to a Bluetooth LE device."""
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
-from expliot.core.protocols.radio.ble import Ble, BlePeripheral
+from expliot.core.protocols.radio.ble import BlePeripheral, \
+    ADDR_TYPE_RANDOM, ADDR_TYPE_PUBLIC
+from expliot.plugins.ble import BLE_REF
 
 
 # pylint: disable=bare-except
 class BleCharWrite(Test):
-    """Write test of chars to Bluetooth LE devices."""
+    """Plugin to write characteristic data to a Bluetooth LE device."""
 
     def __init__(self):
         """Initialize the test."""
@@ -15,7 +17,7 @@ class BleCharWrite(Test):
             descr="This test allows you to write a value to a characteristic on a BLE peripheral device",
             author="Aseem Jakhar",
             email="aseemjakhar@gmail.com",
-            ref=["https://en.wikipedia.org/wiki/Bluetooth_Low_Energy"],
+            ref=[BLE_REF],
             category=TCategory(TCategory.BLE, TCategory.RD, TCategory.ANALYSIS),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
         )
@@ -63,9 +65,9 @@ class BleCharWrite(Test):
             device.connect(
                 self.args.addr,
                 addrType=(
-                    Ble.ADDR_TYPE_RANDOM
+                    ADDR_TYPE_RANDOM
                     if self.args.randaddrtype
-                    else Ble.ADDR_TYPE_PUBLIC
+                    else ADDR_TYPE_PUBLIC
                 ),
             )
             device.writeCharacteristic(
