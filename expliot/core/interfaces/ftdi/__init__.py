@@ -1,7 +1,14 @@
 """Wrapper for FDTI."""
 # pylint: disable=protected-access
+from logging import ERROR, getLogger
+
 from spiflash.serialflash import SerialFlashManager
 from i2cflash.serialeeprom import SerialEepromManager
+from pyftdi.i2c import I2cController, I2cNackError
+
+DEFAULT_FTDI_URL = "ftdi:///1"
+
+getLogger("pyftdi.i2c").setLevel(ERROR)
 
 
 class SpiFlashManager(SerialFlashManager):
