@@ -2,6 +2,7 @@
 from time import time
 
 from expliot.core.protocols.hardware.i2c import I2cEepromManager
+from expliot.core.interfaces.ftdi import DEFAULT_FTDI_URL
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 
 DESCRIPTION = """
@@ -17,7 +18,7 @@ get a USB error related to langid."""
 
 # pylint: disable=bare-except
 class I2cEepromRead(Test):
-    """Read test for data to i2c."""
+    """Plugin to read data over i2c."""
 
     def __init__(self):
         """Initialize the test."""
@@ -43,24 +44,29 @@ class I2cEepromRead(Test):
             "-l",
             "--length",
             type=int,
-            help="Specify the total length of data, in bytes, to be read from the start address. If not specified, it reads till the end",
+            help="Specify the total length of data, in bytes, to be read from the start "
+            "address. If not specified, it reads till the end",
         )
         self.argparser.add_argument(
             "-u",
             "--url",
-            default="ftdi:///1",
-            help="URL of the connected FTDI device. Default is ftdi:///1. For more details on the URL scheme check https://eblot.github.io/pyftdi/urlscheme.html",
+            default=DEFAULT_FTDI_URL,
+            help="URL of the connected FTDI device. Default is {}. "
+            "For more details on the URL scheme check "
+            "https://eblot.github.io/pyftdi/urlscheme.html".format(DEFAULT_FTDI_URL),
         )
         self.argparser.add_argument(
             "-c",
             "--chip",
             required=True,
-            help="Specify the chip. Supported chips are 24AA32A, 24AA64, 24AA128, 24AA256, 24AA512",
+            help="Specify the chip. Supported chips are 24AA32A, 24AA64, "
+            "24AA128, 24AA256, 24AA512",
         )
         self.argparser.add_argument(
             "-w",
             "--wfile",
-            help="Specify the file path where data, read from the i2c chip, is to be written. If not specified output the data on the terminal",
+            help="Specify the file path where data, read from the i2c chip, "
+            "is to be written. If not specified output the data on the terminal",
         )
 
         self.slaveaddr = 0x50
@@ -72,6 +78,7 @@ class I2cEepromRead(Test):
                 self.args.addr, self.args.url
             )
         )
+        device = None
         try:
             device = I2cEepromManager.get_flash_device(
                 self.args.url, self.args.chip, address=self.slaveaddr

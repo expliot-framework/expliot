@@ -2,6 +2,7 @@
 from time import time
 
 from expliot.core.protocols.hardware.i2c import I2cEepromManager
+from expliot.core.interfaces.ftdi import DEFAULT_FTDI_URL
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 
 
@@ -40,15 +41,17 @@ class I2cEepromWrite(Test):
         self.argparser.add_argument(
             "-u",
             "--url",
-            default="ftdi:///1",
-            help="URL of the connected FTDI device. Default is ftdi:///1. For "
-            "more details on the URL scheme check https://eblot.github.io/pyftdi/urlscheme.html",
+            default=DEFAULT_FTDI_URL,
+            help="URL of the connected FTDI device. Default is {}. "
+            "For more details on the URL scheme check "
+            "https://eblot.github.io/pyftdi/urlscheme.html".format(DEFAULT_FTDI_URL),
         )
         self.argparser.add_argument(
             "-c",
             "--chip",
             required=True,
-            help="Specify the chip. Supported chips are 24AA32A, 24AA64, 24AA128, 24AA256, 24AA512",
+            help="Specify the chip. Supported chips are 24AA32A, 24AA64, 24AA128, "
+            "24AA256, 24AA512",
         )
         self.argparser.add_argument(
             "-d",
@@ -59,7 +62,8 @@ class I2cEepromWrite(Test):
             "-r",
             "--rfile",
             help="Specify the file path from where data is to be read. This takes "
-            "precedence over --data option i.e if both options are specified --data would be ignored",
+            "precedence over --data option i.e if both options are specified "
+            "--data would be ignored",
         )
         self.slaveaddr = 0x50
 
@@ -70,6 +74,7 @@ class I2cEepromWrite(Test):
                 self.args.addr, self.args.url
             )
         )
+        device = None
         try:
             start_address = self.args.addr
             if self.args.rfile:
