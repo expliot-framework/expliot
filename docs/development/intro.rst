@@ -4,14 +4,14 @@ Developer Guide
 EXPLIoT Framework is a brilliant choice for vendors, smart infrastructure
 admins, developers and security researchers for various reasons:
 
-- It will streamline your security/regression testing
+- It will streamline your security/regression testing.
 - You will be able to identify security loopholes prior to deployment on an
   IoT solution in your infrastructure.
 - It will help you in automating time consuming test cases.
 - If you fall under any compliance or regulatory requirements for the IoT
   product or Smart Infrastructure, it will help you in automating and
   performing compliance checks regularly.
-- It will save a lot of time during IoT security research or assessments
+- It will save a lot of time during IoT security research or assessments.
 - You can mold it to your needs by simply extending it with your own plugins.
 
 If you are interested in extending the framework i.e. writing new plugins,
@@ -23,12 +23,18 @@ Coding style
 Please follow the below coding style, when writing new code, if you are used
 to some other style.
 
+We use `Black <https://black.readthedocs.io/>`_ for code formatting. Every
+merge request is automatically checked as part of the linting process and we
+never merge submissions that diverge.
+
+#. The code **must** follow `PEP8 (Style Guide for Python Code) <https://www.python.org/dev/peps/pep-0008/>`_.
 #. Class names should be short, simple and define the purpose. It **must**
    be in `CamelCase <https://en.wikipedia.org/wiki/Camel_case>`_.
 #. The method names **must not** use *CamelCase*.
    It may use underscores ("\_") for a name with more than one word.
 #. Class member names should follow the same convention as method names.
-#. More to come soon.
+#. Every module, function, class or method definition **must** have a
+   `Docstring <https://www.python.org/dev/peps/pep-0257/>`_.
 
 Contribute
 ----------
@@ -41,6 +47,7 @@ steps:
    submit a pull/merge request first thing. Instead please open an
    `issue <https://gitlab.com/expliot_framework/expliot/issues/new>`_
    describing your code changes.
+#. Setup your development environment, see :ref:`development-setup`.
 #. You will need to sign a contributor license agreement. Please sign, scan
    and email the same.
 #. Send the merge request.
