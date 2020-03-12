@@ -120,6 +120,7 @@ class TTarget(namedtuple("TTarget", "name, version, vendor")):
     GENERIC = "generic"
 
     # Target name
+    TP_LINK_IOT = "tpliot"
     AWS = "aws"
     _name = [
         AWS,
@@ -128,6 +129,7 @@ class TTarget(namedtuple("TTarget", "name, version, vendor")):
     # Target version
 
     # Target vendor
+    TP_LINK = "tplink"
     AMAZON = "amazon"
     _vendor = [
         AMAZON,
