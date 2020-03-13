@@ -116,7 +116,7 @@ class MqttClient(Client):
     """
 
     def __init__(
-            self, client_id="", clean_session=None,
+            self, client_id="", clean_session=True,
             userdata=None, protocol=MQTTv311, transport="tcp",
     ):
         """

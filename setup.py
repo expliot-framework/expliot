@@ -27,7 +27,7 @@ setup(
         "bluepy>=1.3.0",
         "cmd2>=0.9.15",
         "coapthon3>=1.0.1",
-        "paho-mqtt>=1.3.1",
+        "paho-mqtt>=1.5.0",
         "pycrypto>=2.6.1",
         "pyi2cflash>=0.1.1",
         "pymodbus>=1.5.2",
