@@ -30,11 +30,32 @@ never merge submissions that diverge.
 #. The code **must** follow `PEP8 (Style Guide for Python Code) <https://www.python.org/dev/peps/pep-0008/>`_.
 #. Class names should be short, simple and define the purpose. It **must**
    be in `CamelCase <https://en.wikipedia.org/wiki/Camel_case>`_.
+#. Import should be grouped and ordered, use ``isort``.
 #. The method names **must not** use *CamelCase*.
    It may use underscores ("\_") for a name with more than one word.
 #. Class member names should follow the same convention as method names.
-#. Every module, function, class or method definition **must** have a
+#. Every module, function, class or method definition **must** have at least a
    `Docstring <https://www.python.org/dev/peps/pep-0257/>`_.
+
+   It's preferred to have additional details for the API documentation.
+
+   .. code-block:: console
+
+      """ Method description.
+
+      Args:
+          param1 (type): param1 description
+          param2 (type): param2 description
+
+      Returns: (or Yields: for generators)
+          type: Description of return value
+
+      Raises:
+          type: Description/reason of the exception
+      """
+
+Please refer to the `Google Python Style Guide <http://google.github.io/styleguide/pyguide.html>`_
+for further information or if you are unsure about a specific topic.
 
 Contribute
 ----------
