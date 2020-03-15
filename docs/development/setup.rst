@@ -6,6 +6,8 @@ Setup the development environment
 If you are considering to contribute to EXPLIoT then it's recommended to use
 a Python virtual environment (``venv``).
 
+Please check :ref:`installation-manual` for the pre-requirements.
+
 .. code-block:: console
 
    $ git clone https://gitlab.com/[YOUR_FORK]/expliot.git
