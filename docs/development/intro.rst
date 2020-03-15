@@ -25,7 +25,8 @@ to some other style.
 
 We use `Black <https://black.readthedocs.io/>`_ for code formatting. Every
 merge request is automatically checked as part of the linting process and we
-never merge submissions that diverge.
+never merge submissions that diverge. We recommend to run ``black``, ``pylint``
+and ``flake8`` locally before creating a merge request.
 
 #. The code **must** follow `PEP8 (Style Guide for Python Code) <https://www.python.org/dev/peps/pep-0008/>`_.
 #. Class names should be short, simple and define the purpose. It **must**
@@ -71,7 +72,8 @@ steps:
 #. Setup your development environment, see :ref:`development-setup`.
 #. You will need to sign a contributor license agreement. Please sign, scan
    and email the same.
-#. Send the merge request.
+#. Create the merge request following the mentioned points in the previous
+   section.
 
 Additional details
 ------------------
