@@ -77,7 +77,7 @@ fedora_latest:
     - master
   image: fedora:latest
   script:
-    - dnf -y install redhat-rpm-config libusb glib2-devel python3-devel git @development-tools
+    - dnf -y install redhat-rpm-config libusb glib2-devel python3-devel python3-setuptools git @development-tools
     - git clone --single-branch --branch master https://gitlab.com/expliot_framework/expliot.git expliot-master
     - cd expliot-master
     - python3 setup.py install
