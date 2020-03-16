@@ -39,6 +39,8 @@ Contributors
 * `Arun Magesh <https://gitlab.com/arun.m>`_
 * `Fabian Affolter <https://gitlab.com/fabaff>`_
 * `Sneha Rajguru <https://twitter.com/Sneharajguru>`_
+* `Appar Thusoo <https://www.linkedin.com/in/appar-thusoo-5a5664126/>`_
+* `Dattatray Hinge <https://twitter.com/Dattatray_Hinge>`_
 
 Thank you
 ---------
