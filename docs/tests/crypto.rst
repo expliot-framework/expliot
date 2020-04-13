@@ -2,13 +2,17 @@ Crypto
 =======
 
 `Cryptography <https://en.wikipedia.org/wiki/Cryptography>`_
-(Crypto) is the practice and study of techniques for secure communication in the presence of third parties.More generally, cryptography is about constructing and analyzing protocols that prevent third parties or the public from reading private messages maintaining the confidentiality, authentication, data Integrity and non-repudiation. 
+(Crypto) is the practice and study of techniques for secure communication
+in the presence of third parties. More generally, cryptography is about
+constructing and analyzing protocols that prevent third parties or the public
+from reading private messages maintaining the confidentiality, authentication,
+data integrity and non-repudiation. 
 
 crypto.tpliot.decrypt
 ----------------------
 
-You can use this test case to decrypt the communication between tp-link smart devices and kasa home application.
-
+You can use this test case to decrypt the communication between TP-Link smart
+devices and Kasa home application.
 
 
 **Usage details:**
@@ -20,7 +24,7 @@ You can use this test case to decrypt the communication between tp-link smart de
 Examples
 ^^^^^^^^
 
-The input data ``-d`` would be hex string from the captured communication.
+The input data ``-d`` would be a HEX string from the captured communication.
 
 .. code-block:: text
 
@@ -33,4 +37,4 @@ The input data ``-d`` would be hex string from the captured communication.
 
 .. note::
 
-   The hex input should be without the 0x prefix.
+   The HEX input should be without the ``0x`` prefix.
