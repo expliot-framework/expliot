@@ -38,7 +38,7 @@ class CANWrite(Test):
             "-e",
             "--exid",
             action="store_true",
-            help="Speficy this option if using extended format --arbitid",
+            help="Specify this option if using extended format --arbitid",
         )
         self.argparser.add_argument(
             "-d",
@@ -57,9 +57,9 @@ class CANWrite(Test):
             "-w",
             "--wait",
             type=float,
-            help="Specify the wait time, in seconds, between each consecutive"
+            help="Specify the wait time, in seconds, between each consecutive "
             "message write. Default is to not wait between writes. You "
-            "may use float values as well, e.g., 0.5",
+            "may use float values as well, e.g. 0.5",
         )
 
     def execute(self):

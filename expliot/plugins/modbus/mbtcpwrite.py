@@ -40,7 +40,7 @@ class MBTcpWrite(Test):
             "--item",
             default=0,
             type=int,
-            help="The item to read from. {coil} = {}, {} = {}. Default is {coil}".format(
+            help="The item to write to. {coil} = {}, {} = {}. Default is {coil}".format(
                 WRITE_ITEMS[COIL], REG, WRITE_ITEMS[REG], coil=COIL
             ),
         )
