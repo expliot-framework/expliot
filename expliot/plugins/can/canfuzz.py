@@ -56,9 +56,9 @@ class CANFuzz(Test):
             "--wait",
             type=float,
             default=0,
-            help="Specify the wait time, in seconds, between each consecutive"
+            help="Specify the wait time, in seconds, between each consecutive "
             "message write. Default is to not wait between writes. You "
-            "may use float values as well, e.g., 0.5",
+            "may use float values as well, e.g. 0.5",
         )
 
     def execute(self):

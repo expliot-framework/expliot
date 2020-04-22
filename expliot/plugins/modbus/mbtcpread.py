@@ -104,28 +104,28 @@ class MBTcpRead(Test):
                 )
             )
             modbus_client.connect()
-            if self.args.item == self.COIL:
+            if self.args.item == COIL:
                 response = modbus_client.read_coils(
                     self.args.address, self.args.count, unit=self.args.unit
                 )
                 if response.isError() is True:
                     raise Exception(str(response))
                 values = response.bits
-            elif self.args.item == self.DINPUT:
+            elif self.args.item == DINPUT:
                 response = modbus_client.read_discrete_inputs(
                     self.args.address, self.args.count, unit=self.args.unit
                 )
                 if response.isError() is True:
                     raise Exception(str(response))
                 values = response.bits
-            elif self.args.item == self.HREG:
+            elif self.args.item == HREG:
                 response = modbus_client.read_holding_registers(
                     self.args.address, self.args.count, unit=self.args.unit
                 )
                 if response.isError() is True:
                     raise Exception(str(response))
                 values = response.registers
-            elif self.args.item == self.IREG:
+            elif self.args.item == IREG:
                 response = modbus_client.read_input_registers(
                     self.args.address, self.args.count, unit=self.args.unit
                 )
