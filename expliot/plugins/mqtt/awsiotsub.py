@@ -44,7 +44,7 @@ class AwsIotSub(Test):
             "-t",
             "--topic",
             required=True,
-            help="Topic name on which message has to be published",
+            help="Topic name to subscribe to",
         )
         self.argparser.add_argument(
             "-i",
