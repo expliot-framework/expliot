@@ -7,6 +7,7 @@ import pyparsing
 
 from expliot.core.tests.testsuite import TestSuite
 
+
 class Cli(Cmd):
     """
     The main command line interpreter for EXPLIoT console. It inherits Cmd2
@@ -107,7 +108,6 @@ class Cli(Cmd):
             # For ex. ef> run -x assuming x is not a valid argument.
             # Cmd2 does not catch SystemExit from v1.0.2 - https://github.com/python-cmd2/cmd2/issues/932
             # returning instead of raising Cmd2ArgparseError so in future any post command hooks implemented can run
-            #self.runp.print_help()
             return
 
         self.runtest(name_space.plugin, subarglist)
