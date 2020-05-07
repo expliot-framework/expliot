@@ -73,14 +73,13 @@ class Cli(Cmd):
             Cmd.do_py,
             Cmd.do_run_pyscript,
             Cmd.do_run_script,
-            #Cmd.do_set,
+            Cmd.do_set,
             Cmd.do_shell,
             Cmd.do_shortcuts,
         ]
 
     def do_list(self, args):
-        print("list args({}:{})".format(args.__class__,args))
-        """List the available test cases."""
+        """List the available plugins (test cases)"""
         print("Total plugins: {}\n".format(len(self.subcmds)))
         print("{:<25} {}".format("PLUGIN", "SUMMARY"))
         print("{:<25} {}\n".format("======", "======="))
@@ -90,15 +89,7 @@ class Cli(Cmd):
 
     @with_argument_list
     def do_run(self, arglist):
-        """
-        Execute a specific plugin/test case.
-
-        Args:
-            arglist (list): Plugin's argument list passed from the console
-
-        Returns:
-            Nothing
-        """
+        """Execute a specific plugin (test case). For details: ef> run -h"""
         arguments_length = len(arglist)
         if arguments_length == 0:
             # For the case: ef> run
