@@ -34,7 +34,7 @@ setup(
         "pynetdicom>=1.2.0",
         "pyparsing>=2.2.0",
         "pyserial>=3.4",
-        "pyspiflash>=0.5.2",
+        "pyspiflash==0.6.1",
         "python-can>=2.1.0",
         "zeroconf>=0.24.4",
         "AWSIoTPythonSDK>=1.4.7",

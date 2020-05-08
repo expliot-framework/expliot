@@ -323,28 +323,38 @@ class Test:
         TLog.generic("")
 
     def run(self, arglist):
-        """Run the test."""
-        # Not keeping parse_args in try block because it raises SystemExit
-        # in case of -h/--help which gets handled by cmd or argparse I think.
-        # If we keep in it below try block run plugin with -h/--help catches
-        # the exception and fails the test case due to the below except
-        self.args = self.argparser.parse_args(arglist)
-        for i in range(0, 1):  # try:
-            # Log Test Intro messages
-            self.intro()
+        """
+        Run the test.
 
-            # Check if the plugin needs root privileges and the program has
-            # the required privileges
-            self._assertpriv()
+        Args:
+            arglist (list): The argument list of the plugin.
 
-            # Test pre() method is used for setup related tasks, if any.
-            self.pre()
+        Returns:
+            Nothing.
+        """
+        try:
+            self.args = self.argparser.parse_args(arglist)
+        except SystemExit:
+            # Nothing to do here. SystemExit occurs in case of wrong arguments or help
+            # Cmd2 does not catch SystemExit from v1.0.2 - https://github.com/python-cmd2/cmd2/issues/932
+            # returning instead of raising Cmd2ArgparseError so in future any post command hooks implemented can run
+            return
 
-            # Test execute() method is for the main test case execution.
-            self.execute()
+        # Log Test Intro messages
+        self.intro()
 
-            # Test post() method is used for cleanup related tasks, if any.
-            self.post()
+        # Check if the plugin needs root privileges and the program has
+        # the required privileges
+        self._assertpriv()
+
+        # Test pre() method is used for setup related tasks, if any.
+        self.pre()
+
+        # Test execute() method is for the main test case execution.
+        self.execute()
+
+        # Test post() method is used for cleanup related tasks, if any.
+        self.post()
         # except:
         #    self.result.exception()
 
@@ -352,10 +362,15 @@ class Test:
         self._logstatus()
 
     def _assertpriv(self):
-        """Raise an exception if the plugin needs root privileges but program
+        """
+        Raise an exception if the plugin needs root privileges but program
         is not executing as root.
 
-        :return:
+        Args:
+            None
+
+        Returns:
+            Nothing
         """
         if self.needroot and geteuid() != 0:
             raise PermissionError(
@@ -363,9 +378,14 @@ class Test:
             )
 
     def _setid(self):
-        """Set the Unique Test ID. The ID is the plugin class name in lowercase.
+        """
+        Set the Unique Test ID. The ID is the plugin class name in lowercase.
 
-        :return:
+        Args:
+            None
+
+        Returns:
+            Nothing
         """
         # self.id = self.__class__.__name__.lower()
         self.id = "{}.{}.{}".format(
@@ -373,9 +393,14 @@ class Test:
         ).lower()
 
     def _logstatus(self):
-        """Handle the log status.
+        """
+        Handle the log status.
 
-        :return:
+        Args:
+            None
+
+        Returns:
+            Nothing
         """
         if self.result.passed:
             TLog.success("Test {} passed".format(self.id))
