@@ -32,6 +32,18 @@ ubuntu1910:
     - cd expliot-master
     - python3 setup.py install
 
+ubuntu_latest:
+  stage: installation
+  only:
+    - master
+  image: ubuntu:latest
+  script:
+    - apt-get update
+    - apt-get install -y libglib2.0-dev libusb-1.0 git python3-dev python3-setuptools build-essential
+    - git clone --single-branch --branch master https://gitlab.com/expliot_framework/expliot.git expliot-master
+    - cd expliot-master
+    - python3 setup.py install
+
 debian_old:
   stage: installation
   only:
