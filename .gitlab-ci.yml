@@ -20,11 +20,11 @@ pylint:
     - pip install -r requirements.txt
     - pylint expliot
 
-ubuntu1904:
+ubuntu1910:
   stage: installation
   only:
     - master
-  image: ubuntu:19.04
+  image: ubuntu:19.10
   script:
     - apt-get update
     - apt-get install -y libglib2.0-dev libusb-1.0 git python3-dev python3-setuptools build-essential
