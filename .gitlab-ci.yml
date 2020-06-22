@@ -44,19 +44,6 @@ ubuntu_latest:
     - cd expliot-master
     - python3 setup.py install
 
-debian_old:
-  stage: installation
-  only:
-    - master
-  image: debian:9
-  script:
-    - echo -e 'deb http://deb.debian.org/debian oldstable main\ndeb-src http://deb.debian.org/debian oldstable main\ndeb http://deb.debian.org/debian/ oldstable-updates main\ndeb-src http://deb.debian.org/debian/ oldstable-updates main' >> /etc/apt/sources.list
-    - apt-get update
-    - apt-get install -y libglib2.0-dev libusb-1.0 git python3-dev python3-setuptools build-essential
-    - git clone --single-branch --branch master https://gitlab.com/expliot_framework/expliot.git expliot-master
-    - cd expliot-master
-    - python3 setup.py install
-
 debian_latest:
   stage: installation
   only:
