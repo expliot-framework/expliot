@@ -10,7 +10,7 @@ Installation from PyPI
 
 .. NOTE::
 
-   Before installation ensure that requirements have been fulfilled. Check out the `requirements  <https://expliot.readthedocs.io/en/latest/installation/manual-installation.html#requirements>`_.
+   Before installation ensure that requirements (dependencies) have been fulfilled. Check out the `requirements  <https://expliot.readthedocs.io/en/latest/installation/manual-installation.html#requirements>`_.
 
 
 
