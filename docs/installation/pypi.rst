@@ -7,6 +7,13 @@ Installation from PyPI
 
 **EXPLIoT** is available from the `Python Package Index <https://pypi.python.org/pypi>`_.
 
+
+.. NOTE::
+
+   Before installation ensure that requirements (dependencies) have been fulfilled. Check out the `requirements  <https://expliot.readthedocs.io/en/latest/installation/manual-installation.html#requirements>`_.
+
+
+
 Installation
 ------------
 
