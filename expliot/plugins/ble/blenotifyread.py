@@ -1,5 +1,6 @@
 """Test the possibility of enabling notification for a characteristic on a Bluetooth LE device."""
-from expliot.core.tests.test import Test, TCategory, TTarget, TLog
+from expliot.core.tests.test import Test, TCategory, TTarget, \
+    TLog, LOGNO
 from expliot.core.protocols.radio.ble import BlePeripheral, \
     BleNotifyDelegate, ADDR_TYPE_RANDOM, ADDR_TYPE_PUBLIC, \
     DEFAULT_NOTIFY_TIMEOUT
@@ -31,7 +32,6 @@ class BleNotifyRead(Test):
                 TTarget.GENERIC,
                 TTarget.GENERIC),
         )
-
         self.argparser.add_argument(
             "-a",
             "--addr",
@@ -45,7 +45,6 @@ class BleNotifyRead(Test):
             type=lambda x: int(x, 0),
             help="Specify the handle to read from. Prefix 0x if handle is hex",
         )
-
         self.argparser.add_argument(
             "-r",
             "--randaddrtype",
@@ -95,8 +94,11 @@ class BleNotifyRead(Test):
             device.enable_notify(ndelegate, self.args.handle, write_response=True)
             while not timer.is_timeout():
                 device.waitForNotifications(1)
-            if ndelegate.count() > 0:
-                TLog.success("Total notification data received {}".format(ndelegate.count()))
+            ncount = ndelegate.count()
+            if ncount > 0:
+                self.output_handler(msg="Total notification data received {}".format(ncount),
+                                    logkwargs=LOGNO,
+                                    ndata=ncount)
             else:
                 self.result.setstatus(passed=False, reason="No notification data received from BLE peripheral")
         except:  # noqa: E722

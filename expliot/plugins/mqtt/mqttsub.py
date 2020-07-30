@@ -18,7 +18,7 @@ class MqttSub(Test):
             name="sub",
             summary="MQTT Subscriber",
             descr="This test allows you to subscribe to a topic on an MQTT "
-            "broker and read messages being published on that topic.",
+                  "broker and read messages being published on that topic.",
             author="Aseem Jakhar",
             email="aseemjakhar@gmail.com",
             ref=[MQTT_REFERENCE],
@@ -49,19 +49,19 @@ class MqttSub(Test):
             "-i",
             "--id",
             help="The client ID to be used for the connection. Default is "
-            "random client ID",
+                 "random client ID",
         )
         self.argparser.add_argument(
             "-u",
             "--user",
             help="Specify the user name to be used. If not specified, it "
-            "connects without authentication",
+                 "connects without authentication",
         )
         self.argparser.add_argument(
             "-w",
             "--passwd",
             help="Specify the password to be used. If not specified, it "
-            "connects with without authentication",
+                 "connects with without authentication",
         )
         self.argparser.add_argument(
             "-o",
@@ -69,30 +69,30 @@ class MqttSub(Test):
             default=DEFAULT_MQTT_TIMEOUT,
             type=int,
             help="Time, in seconds, it will keep waiting/reading messages. "
-            "Default is {} secs".format(DEFAULT_MQTT_TIMEOUT),
+                 "Default is {} secs".format(DEFAULT_MQTT_TIMEOUT),
         )
 
-    @staticmethod
-    def on_msg(client, userdata, message):
+    def on_msg(self, client, userdata, message):
         """
         Custom on_message callback for MqttClient. It just logs the topic
         and the message received.
 
         Args:
             client (MqttClient) - The MQTT client object. This is not
-                used as it is the same as self.
+            used.
             userdata (caller defined): Callback specific data passed in
-                __init__(). This is not used as we use self members to
-                pass information.
+                __init__() of MqttClient. This is not used as we cane use
+                self members to pass information.
             message (MQTTMessage): Contains topic, payload, qos, retain
                 for the message received from the broker.
 
         Returns:
             Nothing.
         """
-        TLog.success(
-            "(topic={})(payload={})".format(message.topic, message.payload)
-        )
+        # TLog.success(
+        #    "(topic={})(payload={})".format(message.topic, message.payload)
+        # )logkwargs=LOGNORMAL
+        self.output_handler(topic=message.topic, payload=message.payload)
 
     def execute(self):
         """Execute the plugin."""
@@ -108,7 +108,7 @@ class MqttSub(Test):
                 user=self.args.user,
                 passwd=self.args.passwd,
                 on_connect=client.on_connectcb,
-                on_message=MqttSub.on_msg,
+                on_message=self.on_msg,
                 on_disconnect=client.on_disconnectcb
             )
             client.connect(self.args.rhost, self.args.rport)

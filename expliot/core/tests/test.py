@@ -6,6 +6,10 @@ import sys
 
 from expliot.core.common.exceptions import sysexcinfo
 
+LOGPRETTY = 0
+LOGNORMAL = 1
+LOGNO = 2
+
 
 class TCategory(namedtuple("TCategory", "tech, iface, action")):
     """
@@ -33,7 +37,7 @@ class TCategory(namedtuple("TCategory", "tech, iface, action")):
     TCP = "tcp"
     HTTP = "http"
 
-# Radio protocols
+    # Radio protocols
     BLE = "ble"
     ZIGBEE = "zigbee"
     IEEE802154 = "802154"
@@ -75,7 +79,7 @@ class TCategory(namedtuple("TCategory", "tech, iface, action")):
         ZIGBEE,
     ]
 
-# Interface category. Whether the test is for software, hardware or radio
+    # Interface category. Whether the test is for software, hardware or radio
     HW = "hardware"
     RD = "radio"
     SW = "software"
@@ -141,7 +145,18 @@ class TTarget(namedtuple("TTarget", "name, version, vendor")):
 
 
 class TResult:
-    """Representation of a test result."""
+    """
+    Representation of a test result.
+
+    self.output is a list of dict. This is populated by the plugin
+    when it needs to push results during the execution. To make it
+    standardized, the plugin pushes a block of info in a dict object
+    as and when it has certain info. For ex. when enumerating on
+    something, each item identified will be push as a dict considering
+    there is more than one data point to be stored for that item and
+    once the plugin execution finishes we get a list of dicts containing
+    same/similar data for each of the items.
+    """
 
     defaultrsn = "No reason specified"
 
@@ -149,6 +164,8 @@ class TResult:
         """Initialize a test result."""
         self.passed = True
         self.reason = None
+        # Test execution output list (of dicts)
+        self.output = []
 
     def setstatus(self, passed=True, reason=None):
         """Set the Test result status.
@@ -163,10 +180,23 @@ class TResult:
     def exception(self):
         """Set passed to False and reason to the exception message.
 
-        :return:
+        Returns:
+            Nothing
         """
         self.passed = False
         self.reason = "Exception caught: [{}]".format(sysexcinfo())
+
+    def getresult(self):
+        """
+        Returns a dict with result data. Caller needs to make sure
+        plugin execution (run()) is done before calling this.
+
+        Returns:
+            dict: the result data including status and output
+        """
+        return {"status": 0 if self.passed is True else 1,
+                "reason": self.reason,
+                "output": self.output}
 
 
 class TLog:
@@ -178,11 +208,17 @@ class TLog:
     with the output file using init() class method
     """
 
+    SUCCESS = 0
+    FAIL = 1
+    TRYDO = 2
+    GENERIC = 3
+
+    _prefix = ["[+]",  # SUCCESS prefix
+               "[-]",  # FAIL prefix
+               "[?]",  # TRYDO (Try/do/search) prefix
+               "[*]"]  # GENERIC prefix]
+    _errprefix = "[.]"
     _file = sys.stdout
-    _success_prefix = "[+]"  # Success prefix
-    _fail_prefix = "[-]"  # Fail prefix
-    _trydo_prefix = "[?]"  # Try/search prefix
-    _generic_prefix = "[*]"  # Generic prefix
 
     @classmethod
     def init(cls, file=None):
@@ -209,16 +245,22 @@ class TLog:
             cls._file.close()
 
     @classmethod
-    def _print(cls, prefix, message):
+    def print(cls, prefixtype, message):
         """
         The actual print methods that write the formatted message to the _file
         file.
 
-        :param prefix: the prefix to be used for the message (defined above)
-        :param message: The actual message from the Test object
-        :return:
+        Args:
+            prefixtype(int): the prefix type to be used for the message (defined above)
+            message(str): The actual message from the Test object
+        Returns:
+            Nothing
         """
-        print("{} {}".format(prefix, message), file=cls._file)
+        try:
+            pre = cls._prefix[prefixtype]
+        except IndexError:
+            pre = cls._errprefix
+        print("{} {}".format(pre, message), file=cls._file)
 
     @classmethod
     def success(cls, message):
@@ -227,7 +269,7 @@ class TLog:
         :param message: The message to be written
         :return:
         """
-        cls._print(cls._success_prefix, message)
+        cls.print(cls.SUCCESS, message)
 
     @classmethod
     def fail(cls, message):
@@ -236,7 +278,7 @@ class TLog:
         :param message: The message to be written
         :return:
         """
-        cls._print(cls._fail_prefix, message)
+        cls.print(cls.FAIL, message)
 
     @classmethod
     def trydo(cls, message):
@@ -245,7 +287,7 @@ class TLog:
         :param message: The message to be written
         :return: void
         """
-        cls._print(cls._trydo_prefix, message)
+        cls.print(cls.TRYDO, message)
 
     @classmethod
     def generic(cls, message):
@@ -254,7 +296,36 @@ class TLog:
         :param message: The message to be written
         :return: void
         """
-        cls._print(cls._generic_prefix, message)
+        cls.print(cls.GENERIC, message)
+
+    @classmethod
+    def prettylog(cls, data, prefixtype, level=0):
+        """
+        Formatted Logging for dict or list data types using recursion.
+
+        Args:
+            data(dict or list): The plugin output data to be logged
+            prefixtype(int): the prefix type to be used for the logs
+            level=0(int): Must not be used by caller. It is used
+                internally for indentation.
+        Returns:
+            Nothing
+        """
+        # Used for indentation of child data under the parent data
+        spaces = "  " * level
+
+        if data.__class__ == dict:
+            for key, value in data.items():
+                if (value.__class__ == dict) or (value.__class__ == list):
+                    cls.prettylog(value, prefixtype=prefixtype, level=(level + 1))
+                else:
+                    TLog.print(prefixtype, "{}{}: {}".format(spaces, key, value))
+        elif data.__class__ == list:
+            for value in data:
+                if (value.__class__ == dict) or (value.__class__ == list):
+                    cls.prettylog(value, prefixtype=prefixtype, level=(level + 1))
+                else:
+                    TLog.print(prefixtype, "{}{}".format(spaces, value))
 
 
 class Test:
@@ -322,6 +393,42 @@ class Test:
         )
         TLog.generic("")
 
+    def output_handler(self,
+                       tlogtype=TLog.SUCCESS,
+                       msg=None,
+                       logkwargs=LOGPRETTY,
+                       **kwargs):
+        """
+        Handle the Test execution output Data
+          - Add(append) data (dict) as an item in the TResult output (list).
+          - And/or Log (print) the output
+
+        Args:
+            tlogtype (int): TLog prefix type to use i.e. Success, fail etc.
+                Check TLog class for prefix details.
+            msg (str): Specify a message to be logged, if any, apart from
+                output data.
+            logkwargs=LOGPRETTY(int): There are three options for kwargs logging
+                LOGPRETTY(0) - formatted logging for dict or list.
+                LOGNORMAL(1) - Direct print of dict or list as is.
+                LOGNO(2) - Do not log kwargs.
+            **kwargs (dict): plugin output keyword arguments (or a **dictObject)
+
+        Returns:
+            Nothing.
+        """
+        if msg is not None:
+            TLog.print(tlogtype, msg)
+        if not kwargs:
+            # empty dict
+            return
+        self.result.output.append(kwargs)
+        if logkwargs == LOGPRETTY:
+            TLog.prettylog(kwargs, prefixtype=tlogtype)
+            TLog.print(tlogtype, "")
+        elif logkwargs == LOGNORMAL:
+            TLog.print(tlogtype, kwargs)
+
     def run(self, arglist):
         """
         Run the test.
@@ -330,7 +437,8 @@ class Test:
             arglist (list): The argument list of the plugin.
 
         Returns:
-            Nothing.
+            dict: The plugin result (status and output) on success,
+                or an empty dict in case of any error.
         """
         try:
             self.args = self.argparser.parse_args(arglist)
@@ -338,7 +446,7 @@ class Test:
             # Nothing to do here. SystemExit occurs in case of wrong arguments or help
             # Cmd2 does not catch SystemExit from v1.0.2 - https://github.com/python-cmd2/cmd2/issues/932
             # returning instead of raising Cmd2ArgparseError so in future any post command hooks implemented can run
-            return
+            return {}
 
         # Log Test Intro messages
         self.intro()
@@ -360,6 +468,9 @@ class Test:
 
         # Log Test status
         self._logstatus()
+
+        # Return test result
+        return self.result.getresult()
 
     def _assertpriv(self):
         """

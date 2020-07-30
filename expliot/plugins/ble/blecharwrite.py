@@ -38,14 +38,12 @@ class BleCharWrite(Test):
         self.argparser.add_argument(
             "-w", "--value", required=True, help="Specify the value to write"
         )
-
         self.argparser.add_argument(
             "-r",
             "--randaddrtype",
             action="store_true",
             help="Use LE address type random. If not specified use address type public",
         )
-
         self.argparser.add_argument(
             "-s",
             "--noresponse",
