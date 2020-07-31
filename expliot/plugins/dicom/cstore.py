@@ -86,8 +86,8 @@ class CStore(Test):
         try:
             app_entity = AE(ae_title=self.args.aetscu)
             app_entity.requested_contexts = StoragePresentationContexts
-            input_file = open(self.args.file, "rb")
-            dataset = dcmread(input_file, force=True)
+            file = open(self.args.file, "rb")
+            dataset = dcmread(file, force=True)
 
             # 0 means assign random port in pynetdicom
             if self.args.lport != 0:
@@ -105,28 +105,23 @@ class CStore(Test):
                 bind_address=("", self.args.lport),
                 ae_title=self.args.aetscp,
             )
-            TLog.trydo(
-                "Server implementation version name ({})".format(
-                    assoc.acceptor.implementation_version_name
-                )
-            )
-            TLog.trydo(
-                "Server implementation class UID ({})".format(
-                    assoc.acceptor.implementation_class_uid
-                )
+            self.output_handler(
+                tlogtype=TLog.TRYDO,
+                server_implementation_version_name=assoc.acceptor.implementation_version_name,
+                server_implementation_class_uid=assoc.acceptor.implementation_class_uid,
             )
             if assoc.is_established:
                 status = assoc.send_c_store(dataset)
-                if status.Status == 0x0000:
-                    TLog.success(
-                        "C-STORE Success (status=0x{0:04x})".format(status.Status)
-                    )
-                else:
+                success = True
+                if status.Status != 0x0000:
+                    success = False
                     reason = "C-STORE Failed to store file (status=0x{0:04x})".format(
                         status.Status
                     )
                     TLog.fail(reason)
                     self.result.setstatus(passed=False, reason=reason)
+                self.output_handler(cstore_status="0x{0:04x}".format(status.Status),
+                                    cstore_success=success)
             else:
                 self.result.setstatus(
                     passed=False,

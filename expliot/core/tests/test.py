@@ -412,7 +412,7 @@ class Test:
                 LOGPRETTY(0) - formatted logging for dict or list.
                 LOGNORMAL(1) - Direct print of dict or list as is.
                 LOGNO(2) - Do not log kwargs.
-            **kwargs (dict): plugin output keyword arguments (or a **dictObject)
+            **kwargs: plugin output keyword arguments (or a **dictObject)
 
         Returns:
             Nothing.

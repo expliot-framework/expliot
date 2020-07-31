@@ -13,6 +13,7 @@ from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 # pylint: disable=bare-except
 class ZbAuditorReplay(Test):
     """Zigbee packet dump replay plugin."""
+    DELAYMS = 200
 
     def __init__(self):
         super().__init__(
@@ -37,28 +38,24 @@ class ZbAuditorReplay(Test):
             required=True,
             help="IEEE 802.15.4 2.4 GHz channel to inject with Zigbee packets",
         )
-
         self.argparser.add_argument(
             "-f",
             "--pcapfile",
             required=True,
             help="PCAP file name to be read for Zigbee packets",
         )
-
         self.argparser.add_argument(
             "-p",
             "--pan",
-            type=str,
             help="Replays packets for destination PAN address in hex. "
             "Example:- 0x12ab or 12ab",
         )
-
         self.argparser.add_argument(
             "-d",
             "--delay",
             type=int,
-            default=200,
-            help="Interpacket delay in milliseconds, default is 200ms",
+            default=self.DELAYMS,
+            help="Inter-packet delay in milliseconds. Default is {}".format(self.DELAYMS),
         )
 
     def execute(self):
@@ -103,16 +100,8 @@ class ZbAuditorReplay(Test):
                         break
 
             finally:
-                TLog.generic(
-                    "{:<13}: ({})".format(
-                        "Packet received", radio.get_received_packets()
-                    )
-                )
-                TLog.generic(
-                    "{:<13}: ({})".format(
-                        "Packet transmit", radio.get_transmitted_packets()
-                    )
-                )
+                self.output_handler(packets_received=radio.get_received_packets(),
+                                    packets_transmitted=radio.get_transmitted_packets())
                 pcap_reader.close()
                 radio.radio_off()
 

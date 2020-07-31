@@ -1,6 +1,7 @@
 """Test for reading data from the CAN bus."""
 from binascii import hexlify
-from expliot.core.tests.test import Test, TCategory, TTarget, TLog
+from expliot.core.tests.test import Test, TCategory, TTarget, \
+    TLog, LOGNORMAL
 from expliot.core.protocols.hardware.can import CanBus
 
 
@@ -68,17 +69,14 @@ class CANRead(Test):
                     raise TimeoutError("Timed out while waiting for CAN message")
                 if self.args.arbitid:
                     if self.args.arbitid == message.arbitration_id:
-                        TLog.success(
-                            "(msg={})(data={})".format(
-                                cnt, hexlify(message.data).decode()
-                            )
-                        )
+                        self.output_handler(logkwargs=LOGNORMAL,
+                                            count=cnt,
+                                            data=hexlify(message.data).decode())
                 else:
-                    TLog.success(
-                        "(msg={})(arbitration_id=0x{:x})(data={})".format(
-                            cnt, message.arbitration_id, hexlify(message.data).decode()
-                        )
-                    )
+                    self.output_handler(logkwargs=LOGNORMAL,
+                                        count=cnt,
+                                        arbitration_id="0x{:x}".format(message.arbitration_id),
+                                        data=hexlify(message.data).decode())
         except:  # noqa: E722
             self.result.exception()
         finally:

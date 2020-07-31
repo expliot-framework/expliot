@@ -2,7 +2,8 @@
 import json
 import time
 from expliot.core.common.exceptions import sysexcinfo
-from expliot.core.tests.test import Test, TCategory, TTarget, TLog
+from expliot.core.tests.test import Test, TCategory, TTarget, \
+    TLog, LOGNO
 from expliot.core.protocols.radio.zigbee import ZigbeeNetworkScan
 
 
@@ -35,7 +36,6 @@ class ZbAuditorNwkScan(Test):
             help="First channel to be scanned from 2.4 GHz band. "
             "If not specified, default is 11",
         )
-
         self.argparser.add_argument(
             "-e",
             "--end",
@@ -44,7 +44,6 @@ class ZbAuditorNwkScan(Test):
             help="Last channel to scanned from 2.4 GHz band"
             "if not specified, default is 26",
         )
-
         self.argparser.add_argument(
             "-f", "--filepath", help="file name to store network scan result as a log."
         )
@@ -59,54 +58,54 @@ class ZbAuditorNwkScan(Test):
 
         if "device_count" in result_dict:
             count = result_dict["device_count"]
-            TLog.generic("{:<17} {}".format("Devices found ", count))
+            TLog.success("{:<17} {}".format("Devices found ", count))
             num_dev = 0
 
         if "beacons" in result_dict:
             dev_beacons = result_dict["beacons"]
             for dev in dev_beacons:
                 num_dev += 1
-                TLog.generic("{:<17}: {}".format("Device Number", num_dev))
-                TLog.generic("{:<17}: {}".format("Channel", dev["channel"]))
-                TLog.generic("{:<17}: {}".format("Source Address", dev["source_addr"]))
-                TLog.generic("{:<17}: {}".format("Source PAN ID", dev["source_panid"]))
+                TLog.success("{:<17}: {}".format("Device Number", num_dev))
+                TLog.success("{:<17}: {}".format("Channel", dev["channel"]))
+                TLog.success("{:<17}: {}".format("Source Address", dev["source_addr"]))
+                TLog.success("{:<17}: {}".format("Source PAN ID", dev["source_panid"]))
 
                 if "extn_panid" in dev:
-                    TLog.generic(
+                    TLog.success(
                         "{:<17}: {}".format(
                             "Extended PAN ID (Device Address)", dev["extn_panid"]
                         )
                     )
 
-                TLog.generic(
+                TLog.success(
                     "{:<17}: {}".format("Pan Coordinator", dev["pan_coordinator"])
                 )
-                TLog.generic(
+                TLog.success(
                     "{:<17}: {}".format("Permit Joining", dev["permit_joining"])
                 )
 
                 if "router_capacity" in dev:
-                    TLog.generic(
+                    TLog.success(
                         "{:<17}: {}".format("Router Capacity", dev["router_capacity"])
                     )
 
                 if "device_capacity" in dev:
-                    TLog.generic(
+                    TLog.success(
                         "{:<17}: {}".format("Device Capacity", dev["device_capacity"])
                     )
 
                 if "protocol_version" in dev:
-                    TLog.generic(
+                    TLog.success(
                         "{:<17}: {}".format("Protocol Version", dev["protocol_version"])
                     )
 
                 if "stack_profile" in dev:
-                    TLog.generic(
+                    TLog.success(
                         "{:<17}: {}".format("Stack Profile", dev["stack_profile"])
                     )
 
-                TLog.generic("{:<17}: {}".format("LQI", dev["lqi"]))
-                TLog.generic("{:<17}: {}".format("RSSI", dev["rssi"]))
+                TLog.success("{:<17}: {}".format("LQI", dev["lqi"]))
+                TLog.success("{:<17}: {}".format("RSSI", dev["rssi"]))
                 TLog.generic("")
 
     def write_result_to_logfile(self, result_dict):
@@ -160,22 +159,23 @@ class ZbAuditorNwkScan(Test):
             start_time = time.time()
 
             # Start network scan with channel mask
-            result_str = nwkscanner.scan(ch_mask)
+            result_dict = nwkscanner.scan(ch_mask)
 
             # Capture the scan start time
             end_time = time.time()
 
-            if result_str is not None:
+            if result_dict is not None:
                 self.found = True
+                self.output_handler(logkwargs=LOGNO, **result_dict)
                 # Display result on console
-                self.display_scan_result(result_str)
+                self.display_scan_result(result_dict)
 
-                TLog.generic("{:<17} {}".format("Scan duration", end_time - start_time))
+                TLog.success("{:<17} {}".format("Scan duration", end_time - start_time))
                 TLog.generic("")
 
                 # Write result in log file
                 if self.filename is not None:
-                    self.write_result_to_logfile(result_str)
+                    self.write_result_to_logfile(result_dict)
             else:
                 self.found = False
                 self.reason = "Couldn't find any Zigbee device on network"

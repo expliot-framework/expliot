@@ -1,6 +1,7 @@
 """Support for Zigbee Auditor Device Information."""
 from expliot.core.interfaces.zbauditor import ZbAuditor
-from expliot.core.tests.test import TCategory, Test, TLog, TTarget
+from expliot.core.tests.test import TCategory, Test, TLog, \
+    TTarget, LOGNO
 
 
 # pylint: disable=bare-except
@@ -25,9 +26,9 @@ class ZbAuditorDevInfo(Test):
         """Displays Device information"""
 
         if info_dict:
-            TLog.generic("Zigbee Auditor Details:")
-            TLog.generic("{:<17}: {}".format("Device Name", info_dict["device_name"]))
-            TLog.generic("{:<17}: {}".format("FW Revision", info_dict["fw_revision"]))
+            TLog.success("Zigbee Auditor Details:")
+            TLog.success("{:<17}: {}".format("Device Name", info_dict["device_name"]))
+            TLog.success("{:<17}: {}".format("FW Revision", info_dict["fw_revision"]))
             TLog.generic("")
 
             if "services" in info_dict:
@@ -35,7 +36,7 @@ class ZbAuditorDevInfo(Test):
 
                 TLog.generic("Services:")
                 for _, (serivce, value) in enumerate(services.items()):
-                    TLog.generic("\t {:<17}: {}".format(serivce, value))
+                    TLog.success("\t {:<17}: {}".format(serivce, value))
 
             TLog.generic("")
 
@@ -45,6 +46,7 @@ class ZbAuditorDevInfo(Test):
         try:
             auditor = ZbAuditor()
             dev_info_dict = auditor.get_interface_info()
+            self.output_handler(logkwargs=LOGNO, **dev_info_dict)
             self.display_device_info(dev_info_dict)
         except:  # noqa: E722
             self.result.exception()

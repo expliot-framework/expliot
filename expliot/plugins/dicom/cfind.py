@@ -120,29 +120,21 @@ class CFind(Test):
                 bind_address=("", self.args.lport),
                 ae_title=self.args.aetscp,
             )
-            TLog.trydo(
-                "Server implementation version name ({})".format(
-                    assoc.acceptor.implementation_version_name
-                )
-            )
-            TLog.trydo(
-                "Server implementation class UID ({})".format(
-                    assoc.acceptor.implementation_class_uid
-                )
+            self.output_handler(
+                tlogtype=TLog.TRYDO,
+                server_implementation_version_name=assoc.acceptor.implementation_version_name,
+                server_implementation_class_uid=assoc.acceptor.implementation_class_uid,
             )
             if assoc.is_established:
                 responses = assoc.send_c_find(data_set, query_model=self.args.model)
                 if responses:
                     for (status, identifier) in responses:
-                        TLog.success(
-                            "C-FIND query status: (0x{0:04x})".format(status.Status)
-                        )
+                        statdict = {"cfind_query_status": "0x{0:04x}".format(status.Status)}
                         # As per pynetdicom if status is either of below, then responses contain valid identifier
                         # datasets, else None. Ref: pynetdicom/pynetdicom/apps/findscu/findscu.py
                         if status.Status in (0xFF00, 0xFF01):
-                            TLog.success(
-                                "C-FIND query Identifier: ({})".format(identifier)
-                            )
+                            statdict["cfind_query_identifier"] = identifier
+                        self.output_handler(**statdict)
                 else:
                     reason = "Did not receive any response data sets"
                     TLog.fail(reason)

@@ -1,7 +1,8 @@
 """Testcase for fuzzing the CAN bus data message."""
 from time import sleep
 from random import randint
-from expliot.core.tests.test import Test, TCategory, TTarget, TLog
+from expliot.core.tests.test import Test, TCategory, TTarget, \
+    TLog, LOGNORMAL
 from expliot.core.protocols.hardware.can import CanBus, CanMessage
 
 
@@ -91,7 +92,7 @@ class CANFuzz(Test):
                     data=list(
                         bytes.fromhex(datacan)))
                 bus.send(message)
-                TLog.success("{} : Wrote message {}  ".format(count, datacan))
+                self.output_handler(logkwargs=LOGNORMAL, count=count, sent_data=datacan)
                 if self.args.wait > 0:
                     sleep(self.args.wait)
         except BaseException:

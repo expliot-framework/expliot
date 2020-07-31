@@ -82,7 +82,7 @@ class CANWrite(Test):
             )
             for count in range(1, self.args.count + 1):
                 bus.send(message)
-                TLog.success("Wrote message {}".format(count))
+                self.output_handler(message_sent=count)
                 if self.args.wait and count < self.args.count:
                     sleep(self.args.wait)
         except:  # noqa: E722

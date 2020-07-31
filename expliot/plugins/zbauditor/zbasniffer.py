@@ -102,18 +102,7 @@ class ZbAuditorSniffer(Test):
                     if packetcount == count:
                         break
             finally:
-                TLog.generic("")
-                TLog.generic(
-                    "{:<13}: ({})".format(
-                        "Packet received", radio.get_received_packets()
-                    )
-                )
-                TLog.generic(
-                    "{:<13}: ({})".format(
-                        "Packet transmit", radio.get_transmitted_packets()
-                    )
-                )
-
+                self.output_handler(packets_received=radio.get_received_packets())
                 # Turn OFF radio sniffer and exit
                 pcap_writer.close()
                 radio.sniffer_off()
