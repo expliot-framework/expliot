@@ -4,6 +4,14 @@ import itertools
 from expliot.core.common.exceptions import sysexcinfo
 from expliot.core.protocols.hardware.serial import Serial
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
+from expliot.plugins.serial import (
+    DEFAULT_BAUD,
+    DEV_PORT,
+    DEFAULT_CHARS,
+    DEFAULT_WORDLEN,
+    TIMEOUT_SECS,
+    DEFAULT_BUFFSZ,
+)
 
 
 # pylint: disable=too-many-nested-blocks, bare-except
@@ -15,7 +23,14 @@ class FuzzCommands(Test):
         super().__init__(
             name="fuzzcmds",
             summary="Serial console command brute-forcer/fuzzer",
-            descr="This test helps in finding/fuzzing hidden commands/parameters/back doors in custom consoles, of devices exposed over the UART port on the board. It  sends random words as specified over the serial connection and matches the response to a specified string (case insensitive). Based on match or nomatch criteria it decides whether the word is a valid or invalid command.",
+            descr="This test helps in finding/fuzzing hidden "
+                  "commands/parameters/back doors in custom consoles, "
+                  "of devices exposed over the UART port on the board. "
+                  "It  sends random words as specified over the serial "
+                  "connection and matches the response to a specified "
+                  "string (case insensitive). Based on match or nomatch "
+                  "criteria it decides whether the word is a valid or "
+                  "invalid command.",
             author="Aseem Jakhar",
             email="aseemjakhar@gmail.com",
             ref=[
@@ -29,31 +44,34 @@ class FuzzCommands(Test):
             "-b",
             "--baud",
             type=int,
-            default=115200,
-            help="The Baud rate of the serial device. Default is 115200",
+            default=DEFAULT_BAUD,
+            help="The Baud rate of the serial device. Default is {}".format(DEFAULT_BAUD),
         )
         self.argparser.add_argument(
             "-p",
             "--port",
-            default="/dev/ttyUSB0",
+            default=DEV_PORT,
             required=True,
-            help="The device port on the system. Default is /dev/ttyUSB0",
+            help="The device port on the system. Default is {}".format(DEV_PORT),
         )
         self.argparser.add_argument(
             "-c",
             "--chars",
-            default="abcdefghijklmnopqrstuvwxyz",
-            help="The characters to use for generating random words. Default is abcdefghijklmnopqrstuvwxyz",
+            default=DEFAULT_CHARS,
+            help="The characters to use for generating random words. "
+                 "Default is {}".format(DEFAULT_CHARS),
         )
         self.argparser.add_argument(
             "-l",
             "--length",
             type=int,
-            default=3,
-            help="Specify the character length for each generated word. Default is 3 characters",
+            default=DEFAULT_WORDLEN,
+            help="Specify the length for each generated word. "
+                 "Default is {} characters".format(DEFAULT_WORDLEN),
         )
         self.argparser.add_argument(
-            "-x", "--prefix", default="", help="Prefix a string to the generated word"
+            "-x", "--prefix", default="",
+            help="Prefix a string to the generated word"
         )
         self.argparser.add_argument(
             "-a",
@@ -64,12 +82,20 @@ class FuzzCommands(Test):
         self.argparser.add_argument(
             "-m",
             "--match",
-            help="Specify a match criteria string. If the response contains this thring, then the word is a valid command. Assumption is based on different responses for valid and invalid commands. Must not be used along with --nomatch",
+            help="Specify a match criteria string. If the response "
+                 "contains this thring, then the word is a valid "
+                 "command. Assumption is based on different responses "
+                 "for valid and invalid commands. Must not be used "
+                 "along with --nomatch",
         )
         self.argparser.add_argument(
             "-n",
             "--nomatch",
-            help="Specify a nomatch criteria string. If the response doesn't contain this string, then the word is a valid command. Assumption is based on different responses for valid and invalid commands. Must not used along with --match",
+            help="Specify a nomatch criteria string. If the response "
+                 "doesn't contain this string, then the word is a valid "
+                 "command. Assumption is based on different responses "
+                 "for valid and invalid commands. Must not used along "
+                 "with --match",
         )
         self.argparser.add_argument(
             "-s",
@@ -81,15 +107,17 @@ class FuzzCommands(Test):
             "-t",
             "--timeout",
             type=float,
-            default=0.5,
-            help="Read timeout, in secs, for the serial device. Default is 0.5",
+            default=TIMEOUT_SECS,
+            help="Read timeout, in secs, for the serial device. "
+                 "Default is {}".format(TIMEOUT_SECS),
         )
         self.argparser.add_argument(
             "-z",
             "--buffsize",
             type=int,
-            default=1,
-            help="Read buffer size. change this and timeout to increase efficiency. Default is 1",
+            default=DEFAULT_BUFFSZ,
+            help="Read buffer size. change this and timeout to increase "
+                 "efficiency. Default is {} bytes".format(DEFAULT_BUFFSZ),
         )
         self.argparser.add_argument(
             "-v",

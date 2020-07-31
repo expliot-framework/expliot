@@ -18,12 +18,13 @@ class I2cEepromWrite(Test):
             descr="This plugin writes data to an I2C EEPROM chip. It needs an "
             "FTDI interface to write data to the target EEPROM chip. You "
             "can buy an FTDI device online. If you are interested we have "
-            "an FTDI based product - 'Expliot Nano' which you can order online "
+            "an FTDI based product - 'EXPLIoT Nano' which you can order online "
             "from www.expliot.io This plugin uses pyi2cflash package which in "
             "turn uses pyftdi python driver for ftdi chips. For more details "
-            "on supported I2C EEPROM chips, check the readme at https://github.com/eblot/pyi2cflash "
-            "Thank you Emmanuel Blot for pyi2cflash. You may want to run it as "
-            "root in case you  get a USB error related to langid.",
+            "on supported I2C EEPROM chips, check the readme at "
+            "https://github.com/eblot/pyi2cflash Thank you Emmanuel Blot for "
+            "pyi2cflash. You may want to run it as root in case you  get a USB "
+            "error related to langid.",
             author="Aseem Jakhar",
             email="aseemjakhar@gmail.com",
             ref=["https://github.com/eblot/pyspiflash"],
@@ -90,7 +91,7 @@ class I2cEepromWrite(Test):
             device = I2cEepromManager.get_flash_device(
                 self.args.url, self.args.chip, address=self.slaveaddr
             )
-            TLog.success("(chip size={} bytes)".format(len(device)))
+            self.output_handler(chip_size="{} bytes".format(len(device)))
 
             length_data = len(data)
             TLog.trydo(
@@ -103,11 +104,8 @@ class I2cEepromWrite(Test):
             start_time = time()
             device.write(start_address, data)
             end_time = time()
-            TLog.success(
-                "wrote {} byte(s) of data from address {}. Time taken {} secs".format(
-                    len(data), start_address, round(end_time - start_time, 2)
-                )
-            )
+            self.output_handler(bytes_written=length_data,
+                                time_taken="{} secs".format(round(end_time - start_time, 2)))
         except:  # noqa: E722
             self.result.exception()
         finally:

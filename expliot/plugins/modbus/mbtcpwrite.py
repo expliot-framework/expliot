@@ -1,7 +1,16 @@
 """Support for writing data to Modbus over TCP."""
 from expliot.core.protocols.internet.modbus import ModbusTcpClient
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
-from expliot.plugins.modbus import COIL, MODBUS_REFERENCE, REG, WRITE_ITEMS
+from expliot.plugins.modbus import (
+    COIL,
+    MODBUS_REFERENCE,
+    REG,
+    WRITE_ITEMS,
+    MODBUS_PORT,
+    DEFAULT_ADDR,
+    DEFAULT_UNITID,
+    DEFAULT_COUNT,
+)
 
 
 # pylint: disable=bare-except
@@ -31,14 +40,14 @@ class MBTcpWrite(Test):
         self.argparser.add_argument(
             "-p",
             "--rport",
-            default=502,
+            default=MODBUS_PORT,
             type=int,
-            help="The port number of the Modbus server. Default is 502",
+            help="The port number of the Modbus server. Default is {}".format(MODBUS_PORT),
         )
         self.argparser.add_argument(
             "-i",
             "--item",
-            default=0,
+            default=COIL,
             type=int,
             help="The item to write to. {coil} = {}, {} = {}. Default is {coil}".format(
                 WRITE_ITEMS[COIL], REG, WRITE_ITEMS[REG], coil=COIL
@@ -47,23 +56,25 @@ class MBTcpWrite(Test):
         self.argparser.add_argument(
             "-a",
             "--address",
-            default=0,
+            default=DEFAULT_ADDR,
             type=int,
-            help="The start address of item to write to",
+            help="The start address of item to write to. The "
+                 "default is {}".format(DEFAULT_ADDR),
         )
         self.argparser.add_argument(
             "-c",
             "--count",
-            default=1,
+            default=DEFAULT_COUNT,
             type=int,
-            help="The count of items to write. Default is 1",
+            help="The count of items to write. Default is {}".format(DEFAULT_COUNT),
         )
         self.argparser.add_argument(
             "-u",
             "--unit",
-            default=1,
+            default=DEFAULT_UNITID,
             type=int,
-            help="The unit ID of the slave on the server to write to",
+            help="The unit ID of the slave on the server to write to. "
+                 "The default is {}".format(DEFAULT_UNITID),
         )
         self.argparser.add_argument(
             "-w", "--value", required=True, type=int, help="The value to write"

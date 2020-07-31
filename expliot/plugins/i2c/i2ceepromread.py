@@ -3,12 +3,13 @@ from time import time
 
 from expliot.core.protocols.hardware.i2c import I2cEepromManager
 from expliot.core.interfaces.ftdi import DEFAULT_FTDI_URL
-from expliot.core.tests.test import TCategory, Test, TLog, TTarget
+from expliot.core.tests.test import TCategory, Test, TLog, \
+    TTarget, LOGNO
 
 DESCRIPTION = """
 This plugin reads data from an I2C EEPROM chip. It needs an FTDI interface to
 read data from the target EEPROM chip. You can buy an FTDI device online. If you
-are interested we have an FTDI based product - 'Expliot Nano' which you can
+are interested we have an FTDI based product - 'EXPLIoT Nano' which you can
 order online from www.expliot.io This plugin uses pyi2cflash package which in
 turn uses pyftdi python driver for ftdi chips. For more details on supported
 I2C EEPROM chips, check the readme at https://github.com/eblot/pyi2cflash Thank
@@ -84,7 +85,7 @@ class I2cEepromRead(Test):
                 self.args.url, self.args.chip, address=self.slaveaddr
             )
             length = self.args.length or (len(device) - self.args.addr)
-            TLog.success("(chip size={} bytes)".format(len(device)))
+            self.output_handler(chip_size="{} bytes".format(len(device)))
             TLog.trydo(
                 "Reading {} bytes from start address {}".format(length, self.args.addr)
             )
@@ -99,12 +100,11 @@ class I2cEepromRead(Test):
                 output_file.write(data)
                 output_file.close()
             else:
-                TLog.success("(data={})".format([hex(x) for x in data]))
-            TLog.success(
-                "Done. Total bytes read ({}) Time taken to read = {} secs".format(
-                    len(data), round(end_time - start_time, 2)
-                )
-            )
+                self.output_handler(msg="data: {}".format([hex(x) for x in data]),
+                                    logkwargs=LOGNO,
+                                    data=data)
+            self.output_handler(bytes_read=len(data),
+                                time_taken="{} secs".format(round(end_time - start_time, 2)))
         except:  # noqa: E722
             self.result.exception()
         finally:

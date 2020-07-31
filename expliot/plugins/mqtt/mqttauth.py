@@ -2,7 +2,8 @@
 from expliot.core.common.fileutils import readlines
 from expliot.core.protocols.internet.mqtt import \
     SimpleMqttClient, DEFAULT_MQTT_PORT
-from expliot.core.tests.test import Test, TCategory, TTarget, TLog
+from expliot.core.tests.test import Test, TCategory, \
+    TTarget, TLog, LOGNO
 from expliot.plugins.mqtt import MQTT_REFERENCE
 
 
@@ -84,10 +85,16 @@ class MqttAuth(Test):
                         port=self.args.rport,
                     )
                     if return_code == 0:
-                        TLog.success(
-                            "FOUND - (user={})(passwd={})(return code={}:{})".format(
+                        self.output_handler(
+                            msg="FOUND - (user={})(passwd={})(return code={}:{})".format(
                                 self.args.user, password, return_code, state
-                            )
+                            ),
+                            logkwargs=LOGNO,
+                            auth="success",
+                            user=self.args.user,
+                            password=password,
+                            reason_code=return_code,
+                            reason_code_str=state,
                         )
                         found = True
                     elif self.args.verbose:
@@ -109,10 +116,16 @@ class MqttAuth(Test):
                     port=self.args.rport,
                 )
                 if return_code == 0:
-                    TLog.success(
-                        "FOUND - (user={})(passwd={})(return code={}:{})".format(
+                    self.output_handler(
+                        msg="FOUND - (user={})(passwd={})(return code={}:{})".format(
                             self.args.user, self.args.passwd, return_code, state
-                        )
+                        ),
+                        logkwargs=LOGNO,
+                        auth="success",
+                        user=self.args.user,
+                        password=self.args.passwd,
+                        reason_code=return_code,
+                        reason_code_str=state,
                     )
                 else:
                     self.result.setstatus(passed=False, reason=state)

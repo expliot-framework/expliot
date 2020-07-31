@@ -317,6 +317,7 @@ class TLog:
         if data.__class__ == dict:
             for key, value in data.items():
                 if (value.__class__ == dict) or (value.__class__ == list):
+                    TLog.print(prefixtype, "{}{}:".format(spaces, key))
                     cls.prettylog(value, prefixtype=prefixtype, level=(level + 1))
                 else:
                     TLog.print(prefixtype, "{}{}: {}".format(spaces, key, value))

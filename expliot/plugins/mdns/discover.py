@@ -44,11 +44,8 @@ class Discovery(Test):
 
         service_names = list(MDNS_SERVICE_TYPES)
         if self.args.list:
-            TLog.trydo("Supported Device types")
-            for name in service_names:
-                TLog.success("{}".format(name))
+            self.output_handler(supported_device_types=service_names)
             return
-
         TLog.generic("Search local network for mDNS enabled devices")
 
         if self.args.device:
@@ -64,14 +61,13 @@ class Discovery(Test):
             details.scan()
             for device in details.devices:
                 cnt += 1
-                TLog.success("Device {}".format(cnt))
-                TLog.success("  (name={})".format(device.name))
-                TLog.success("  (address={})".format(device.address))
-                TLog.success("  (port={})".format(device.port))
-                TLog.success("  (server={})".format(device.server))
-                TLog.success("  (type={})".format(device.type))
-                TLog.success("  (priority={})".format(device.priority))
-                TLog.success("  (weight={})".format(device.weight))
-                TLog.success("  (properties={})".format(device.properties))
-                TLog.success("")
-        TLog.success("Total devices discovered = {}".format(cnt))
+                self.output_handler(device_number=cnt,
+                                    name=device.name,
+                                    address=device.address,
+                                    port=device.port,
+                                    server=device.server,
+                                    type=device.type,
+                                    priority=device.priority,
+                                    weight=device.weight,
+                                    properties=device.properties)
+        self.output_handler(total_devices_discovered=cnt)

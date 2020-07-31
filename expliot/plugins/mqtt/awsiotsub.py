@@ -95,14 +95,13 @@ class AwsIotSub(Test):
             "Default is {} secs".format(DEFAULT_AWSIOT_TIMEOUT),
         )
 
-    @classmethod
-    def subcb(cls, client, userdata, message):
+    def subcb(self, client, userdata, message):
         """
         A callback method that is called when the thing
         receives a message on the subscribed topic from
         an AWS IoT endpoint.
         """
-        TLog.success("(topic={})(payload={})".format(message.topic, message.payload))
+        self.output_handler(topic=message.topic, payload=message.payload)
 
     def execute(self):
         """Execute the plugin."""

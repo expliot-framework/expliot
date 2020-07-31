@@ -89,9 +89,6 @@ class MqttSub(Test):
         Returns:
             Nothing.
         """
-        # TLog.success(
-        #    "(topic={})(payload={})".format(message.topic, message.payload)
-        # )logkwargs=LOGNORMAL
         self.output_handler(topic=message.topic, payload=message.payload)
 
     def execute(self):
