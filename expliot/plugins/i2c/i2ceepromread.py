@@ -5,6 +5,7 @@ from expliot.core.protocols.hardware.i2c import I2cEepromManager
 from expliot.core.interfaces.ftdi import DEFAULT_FTDI_URL
 from expliot.core.tests.test import TCategory, Test, TLog, \
     TTarget, LOGNO
+from expliot.plugins.i2c import DEFAULT_ADDR
 
 DESCRIPTION = """
 This plugin reads data from an I2C EEPROM chip. It needs an FTDI interface to
@@ -37,16 +38,17 @@ class I2cEepromRead(Test):
         self.argparser.add_argument(
             "-a",
             "--addr",
-            default=0,
+            default=DEFAULT_ADDR,
             type=int,
-            help="Specify the start address from where data is to be read. Default is 0",
+            help="Specify the start address from where data is to be "
+                 "read. Default is {}".format(DEFAULT_ADDR),
         )
         self.argparser.add_argument(
             "-l",
             "--length",
             type=int,
-            help="Specify the total length of data, in bytes, to be read from the start "
-            "address. If not specified, it reads till the end",
+            help="Specify the total length of data, in bytes, to be read from "
+                 "the start address. If not specified, it reads till the end",
         )
         self.argparser.add_argument(
             "-u",
@@ -85,7 +87,7 @@ class I2cEepromRead(Test):
                 self.args.url, self.args.chip, address=self.slaveaddr
             )
             length = self.args.length or (len(device) - self.args.addr)
-            self.output_handler(chip_size="{} bytes".format(len(device)))
+            self.output_handler(chip_size=len(device))
             TLog.trydo(
                 "Reading {} bytes from start address {}".format(length, self.args.addr)
             )
@@ -104,7 +106,7 @@ class I2cEepromRead(Test):
                                     logkwargs=LOGNO,
                                     data=data)
             self.output_handler(bytes_read=len(data),
-                                time_taken="{} secs".format(round(end_time - start_time, 2)))
+                                time_taken_secs=round(end_time - start_time, 2))
         except:  # noqa: E722
             self.result.exception()
         finally:

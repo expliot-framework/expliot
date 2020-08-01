@@ -3,7 +3,8 @@ import itertools
 
 from expliot.core.common.exceptions import sysexcinfo
 from expliot.core.protocols.hardware.serial import Serial
-from expliot.core.tests.test import TCategory, Test, TLog, TTarget
+from expliot.core.tests.test import TCategory, Test, TLog, \
+    TTarget, LOGNO
 from expliot.plugins.serial import (
     DEFAULT_BAUD,
     DEV_PORT,
@@ -117,7 +118,7 @@ class FuzzCommands(Test):
             type=int,
             default=DEFAULT_BUFFSZ,
             help="Read buffer size. change this and timeout to increase "
-                 "efficiency. Default is {} bytes".format(DEFAULT_BUFFSZ),
+                 "efficiency. Default is {} byte".format(DEFAULT_BUFFSZ),
         )
         self.argparser.add_argument(
             "-v",
@@ -126,16 +127,17 @@ class FuzzCommands(Test):
             help="Show verbose output i.e. each word",
         )
 
-    def pre(self):
-        """Pre task for the test."""
-        if self.args.match is None:
-            if self.args.nomatch is None:
-                raise AttributeError("Specify either --match or --nomatch")
-        elif self.args.nomatch is not None:
-            raise AttributeError("Can't specify both --match and --nomatch")
-
     def execute(self):
         """Execute the test."""
+        if self.args.match is None:
+            if self.args.nomatch is None:
+                self.result.setstatus(passed=False,
+                                      reason="Specify either --match or --nomatch")
+                return
+        elif self.args.nomatch is not None:
+            self.result.setstatus(passed=False,
+                                  reason="Can't specify both --match and --nomatch")
+            return
         TLog.generic(
             "Connecting to the the serial port ({}) with baud ({})".format(
                 self.args.port, self.args.baud
@@ -173,8 +175,6 @@ class FuzzCommands(Test):
                         )
                         found = True
                         commands.append(cmd.rstrip())
-                        if self.args.stop is True:
-                            break
                 elif self.args.nomatch is not None:
                     if self.args.nomatch.lower() not in received_data.decode().lower():
                         TLog.success(
@@ -184,14 +184,19 @@ class FuzzCommands(Test):
                         )
                         found = True
                         commands.append(cmd.rstrip())
-                        if self.args.stop is True:
-                            break
+                self.output_handler(logkwargs=LOGNO,
+                                    command=cmd.rstrip(),
+                                    response=received_data,
+                                    num=tries,
+                                    found=found)
+                if (found is True) and (self.args.stop is True):
+                    break
         except:  # noqa: E722
             reason = "Exception caught: {}".format(sysexcinfo())
         finally:
             if sock:
                 sock.close()
         if found is True:
-            TLog.success("Valid commands found: ({})".format(commands))
+            self.output_handler(valid_commands_found=commands)
         else:
             self.result.setstatus(passed=False, reason=reason)

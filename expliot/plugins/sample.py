@@ -1,5 +1,8 @@
 """Sample test/plugin as demo."""
-from expliot.core.tests.test import Test, TCategory, TTarget, TLog
+from expliot.core.tests.test import Test, TCategory, TTarget, \
+    TLog, LOGNO
+
+DEFAULT_PORT = 80
 
 
 class Sample(Test):
@@ -24,9 +27,9 @@ class Sample(Test):
         self.argparser.add_argument(
             "-p",
             "--rport",
-            default=80,
+            default=DEFAULT_PORT,
             type=int,
-            help="Port number of the target. Default is 80",
+            help="Port number of the target. Default is {}".format(DEFAULT_PORT),
         )
         self.argparser.add_argument(
             "-v", "--verbose", action="store_true", help="show verbose output"
@@ -52,7 +55,12 @@ class Sample(Test):
             )
         )
         TLog.trydo("Searching imaginary database")
-        TLog.success("Found matching entry in database - ({})".format("FooEntry"))
+        self.output_handler(found_entry_in_db="FooEntry")
+        # Or if you need to print extra message for only the console
+        # but not required for the actual result output (chaining plugins)
+        self.output_handler(msg="Found matching entry in database - ({})".format("FooEntry"),
+                            logkwargs=LOGNO,
+                            found_entry_in_db="FooEntry")
         snd = "GET / HTTP/1.1"
         TLog.generic(
             "Sending command to server ({}) on port ({})".format(
@@ -66,8 +74,8 @@ class Sample(Test):
         response = "Response received from the server"
         # In case of failure (Nothing to do in case of success)
         if response:
-            self.result.setstatus(passed=True, reason="Server is vulnerable")
+            self.output_handler(status="Server is vulnerable")
         else:
             self.result.setstatus(passed=False, reason="Server is not vulnerable")
         # Or in case you want the test to fail with whatever exception occurred as the reason
-        # self.result.exception()
+        # use reason=self.result.exception()

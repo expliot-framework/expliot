@@ -4,6 +4,7 @@ from time import time
 from expliot.core.protocols.hardware.i2c import I2cEepromManager
 from expliot.core.interfaces.ftdi import DEFAULT_FTDI_URL
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
+from expliot.plugins.i2c import DEFAULT_ADDR, SLAVE_ADDR
 
 
 # pylint: disable=bare-except
@@ -35,9 +36,10 @@ class I2cEepromWrite(Test):
         self.argparser.add_argument(
             "-a",
             "--addr",
-            default=0,
+            default=DEFAULT_ADDR,
             type=int,
-            help="Specify the start address where data is to be written. Default is 0",
+            help="Specify the start address where data is to be written. "
+                 "Default is {}".format(DEFAULT_ADDR),
         )
         self.argparser.add_argument(
             "-u",
@@ -66,7 +68,6 @@ class I2cEepromWrite(Test):
             "precedence over --data option i.e if both options are specified "
             "--data would be ignored",
         )
-        self.slaveaddr = 0x50
 
     def execute(self):
         """Execute the test."""
@@ -89,9 +90,9 @@ class I2cEepromWrite(Test):
                 raise AttributeError("Specify either --data or --rfile (but not both)")
 
             device = I2cEepromManager.get_flash_device(
-                self.args.url, self.args.chip, address=self.slaveaddr
+                self.args.url, self.args.chip, address=SLAVE_ADDR
             )
-            self.output_handler(chip_size="{} bytes".format(len(device)))
+            self.output_handler(chip_size=len(device))
 
             length_data = len(data)
             TLog.trydo(
@@ -105,7 +106,7 @@ class I2cEepromWrite(Test):
             device.write(start_address, data)
             end_time = time()
             self.output_handler(bytes_written=length_data,
-                                time_taken="{} secs".format(round(end_time - start_time, 2)))
+                                time_taken_secs=round(end_time - start_time, 2))
         except:  # noqa: E722
             self.result.exception()
         finally:
