@@ -36,7 +36,7 @@ class ZbAuditorDevInfo(Test):
 
                 TLog.generic("Services:")
                 for _, (serivce, value) in enumerate(services.items()):
-                    TLog.success("\t {:<17}: {}".format(serivce, value))
+                    TLog.success("\t {:<23}: {}".format(serivce, value))
 
             TLog.generic("")
 

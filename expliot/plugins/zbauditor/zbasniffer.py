@@ -4,6 +4,7 @@ from expliot.core.common.pcaphelper import PcapDumper, PcapFrame
 from expliot.core.common.timer import Timer
 from expliot.core.protocols.radio.dot154 import Dot154Radio
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
+from expliot.core.common.exceptions import sysexcinfo
 
 
 # pylint: disable=bare-except
@@ -65,6 +66,8 @@ class ZbAuditorSniffer(Test):
         count = self.args.count
         timeout = self.args.timeout
         packetcount = 0
+        pcap_writer = None
+        radio = None
 
         TLog.generic("{:<13}: ({})".format("Channel", self.args.channel))
         TLog.generic("{:<13}: ({})".format("File", self.args.filepath))
@@ -78,34 +81,40 @@ class ZbAuditorSniffer(Test):
             # Create pcap file to dump the packet
             pcap_writer = PcapDumper(PCAP_DLT_IEEE802_15_4, self.args.filepath)
 
-            try:
-                # Turn ON radio sniffer
-                radio.sniffer_on(self.args.channel)
+            # Turn ON radio sniffer
+            radio.sniffer_on(self.args.channel)
 
-                # kick start timer, if user set some timeout
+            # kick start timer, if user set some timeout
+            if timeout != 0:
+                # Create Timer for timeout check
+                timer = Timer()
+                timer.timeout = timeout
+
+            while True:
+                packet = radio.read_raw_packet()
+                if packet is not None:
+                    packetcount += 1
+                    pcap_frame = PcapFrame(packet)
+                    pcap_writer.write_to_pcapfile(pcap_frame.get_pcap_frame())
+
                 if timeout != 0:
-                    # Create Timer for timeout check
-                    timer = Timer()
-                    timer.timeout = timeout
-
-                while True:
-                    packet = radio.read_raw_packet()
-                    if packet is not None:
-                        packetcount += 1
-                        pcap_frame = PcapFrame(packet)
-                        pcap_writer.write_to_pcapfile(pcap_frame.get_pcap_frame())
-
-                    if timeout != 0:
-                        if timer.is_timeout():
-                            break
-
-                    if packetcount == count:
+                    if timer.is_timeout():
                         break
-            finally:
-                self.output_handler(packets_received=radio.get_received_packets())
-                # Turn OFF radio sniffer and exit
-                pcap_writer.close()
-                radio.sniffer_off()
+
+                if packetcount == count:
+                    break
 
         except:  # noqa: E722
-            self.result.exception()
+            self.result.setstatus(passed=False,
+                                  reason="Exception caught: {}".format(sysexcinfo()))
+
+        finally:
+            # Close file handler
+            if pcap_writer:
+                pcap_writer.close()
+            
+            # Turn OFF radio sniffer and exit
+            if radio:
+                # Execution Done
+                self.output_handler(packets_received=radio.get_received_packets())
+                radio.sniffer_off()
