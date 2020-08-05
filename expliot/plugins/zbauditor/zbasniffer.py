@@ -112,7 +112,7 @@ class ZbAuditorSniffer(Test):
             # Close file handler
             if pcap_writer:
                 pcap_writer.close()
-            
+
             # Turn OFF radio sniffer and exit
             if radio:
                 # Execution Done
