@@ -89,7 +89,7 @@ class BleEnum(Test):
                 chars = device.getCharacteristics()
                 for char in chars:
                     chardict = {"char_uuid": char.uuid,
-                                "handle": char.getHandle(),
+                                "handle": hex(char.getHandle()),
                                 "supported_properties": char.propertiesToString()}
                     if char.supportsRead():
                         chardict["readvalue"] = char.read()
