@@ -82,13 +82,15 @@ class BleEnum(Test):
             if self.args.services is True:
                 services = device.getServices()
                 for service in services:
-                    self.output_handler(service_uuid=service.uuid,
+                    self.output_handler(service_uuid=str(service.uuid),
+                                        service_uuid_name=service.uuid.getCommonName(),
                                         handle_start=hex(service.hndStart),
                                         handle_end=hex(service.hndEnd))
             if self.args.chars is True:
                 chars = device.getCharacteristics()
                 for char in chars:
-                    chardict = {"char_uuid": char.uuid,
+                    chardict = {"char_uuid": str(char.uuid),
+                                "char_uuid_name": char.uuid.getCommonName(),
                                 "handle": hex(char.getHandle()),
                                 "supported_properties": char.propertiesToString()}
                     if char.supportsRead():
