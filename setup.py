@@ -38,6 +38,7 @@ setup(
         "python-can==3.3.3",
         "zeroconf==0.27.1",
         "AWSIoTPythonSDK==1.4.8",
+        "xmltodict==0.12.0",
     ],
     python_requires=">=3.5",
     classifiers=[
