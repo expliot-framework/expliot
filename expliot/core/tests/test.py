@@ -51,30 +51,32 @@ class TCategory(namedtuple("TCategory", "tech, iface, action")):
 
     # Other
     CRYPTO = "crypto"
-    # Auditors
+    # Auditors/Utilities
     ZB_AUDITOR = "zbauditor"
     BUS_AUDITOR = "busauditor"
     FW_AUDITOR = "fwauditor"
+    NMAP = "nmap"
 
     _tech = [
         BLE,
         BUS_AUDITOR,
         CAN,
         COAP,
+        CRYPTO,
         DICOM,
         FW_AUDITOR,
+        HTTP,
         I2C,
         IEEE802154,
         JTAG,
         MDNS,
         MODBUS,
         MQTT,
+        NMAP,
         SPI,
+        TCP,
         UART,
         UDP,
-        TCP,
-        HTTP,
-        CRYPTO,
         ZB_AUDITOR,
         ZIGBEE,
     ]
