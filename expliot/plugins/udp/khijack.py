@@ -76,13 +76,13 @@ class KHijack(Test):
         Returns:
             str: The encrypted/decrypted string
         """
-        aesobj = AES.new(AES_KEY, AES.MODE_ECB)
+        aesobj = AES.new(bytes(AES_KEY, 'utf-8'), AES.MODE_ECB)
         if string:
             # AES requires the input length to be in multiples of 16
             while len(string) % 16 != 0:
                 string = string + " "
             if encrypt is True:
-                return aesobj.encrypt(string)
+                return aesobj.encrypt(bytes(string, 'utf-8'))
             return aesobj.decrypt(string)
         return None
 
