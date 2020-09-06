@@ -4,11 +4,12 @@ from collections import namedtuple
 from os import geteuid
 import sys
 
+from expliot.core.common import recurse_list_dict, bstr
 from expliot.core.common.exceptions import sysexcinfo
 
-LOGPRETTY = 0
-LOGNORMAL = 1
-LOGNO = 2
+LOGNO = 0
+LOGPRETTY = 1
+LOGNORMAL = 2
 
 
 class TCategory(namedtuple("TCategory", "tech, iface, action")):
@@ -163,7 +164,15 @@ class TResult:
     defaultrsn = "No reason specified"
 
     def __init__(self):
-        """Initialize a test result."""
+        """
+        Initialize a test result.
+
+        NOTE: The output member MUST be populated as a list of dicts.
+              This is the responsibility of the plugin and based on
+              it's execution output it MUST document the format
+              of output member clearly and explain the keys and meaning,
+              type of values held by those keys.
+        """
         self.passed = True
         self.reason = None
         # Test execution output list (of dicts)
@@ -195,6 +204,16 @@ class TResult:
 
         Returns:
             dict: the result data including status and output
+        NOTE: This is the standard dict format that will be used by EXPLIoT
+        for returning the plugin execution results. The dict keys and their
+        meaning:
+        status(int) - The execution status of the plugin. 0 if the test passed
+                      1 otherwise.
+        reason(str) - The reason the test failed. If it was successful, this
+                      will be None.
+        output(list) - The actual plugin execution output. This is a list of
+                      dicts and the plugins MUST adhere to this format and
+                      document their output format clearly in the plugin class.
         """
         return {"status": 0 if self.passed is True else 1,
                 "reason": self.reason,
@@ -300,36 +319,6 @@ class TLog:
         """
         cls.print(cls.GENERIC, message)
 
-    @classmethod
-    def prettylog(cls, data, prefixtype, level=0):
-        """
-        Formatted Logging for dict or list data types using recursion.
-
-        Args:
-            data(dict or list): The plugin output data to be logged
-            prefixtype(int): the prefix type to be used for the logs
-            level=0(int): Must not be used by caller. It is used
-                internally for indentation.
-        Returns:
-            Nothing
-        """
-        # Used for indentation of child data under the parent data
-        spaces = "  " * level
-
-        if data.__class__ == dict:
-            for key, value in data.items():
-                if (value.__class__ == dict) or (value.__class__ == list):
-                    TLog.print(prefixtype, "{}{}:".format(spaces, key))
-                    cls.prettylog(value, prefixtype=prefixtype, level=(level + 1))
-                else:
-                    TLog.print(prefixtype, "{}{}: {}".format(spaces, key, value))
-        elif data.__class__ == list:
-            for value in data:
-                if (value.__class__ == dict) or (value.__class__ == list):
-                    cls.prettylog(value, prefixtype=prefixtype, level=(level + 1))
-                else:
-                    TLog.print(prefixtype, "{}{}".format(spaces, value))
-
 
 class Test:
     """
@@ -396,6 +385,51 @@ class Test:
         )
         TLog.generic("")
 
+    def output_dict_iter(self, cblog, robj, rlevel, key=None, value=None):
+        """
+        Callback method for recurse_list_dict(). It iterates over the dict
+        output passed from a plugin to output_handler(). It performs two
+        operations on the dict
+            1. If the output data is to be TLog(ged) (LOGPRETTY) on the console,
+               then log the data recursively from the dict.
+            2. Convert any bytes or bytearray objects in the dict to binary string
+               and update the original dict object itself.
+
+        Args:
+            cblog (dict): Contains logging information i.e. to log the data or not?
+                and the Log prefix type.
+            robj (list or dict): The list or dict object at the specified recursion
+                level.
+            rlevel (int): The current recursion level at which this callback
+                instance is called.
+            key (str): The key if the robj is a dict.
+            value (can be any type): 1. The value of the key if robj is a dict or
+                                     2. A value from the robj if it is a list
+    Returns:
+        Nothing
+        """
+        spaces = "  " * rlevel
+
+        if robj.__class__ == dict and (value.__class__ == dict or value.__class__ == list):
+            if cblog["logkwargs"] == LOGPRETTY:
+                TLog.print(cblog["tlogtype"], "{}{}:".format(spaces, key))
+        else:
+            strval = value
+            isbval = False
+            if isinstance(value, bytes) or isinstance(value, bytearray):
+                strval = bstr(value)
+                isbval = True
+            if key:
+                if cblog["logkwargs"] == LOGPRETTY:
+                    TLog.print(cblog["tlogtype"], "{}{}: {}".format(spaces, key, strval))
+                if isbval:
+                    robj[key] = strval
+            else:
+                if cblog["logkwargs"] == LOGPRETTY:
+                    TLog.print(cblog["tlogtype"], "{}{}".format(spaces, strval))
+                if isbval:
+                    robj[robj.index(value)] = strval
+
     def output_handler(self,
                        tlogtype=TLog.SUCCESS,
                        msg=None,
@@ -425,12 +459,13 @@ class Test:
         if not kwargs:
             # empty dict
             return
-        self.result.output.append(kwargs)
-        if logkwargs == LOGPRETTY:
-            TLog.prettylog(kwargs, prefixtype=tlogtype)
-            TLog.print(tlogtype, "")
-        elif logkwargs == LOGNORMAL:
+        cblog = {"tlogtype": tlogtype,
+                 "logkwargs": logkwargs}
+        recurse_list_dict(kwargs, self.output_dict_iter, cblog)
+        if logkwargs == LOGNORMAL:
             TLog.print(tlogtype, kwargs)
+        TLog.print(tlogtype, "")
+        self.result.output.append(kwargs)
 
     def run(self, arglist):
         """
@@ -446,9 +481,11 @@ class Test:
         try:
             self.args = self.argparser.parse_args(arglist)
         except SystemExit:
-            # Nothing to do here. SystemExit occurs in case of wrong arguments or help
-            # Cmd2 does not catch SystemExit from v1.0.2 - https://github.com/python-cmd2/cmd2/issues/932
-            # returning instead of raising Cmd2ArgparseError so in future any post command hooks implemented can run
+            # Nothing to do here. SystemExit occurs in case of wrong arguments
+            # or help. Cmd2 does not catch SystemExit from v1.0.2 -
+            # https://github.com/python-cmd2/cmd2/issues/932
+            # returning instead of raising Cmd2ArgparseError so in future any
+            # post command hooks implemented can run
             return {}
 
         # Log Test Intro messages
@@ -473,6 +510,7 @@ class Test:
         self._logstatus()
 
         # Return test result
+        # print(self.result.getresult())
         return self.result.getresult()
 
     def _assertpriv(self):

@@ -7,7 +7,17 @@ from expliot.core.vendors.tplink import crypto, TPL_PORT
 
 
 class TPLinkTakeover(Test):
-    """Test for TPLink Smart devices"""
+    """
+    Test for TPLink Smart devices
+
+    Output Format:
+    [
+        {
+            "response_raw": "Encrypted_hex_data",
+            "response_decrypted": "Decrypted_data"
+        }
+    ]
+    """
 
     def __init__(self):
         """Initialize the test for TPlink smart devices"""
@@ -65,7 +75,7 @@ class TPLinkTakeover(Test):
             sock_tcp.send(data)
             data_tp = sock_tcp.recv(2048)
             # Step 3 : Check for Empty or no response
-            if data_tp is None or len(data_tp) == 0:
+            if not data_tp:
                 self.result.setstatus(passed=False,
                                       reason="Empty or no response received")
             else:
@@ -75,24 +85,24 @@ class TPLinkTakeover(Test):
                 data_tp = [i if len(i) == 2 else "0" + i for i in data_tp]
                 data_tp = "".join(data_tp)
                 # Step 5 : Decrypt the hex string
-                data_tp = crypto.decrypt(data_tp)
-                self.output_handler(response_raw=data_tp, response_decrypted=data_tp)
-                data_tp = json.loads(data_tp)
+                decrypted = crypto.decrypt(data_tp)
+                self.output_handler(response_raw=data_tp, response_decrypted=decrypted)
+                jsondata = json.loads(decrypted)
                 # Step 6 : Check for reason of failture
-                if data_tp.get("system") and \
-                        data_tp.get("system").get("err_msg"):
-                    reason = data_tp.get("system").get("err_msg")
+                if jsondata.get("system") and \
+                        jsondata.get("system").get("err_msg"):
+                    reason = jsondata.get("system").get("err_msg")
                     self.result.setstatus(passed=False, reason=reason)
-                elif data_tp.get("system") and \
-                        not data_tp.get("system").get("err_msg") and \
-                        data_tp.get("system").get("set_relay_state") and \
-                        data_tp.get("system").get("set_relay_state").get("err_msg"):
-                    reason = data_tp.get("system").get("set_relay_state").get("err_msg")
+                elif jsondata.get("system") and \
+                        not jsondata.get("system").get("err_msg") and \
+                        jsondata.get("system").get("set_relay_state") and \
+                        jsondata.get("system").get("set_relay_state").get("err_msg"):
+                    reason = jsondata.get("system").get("set_relay_state").get("err_msg")
                     self.result.setstatus(passed=False, reason=reason)
-                elif data_tp.get("system") and \
-                        not data_tp.get("system").get("err_msg") and \
-                        data_tp.get("system").get("set_relay_state") and \
-                        not data_tp.get("system").get("set_relay_state").get("err_msg"):
+                elif jsondata.get("system") and \
+                        not jsondata.get("system").get("err_msg") and \
+                        jsondata.get("system").get("set_relay_state") and \
+                        not jsondata.get("system").get("set_relay_state").get("err_msg"):
 
                     TLog.success("Json data successfully received by the device.")
                 else:

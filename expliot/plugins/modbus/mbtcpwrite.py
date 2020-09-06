@@ -15,7 +15,12 @@ from expliot.plugins.modbus import (
 
 # pylint: disable=bare-except
 class MBTcpWrite(Test):
-    """Test for writing data to Modbus over TCP."""
+    """
+    Test for writing data to Modbus over TCP.
+
+    Output Format:
+    There is no ouput.
+    """
 
     def __init__(self):
         """Initialize the test."""

@@ -9,7 +9,14 @@ from expliot.core.common.exceptions import sysexcinfo
 
 # pylint: disable=bare-except
 class ZbAuditorSniffer(Test):
-    """IEEE 802.15.4 packet sniffer Plugin."""
+    """
+    IEEE 802.15.4 packet sniffer Plugin.
+
+    Output Format:
+    [
+        {"packets_received": 11}
+    ]
+    """
 
     def __init__(self):
         super().__init__(

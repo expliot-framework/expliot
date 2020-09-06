@@ -8,7 +8,12 @@ from expliot.core.tests.test import Test, TCategory, TTarget, TLog
 
 # pylint: disable=bare-except
 class AwsIotPub(Test):
-    """Publish a MQTT message to a given AWS IoT endpoint."""
+    """
+    Publish a MQTT message to a given AWS IoT endpoint.
+
+    Output Format:
+    There is no output.
+    """
 
     def __init__(self):
         """Initialize the plugin."""

@@ -7,7 +7,20 @@ from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 
 # pylint: disable=bare-except
 class I2cScan(Test):
-    """Scan the I2C bus for connected units."""
+    """
+    Scan the I2C bus for connected units.
+
+    Output Format:
+
+    [
+        {"address_found"="0x51"},   # Address for an I2C device on PCB
+        # ... May be more than one address found
+        {
+            "total_found":6,
+            "total_not_found": 7
+        }
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""

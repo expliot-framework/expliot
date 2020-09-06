@@ -10,7 +10,12 @@ from expliot.plugins.ble import BLE_REF
 
 # pylint: disable=bare-except
 class BleNotifyRead(Test):
-    """Plugin to enable notification and read characteristic data from a Bluetooth LE device."""
+    """
+    Plugin to enable notification and read characteristic data from a Bluetooth LE device.
+
+    output Format:
+    [{"ndata": 1}]
+    """
 
     def __init__(self):
         """Initialize the plugin."""

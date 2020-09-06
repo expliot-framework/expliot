@@ -6,7 +6,12 @@ from expliot.core.vendors.tplink import crypto
 
 
 class TPlinkdecrypt(Test):
-    """Test for TPLink Smart devices."""
+    """
+    Test for TPLink Smart devices.
+
+    Output Format:
+    [{"decrypted_data": "{'foo': 'bar'}"}]
+    """
 
     def __init__(self):
         """Initialize the test for TPlink smart devices."""

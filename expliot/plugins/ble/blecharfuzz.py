@@ -9,7 +9,15 @@ from expliot.plugins.ble import BLE_REF
 
 # pylint: disable=bare-except
 class BleCharFuzz(Test):
-    """Test Bluetooth LE device with fuzzing."""
+    """
+    Test Bluetooth LE device with fuzzing.
+
+    output Format:
+    [
+        {"fuzzvalue": "92abde110e"}, # The fuzzed characteristic value sent
+        # ... May be more than one fuzzvalue
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -98,7 +106,7 @@ class BleCharFuzz(Test):
                         "xx", "{:02x}".format(randint(0, 0xFF)), 1  # nosec
                     )
 
-                self.output_handler(logtype=TLog.TRYDO,
+                self.output_handler(tlogtype=TLog.TRYDO,
                                     msg="Writing the fuzzed value ({})".format(value),
                                     logkwargs=LOGNO,
                                     fuzzvalue=value)

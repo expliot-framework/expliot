@@ -7,7 +7,29 @@ from expliot.plugins.ble import BLE_REF
 
 # pylint: disable=bare-except, too-many-nested-blocks
 class BleScan(Test):
-    """Scan for BLE devices."""
+    """
+    Scan for BLE devices.
+
+    output Format:
+    [
+        {
+            "name": "Foobar", # Device name if present or "Unknown"
+            "addr": "de:ad:be:ef:00:00", # Device BLE address
+            "addrtype": "random", # or "public" addr type
+            "rssi": "60 dBm",  # RSSI strength
+            "connectable": True, # or False
+            "adtype_data": [
+                                {
+                                    "adtype": 25, # int
+                                    "description": "Foobar", # Human readable adtype name
+                                    "value": "Foobar" # Value of adtype
+                                },
+                                ... # may be more than one adtype_data
+                            ]
+        },
+        # ... May be more than one device
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""

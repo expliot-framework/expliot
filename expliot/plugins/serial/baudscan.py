@@ -14,7 +14,25 @@ from expliot.plugins.serial import (
 
 # pylint: disable=bare-except
 class BaudScan(Test):
-    """Test the available baud rate of a device."""
+    """
+    Test the available baud rate of a device.
+
+    Output Format:
+    [
+        {
+            "baud": 9600,
+            "ascii_percent": 70.0,
+            "received_data": "\xf00bar\x01",
+            "ascii_data": "0bar",
+            "status": "Data received", # or "No data received" if nothing is received
+            "exception": None, # or "Error message" in case an exception occurred during
+                               # serial communication, in which case the other information
+                               # may be empty or incomplete
+        },
+        # ... More than one entry based on no. of baud rates scanned.
+
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -124,7 +142,7 @@ class BaudScan(Test):
             if sock:
                 sock.close()
             self.output_handler(logkwargs=LOGNO, **output)
-        return output["percent_ascii"]
+        return output["ascii_percent"]
 
     def execute(self):
         """Execute the test."""

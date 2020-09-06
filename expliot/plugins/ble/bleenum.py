@@ -8,7 +8,37 @@ from expliot.plugins.ble import BLE_REF
 
 # pylint: disable=bare-except, too-many-nested-blocks
 class BleEnum(Test):
-    """Enumerate services/characteristics of a BLE device."""
+    """
+    Enumerate services/characteristics of a BLE device.
+
+    Output Format:
+    There are three types of output:
+    1. Only services
+    2. Only Characteristics
+    3. Services and characteristics both
+
+    [
+        # Services
+        {
+            "service_uuid": "0000fee7-0000-1000-8000-00805f9b34fb",
+            "service_uuid_name": "Foobar", # Human readable name of service, if any
+            "handle_start": "0xa",
+            "handle_end": "0x12"
+        },
+        # ... May be more than one service
+        # Characteristics
+        {
+            "char_uuid": "00002a05-0000-1000-8000-00805f9b34fb",
+            "char_uuid_name": "Foobar",
+            "handle": "0xe",
+            "supported_properties": "READ NOTIFY WRITE INDICATE NO RESPONSE",
+                                    # One or more properties space separated
+            "readvalue": "Foobar_value", # optional field, only present it characteristic
+                                         # value can be read i.e. READ property is supported
+        },
+        # ... May be more than one characteristic
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""

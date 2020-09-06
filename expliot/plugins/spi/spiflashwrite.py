@@ -9,7 +9,33 @@ from expliot.plugins.spi import DEFAULT_ADDR
 
 # pylint: disable=bare-except
 class SPIFlashWrite(Test):
-    """Test for writing data to SPI."""
+    """
+    Test for writing data to SPI.
+
+    Output Format:
+    [
+        {
+            "chip": "Foobar XY12 8 MB",
+            "size": 8388608, # in bytes
+            "frequency": 30000000 # in Hz
+        },
+        {
+            "bytes_backedup_page_aligned": 32768,
+            "from_address": 0,
+            "time_taken_secs": 0.03
+        },
+        {
+            "bytes_erased": 32768,
+            "from_address": 0,
+            "time_taken_secs": 0.03
+        },
+        {
+            "bytes_written": 32768,
+            "from_address": 0,
+            "time_taken_secs": 0.03
+        };
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -108,7 +134,8 @@ class SPIFlashWrite(Test):
             )
             if self.args.addr + data_length > len(device):
                 raise IndexError("Length is out of range of the chip size")
-            # We can't write on any arbitrary address for an aritrary length unless it is aligned to the page size
+            # We can't write on any arbitrary address for an arbitrary length
+            # unless it is aligned to the page size
             # Get erase page size, start/end enclosing page addresses and length
             esz = device.get_erase_size()
             spaddr = start_address - start_address % esz
@@ -125,7 +152,10 @@ class SPIFlashWrite(Test):
             end_time = time()
             self.output_handler(bytes_backedup_page_aligned=pln, from_address=spaddr,
                                 time_taken_secs=round(end_time - start_time, 2))
-            tmpdata = tmpdata.tobytes()
+
+            # commenting below line as pyspiflash 0.6.3 read() returns bytes instead
+            # of ByteArray (array) sept 2020
+            # tmpdata = tmpdata.tobytes()
             # We can only write on erased data
             # Now erase the enclosing pages (of the start and end addresses)
             device.unlock()

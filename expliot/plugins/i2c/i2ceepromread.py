@@ -20,7 +20,26 @@ get a USB error related to langid."""
 
 # pylint: disable=bare-except
 class I2cEepromRead(Test):
-    """Plugin to read data over i2c."""
+    """
+    Plugin to read data over i2c.
+
+    Output Format:
+    There are two types of output format -
+    1. When the read data is stored in a file (--wfile argument).
+    2. When the read data has to be displayed instead of storing in a file.
+
+    [
+        {
+            "data": "Foobar data", # Data read from the chip, this field is present
+                                   # if --wfile is not specified
+        },
+        {
+            chip_size=32768, # Size of the chip in bytes
+            bytes_read=1000,
+            time_taken_secs=1.67,
+        }
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -87,7 +106,6 @@ class I2cEepromRead(Test):
                 self.args.url, self.args.chip, address=self.slaveaddr
             )
             length = self.args.length or (len(device) - self.args.addr)
-            self.output_handler(chip_size=len(device))
             TLog.trydo(
                 "Reading {} bytes from start address {}".format(length, self.args.addr)
             )
@@ -105,7 +123,8 @@ class I2cEepromRead(Test):
                 self.output_handler(msg="data: {}".format([hex(x) for x in data]),
                                     logkwargs=LOGNO,
                                     data=data)
-            self.output_handler(bytes_read=len(data),
+            self.output_handler(chip_size=len(device),
+                                bytes_read=len(data),
                                 time_taken_secs=round(end_time - start_time, 2))
         except:  # noqa: E722
             self.result.exception()

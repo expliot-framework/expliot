@@ -7,7 +7,12 @@ from expliot.plugins.ble import BLE_REF
 
 # pylint: disable=bare-except
 class BleCharWrite(Test):
-    """Plugin to write characteristic data to a Bluetooth LE device."""
+    """
+    Plugin to write characteristic data to a Bluetooth LE device.
+
+    Output Format:
+    There is no output for this plugin
+    """
 
     def __init__(self):
         """Initialize the test."""

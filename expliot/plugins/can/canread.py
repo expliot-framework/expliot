@@ -7,7 +7,33 @@ from expliot.core.protocols.hardware.can import CanBus
 
 # pylint: disable=bare-except
 class CANRead(Test):
-    """Test for reading from the CAN bus."""
+    """
+    Test for reading from the CAN bus.
+
+    Output Format:
+    There are two types of format
+    1. Read all types of can messages
+    2. Where arbitration id is specified for reading those can messages
+
+    1. Read all
+    [
+        {
+            "count":1,
+            "arbitration_id":"0x161",
+            "data":"000005500108000d"
+        },
+        # ... May be more than one message
+    ]
+
+    2. Read only for specific arbitration id
+    [
+        {
+            "count":28,
+            "data":"000000013d"
+        },
+        # ... May be more than one message
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""

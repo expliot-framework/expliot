@@ -10,7 +10,17 @@ from expliot.core.common.timer import Timer
 
 # pylint: disable=bare-except
 class AwsIotSub(Test):
-    """Subscribe to a topic on an AWS IoT endpoint."""
+    """
+    Subscribe to a topic on an AWS IoT endpoint.
+
+    Output Format:
+    [
+        {
+           "topic": "foobar/topic", "payload": "Foobar payload"
+        },
+        # ... May be zero or more entries
+    ]
+    """
 
     def __init__(self):
         """Initialize the plugin."""

@@ -10,7 +10,30 @@ from expliot.plugins.spi import DEFAULT_ADDR
 
 # pylint: disable=bare-except
 class SPIFlashRead(Test):
-    """Test to read data from SPI."""
+    """
+    Test to read data from SPI.
+
+    Output Format:
+    There are two types of output format -
+    1. When the read data is stored in a file (--wfile argument).
+    2. When the read data has to be displayed instead of storing in a file.
+
+    [
+        {
+            "chip": "Foobar XY12 8 MB",
+            "size": 8388608, # in bytes
+            "frequency": 30000000 # in Hz
+        },
+        {
+            "data": "Foobar data", # Data read from the chip, this field is present
+                                   # if --wfile is not specified
+        },
+        {
+            "bytes_read":10000,
+            "time_taken_secs": 0.58
+        },
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""

@@ -6,7 +6,25 @@ DEFAULT_PORT = 80
 
 
 class Sample(Test):
-    """Test class for the sample."""
+    """
+    Test class for the sample.
+
+    Every plugin needs to define and document the output format used in output_handler()
+    Output Format:
+
+    [
+        {
+            {"found_entry_in_db": "FooEntry"},
+            {"found_entry_in_db": "FooEntry2"},
+            {
+                "status": "Server is vulnerable",
+                "services_available": [
+                                        "ssh",
+                                        "foo"
+                                      ]
+            }
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -60,7 +78,7 @@ class Sample(Test):
         # but not required for the actual result output (chaining plugins)
         self.output_handler(msg="Found matching entry in database - ({})".format("FooEntry"),
                             logkwargs=LOGNO,
-                            found_entry_in_db="FooEntry")
+                            found_entry_in_db="FooEntry2")
         snd = "GET / HTTP/1.1"
         TLog.generic(
             "Sending command to server ({}) on port ({})".format(
@@ -74,7 +92,7 @@ class Sample(Test):
         response = "Response received from the server"
         # In case of failure (Nothing to do in case of success)
         if response:
-            self.output_handler(status="Server is vulnerable")
+            self.output_handler(status="Server is vulnerable", services_available=["ssh", "foo"])
         else:
             self.result.setstatus(passed=False, reason="Server is not vulnerable")
         # Or in case you want the test to fail with whatever exception occurred as the reason

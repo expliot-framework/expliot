@@ -5,11 +5,53 @@ from expliot.plugins.mdns import MDNS_REFERENCE
 from expliot.core.discovery.mdns import MdnsDiscovery, DEFAULT_MDNS_TIMEOUT
 
 
-class Discovery(Test):
+class Discover(Test):
     """Discover devices with support for mDNS."""
 
     def __init__(self):
-        """Initialize the mDNS discovery."""
+        """
+        Initialize the mDNS discovery.
+
+        Output Format:
+        There are two different types of outputs
+        1. Information of devices discovered
+        [
+            {
+                "device_number": 1,
+                "name": "Foobar name",
+                "address": "192.168.1.1",
+                "port": 2002,
+                "server": "Foobar",
+                "type": "Foobar",
+                "priority: 2,
+                "weight": 1,
+                "properties": {
+                                "fookey": "foovalue",
+                                 # ... May be zero or more key value.
+                              },
+                # For more details please check class ServiceInfo in zeroconf
+                # https://github.com/jstasiak/python-zeroconf/blob/master/zeroconf/__init__.py
+            },
+            # ... May be zero or more devices. If zero devices found the above dict will not
+            # be present
+            {
+                "total_devices_discovered": 7
+            }
+        ]
+
+        2. List of supported devices for discovery (--list argument)
+        [
+            {
+                "supported_device_types": [
+                                            'aidroid',
+                                            'aiplay',
+                                            'ssh',
+                                            'workstation',
+                                            # ... and more
+                                          ]
+            }
+        ]
+        """
 
         super().__init__(
             name="discover",

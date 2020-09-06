@@ -9,7 +9,47 @@ from expliot.core.protocols.radio.zigbee import ZigbeeNetworkScan
 
 # pylint: disable=bare-except
 class ZbAuditorNwkScan(Test):
-    """Zigbee packet sniffer plugin."""
+    """
+    Zigbee packet sniffer plugin.
+
+    Output Format:
+    [
+        {
+            'device_count': 1,
+            'beacons': [
+                            {
+                                'source_addr': '0x0',
+                                'source_panid': '0xac87',
+                                'channel': 25,
+                                'pan_coordinator': True,
+                                'permit_joining': False,
+                                'zigbee_layer': True,
+                                'router_capacity': True,
+                                'device_capacity': True,
+                                'protocol_version': 2,
+                                'stack_profile': 2,
+                                'depth': 0,
+                                'update_id': 0,
+                                'extn_panid': [
+                                                '0x0',
+                                                '0x15',
+                                                '0x8d',
+                                                '0x0',
+                                                '0x2',
+                                                '0x3f',
+                                                '0x60',
+                                                '0x7a'
+                                              ],
+                                'tx_offset': '0xffffff',
+                                'rssi': -57,
+                                'lqi': 144
+                            },
+                            # ... Zero or more dict entries depending on no. of devices found
+                       ]
+        }
+    ]
+
+    """
 
     def __init__(self):
         super().__init__(

@@ -12,7 +12,17 @@ from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 
 # pylint: disable=bare-except
 class ZbAuditorReplay(Test):
-    """Zigbee packet dump replay plugin."""
+    """
+    Zigbee packet dump replay plugin.
+
+    Output Format:
+    [
+        {
+            "packets_received": 0,
+            "packets_transmitted": 9
+        }
+    ]
+    """
     DELAYMS = 200
 
     def __init__(self):

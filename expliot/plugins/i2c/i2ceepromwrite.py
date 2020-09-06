@@ -9,7 +9,22 @@ from expliot.plugins.i2c import DEFAULT_ADDR, SLAVE_ADDR
 
 # pylint: disable=bare-except
 class I2cEepromWrite(Test):
-    """Write test for data to i2c."""
+    """
+    Write test for data to i2c.
+
+    Output Format:
+
+    [
+        {
+            chip_size=32768, # Size of the chip in bytes
+        },
+        {
+            "bytes_written": 1000,
+            "time_taken_secs": 1.67
+        }
+    ]
+
+    """
 
     def __init__(self):
         """Initialize the test."""

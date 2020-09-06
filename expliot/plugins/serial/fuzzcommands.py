@@ -1,6 +1,7 @@
 """Support for fuzzing command over a serial connection."""
 import itertools
 
+from expliot.core.common import bstr
 from expliot.core.common.exceptions import sysexcinfo
 from expliot.core.protocols.hardware.serial import Serial
 from expliot.core.tests.test import TCategory, Test, TLog, \
@@ -17,7 +18,23 @@ from expliot.plugins.serial import (
 
 # pylint: disable=too-many-nested-blocks, bare-except
 class FuzzCommands(Test):
-    """Test to fuzz commands."""
+    """
+    Test to fuzz commands.
+
+    Output Format:
+    [
+        {
+            'command': 'aa',
+            'response': 'üàº\x00\x01errÿÚor\x02',
+            'num': 1,
+            'valid': True # or False if the criteria did not trigger
+        },
+        # .. May be more entries (depending on the --chars and --length)
+        {
+            'valid_commands_found': ['aa', 'ab', 'ba', 'bb'] # or [] if nothing found
+        }
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -157,6 +174,7 @@ class FuzzCommands(Test):
                 cmd = self.args.prefix + "".join(word) + self.args.append
                 sock.write(cmd.encode())
                 received_data = sock.readfull(self.args.buffsize)
+                received_data = bstr(received_data)
                 sock.flush()
                 tries += 1
                 if tries % 20 == 0:
@@ -167,7 +185,7 @@ class FuzzCommands(Test):
                         "Command=({}) response({})".format(cmd.rstrip(), received_data)
                     )
                 if self.args.match is not None:
-                    if self.args.match.lower() in received_data.decode().lower():
+                    if self.args.match.lower() in received_data.lower():
                         TLog.success(
                             "Command=({}) found. --match criteria in Response=({})".format(
                                 cmd.rstrip(), received_data
@@ -176,7 +194,7 @@ class FuzzCommands(Test):
                         found = True
                         commands.append(cmd.rstrip())
                 elif self.args.nomatch is not None:
-                    if self.args.nomatch.lower() not in received_data.decode().lower():
+                    if self.args.nomatch.lower() not in received_data.lower():
                         TLog.success(
                             "Command=({}) found. --nomatch criteria in response=({})".format(
                                 cmd.rstrip(), received_data
@@ -188,7 +206,7 @@ class FuzzCommands(Test):
                                     command=cmd.rstrip(),
                                     response=received_data,
                                     num=tries,
-                                    found=found)
+                                    valid=found)
                 if (found is True) and (self.args.stop is True):
                     break
         except:  # noqa: E722
@@ -196,7 +214,6 @@ class FuzzCommands(Test):
         finally:
             if sock:
                 sock.close()
-        if found is True:
             self.output_handler(valid_commands_found=commands)
-        else:
-            self.result.setstatus(passed=False, reason=reason)
+            if not found:
+                self.result.setstatus(passed=False, reason=reason)

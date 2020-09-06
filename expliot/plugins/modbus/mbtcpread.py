@@ -18,7 +18,15 @@ from expliot.plugins.modbus import (
 
 # pylint: disable=bare-except
 class MBTcpRead(Test):
-    """Test for reading data from Modbus over TCP."""
+    """
+    Test for reading data from Modbus over TCP.
+
+    Output Format:
+    [
+        {"addr": 2, "value": 1},
+        # ... May be more entries
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""

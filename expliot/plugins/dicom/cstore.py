@@ -12,7 +12,12 @@ from expliot.plugins.dicom import REFERENCE
 
 # pylint: disable=bare-except
 class CStore(Test):
-    """Test the possibility to store on a DICOM instance."""
+    """
+    Test the possibility to store on a DICOM instance.
+
+    Output Format:
+    The plugin is not working as of now - Sept 2020.
+    """
 
     def __init__(self):
         """Initialize the test."""

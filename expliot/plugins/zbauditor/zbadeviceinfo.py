@@ -6,7 +6,27 @@ from expliot.core.tests.test import TCategory, Test, TLog, \
 
 # pylint: disable=bare-except
 class ZbAuditorDevInfo(Test):
-    """Zigbee Auditor Device information Plugin."""
+    """
+    Zigbee Auditor Device information Plugin.
+
+    Output Format:
+    [
+        {
+            "device_name": "ZigBee Auditor",
+            "fw_revision": "1.0.1"
+            "services": {
+                            "Read Revision":True,
+                            "Read Services":True,
+                            "Channel Selection":True,
+                            "Radio ON/OFF":True,
+                            "802.15.4 Sniffer":True,
+                            "802.15.4 Injection":True,
+                            "802.15.4 Network Scan":True,
+                            "2.4 GHz":True
+                        }
+        }
+    ]
+    """
 
     def __init__(self):
         super().__init__(
