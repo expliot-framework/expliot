@@ -25,7 +25,16 @@ class Cli(Cmd):
     Cmd.do_exit = Cmd.do_quit
 
     def __init__(self, prompt=None, intro=None):
-        """Initialize Cmd members."""
+        """
+        Initialize Cmd members.
+
+        Args:
+            prompt (str): The command-line prompt to display
+            intro (str): The program introduction banner
+
+        Returns:
+            Nothing
+        """
         super().__init__(allow_cli_args=False, allow_redirection=False)
         self.prompt = prompt
         self.intro = intro
@@ -45,14 +54,18 @@ class Cli(Cmd):
             prog="run", description="Executes a plugin (test case)", add_help=False
         )
         self.runp.add_argument(
-            "plugin", help="The test case to execute along with its options"
+            "plugin", help="The plugin to execute along with its arguments"
         )
 
     def del_defaultcmds(self):  # pylint: disable=no-self-use
         """
         Delete/remove the default commands from cmd2.
 
-        :return:
+        Args:
+            None
+
+        Returns:
+            Nothing
         """
         del [
             Cmd.do_alias,
@@ -67,7 +80,7 @@ class Cli(Cmd):
         ]
 
     def do_list(self, args):
-        """List the available test cases."""
+        """List the available plugins (test cases)"""
         print("Total plugins: {}\n".format(len(self.subcmds)))
         print("{:<25} {}".format("PLUGIN", "SUMMARY"))
         print("{:<25} {}\n".format("======", "======="))
@@ -77,22 +90,26 @@ class Cli(Cmd):
 
     @with_argument_list
     def do_run(self, arglist):
-        """
-        Execute a specific plugin/test case.
-
-        :param arglist: Argument list (array) passed from the console
-        :return:
-        """
+        """Execute a specific plugin (test case). For details: ef> run -h"""
         arguments_length = len(arglist)
         if arguments_length == 0:
+            # For the case: ef> run
             self.runp.print_help()
             return
 
         if arguments_length == 1 and ("-h" in arglist or "--help" in arglist):
+            # For the case: ef> run -h
             self.runp.print_help()
             return
+        try:
+            name_space, subarglist = self.runp.parse_known_args(arglist)
+        except SystemExit:
+            # Nothing to do here. SystemExit occurs in case of one or more wrong arguments for run command
+            # For ex. ef> run -x assuming x is not a valid argument.
+            # Cmd2 does not catch SystemExit from v1.0.2 - https://github.com/python-cmd2/cmd2/issues/932
+            # returning instead of raising Cmd2ArgparseError so in future any post command hooks implemented can run
+            return
 
-        name_space, subarglist = self.runp.parse_known_args(arglist)
         self.runtest(name_space.plugin, subarglist)
 
     def complete_run(self, text, line, start_index, end_index):
@@ -100,11 +117,14 @@ class Cli(Cmd):
         Tab completion method for run command. It shows the list of available
         plugins that match the subcommand specified by the user.
 
-        :param text: Run subcommand string specified by the user
-        :param line: The whole run command string typed by the user
-        :param start_index: Start index subcommand in the line
-        :param end_index: End index of the subcommand in the line
-        :return: List of matching subcommands(plugins)
+        Args:
+            text (str): Run subcommand string specified by the user
+            line (str): The whole run command string typed by the user
+            start_index (int): Start index subcommand in the line
+            end_index (int): End index of the subcommand in the line
+
+        Returns:
+            List of matching subcommands(plugins)
         """
         if text:
             return [c for c in self.subcmds if c.startswith(text)]
@@ -115,9 +135,12 @@ class Cli(Cmd):
         """
         Run a single test case from the TestSuite if it exists.
 
-        :param name: Name of the test case to run
-        :param arglist: Argument list to be passed to the test for parsing
-        :return:
+        Args:
+            name (str): Name of the plugin (test case) to run
+            arglist (list): Argument list to be passed to the plugin for parsing
+
+        Returns:
+            Nothing
         """
         if name in self.tsuite.keys():
             tobj = self.tsuite[name]["class"]()

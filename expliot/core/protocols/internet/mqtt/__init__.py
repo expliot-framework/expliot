@@ -1,6 +1,11 @@
 """Wrapper for the MQTT features."""
 from paho.mqtt import publish, subscribe
-from paho.mqtt.client import Client, MQTTv31, MQTTv311, connack_string
+from paho.mqtt.client import \
+    Client, MQTTv31, MQTTv311, \
+    MQTT_ERR_SUCCESS, connack_string
+
+DEFAULT_MQTT_PORT = 1883
+DEFAULT_MQTT_TIMEOUT = 5
 
 
 class SimpleMqttClient:
@@ -105,6 +110,150 @@ class SimpleMqttClient:
 
 
 class MqttClient(Client):
-    """Representation of a MQTT client class."""
+    """
+    Wrapper on Paho MQTT Client class. For more details on
+    the functionality check - https://github.com/eclipse/paho.mqtt.python
+    """
 
-    pass
+    def __init__(
+            self, client_id="", clean_session=True,
+            userdata=None, protocol=MQTTv311, transport="tcp",
+    ):
+        """
+        Wrapper on Client __init__() method. Also initialises
+        some new members.
+
+        Args:
+            client_id (str): The client ID to use. If not specified,
+                uses randomly generated ID.
+            clean_session (bool): If True, broker will remove all
+                information about this client else, it will retain.
+            userdata (caller defined): Used to pass data to callbacks.
+            protocol (int): Protocol version of the client
+            transport (str): "tcp" is default. specify "websockets" to
+                to use WebSockets.
+        Returns:
+             Nothing.
+        """
+        super().__init__(
+            client_id=client_id, clean_session=clean_session,
+            userdata=userdata, protocol=protocol, transport=transport
+        )
+        # Required for default on_connect and on_disconnect callbacks
+        self.connect_rc = MQTT_ERR_SUCCESS
+        self.disconnect_rc = MQTT_ERR_SUCCESS
+
+    @classmethod
+    def rcstr(cls, retcode):
+        """
+        Returns a string representation of the return code
+
+        Args:
+            retcode (int): MQTT Connection return code
+        Returns:
+            A string representation of the return code
+        """
+        return connack_string(retcode)
+
+    def on_connectcb(self, client, userdata, flags, retcode):
+        """
+        Default on_connect callback. It sets the member with connection
+        return code and disconnects on error. Used by pub and sub plugins
+
+        Args:
+            client (MqttClient) - The MQTT client object. This is not
+                used as it is the same as self.
+            userdata (caller defined): Callback specific data passed in
+                __init__(). This is not used as we use self members to
+                pass information.
+            flags (dict): A dict that contains response flags from the broker.
+            retcode (int): MQTT Connection return code.
+
+        Returns:
+            Nothing.
+        """
+        self.connect_rc = retcode
+        if retcode != MQTT_ERR_SUCCESS:
+            self.disconnect()
+
+    def on_publishcb(self, client, userdata, mid):
+        """
+        Default on_publish callback. It disconnects the connection assuming
+        the message has been published. Don't use this if you want to send
+        multiple messages in single conenction. Used by pub and sub plugins
+
+        Args:
+            client (MqttClient) - The MQTT client object. This is not
+                used as it is the same as self.
+            userdata (caller defined): Callback specific data passed in
+                __init__(). This is not used as we use self members to
+                pass information.
+            mid (int): matches the mid variable returned from the corresponding
+                publish() call
+
+        Returns:
+            Nothing.
+        """
+        self.disconnect()
+
+    def on_disconnectcb(self, client, userdata, retcode):
+        """
+        Default on_disconnect callback. It sets the member with disconnection
+        return code and disconnects on error. Used by pub and sub plugins.
+        If the retiurn code is not zero i.e. MQTT_ERR_SUCCESS it means that
+        this callback is called because of an unexpected disconnection from
+        the broker. If it is zero, it is called as a result of self.disconnect()
+        call. We call disconnect() to make sure the object stops looping in loop*()
+        methods in the pub sub plugins.
+
+        Args:
+            client (MqttClient) - The MQTT client object. This is not
+                used as it is the same as self.
+            userdata (caller defined): Callback specific data passed in
+                __init__(). This is not used as we use self members to
+                pass information.
+            retcode (int): MQTT Disconnection return code. This is not a correct
+                indication of the error as it returns default connection error
+                return code.
+
+        Returns:
+            Nothing.
+        """
+        self.disconnect_rc = retcode
+        if retcode != MQTT_ERR_SUCCESS:
+            self.disconnect()
+
+    def easy_config(
+            self, user=None, passwd=None, on_connect=None,
+            on_publish=None, on_subscribe=None, on_message=None,
+            on_disconnect=None,
+    ):
+        """
+        Easy configuration for MqttClient. It sets the username,
+        password and default callbacks required by the pub sub plugins.
+
+        Args:
+            user (str): MQTT Username
+            passwd (str): MQTT Password
+            on_connect (callback): On connect Callback to be set
+            on_publish (callback): On publish Callback to be set
+            on_subscribe (callback): On subscribe Callback to be set
+            on_message (callback): On message Callback to be set
+            on_disconnect (callback): On disconnect Callback to be set
+
+        Returns:
+            Nothing.
+        """
+
+        if user and passwd:
+            self.username_pw_set(user, passwd)
+        if on_connect:
+            self.on_connect = on_connect
+        if on_publish:
+            self.on_publish = on_publish
+        if on_subscribe:
+            self.on_subscribe = on_subscribe
+        if on_message:
+            self.on_message = on_message
+        if on_disconnect:
+            self.on_disconnect = on_disconnect

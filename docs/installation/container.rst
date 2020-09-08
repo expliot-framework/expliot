@@ -28,7 +28,7 @@ build process for the images.
 
 .. code-block:: console
 
-   $ sudo docker build -t expliot -f docker/Dockerfile .
+   $ sudo docker build -t expliot -f container/Dockerfile .
 
 Or with ``podman``:
 
@@ -60,3 +60,4 @@ If the container is started up you will get the prompt ``ef>``.
    Keep in mind that there are some limitation when it comes to interacting
    with physical hardware from within a container. Thus, at the moment this
    topic is considered for advanced users only.
+

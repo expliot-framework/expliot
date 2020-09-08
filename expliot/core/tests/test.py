@@ -26,11 +26,14 @@ class TCategory(namedtuple("TCategory", "tech, iface, action")):
     # Network Protocols
     COAP = "coap"
     DICOM = "dicom"
+    MDNS = "mdns"
     MODBUS = "modbus"
     MQTT = "mqtt"
     UDP = "udp"
+    TCP = "tcp"
+    HTTP = "http"
 
-    # Radio protocols
+# Radio protocols
     BLE = "ble"
     ZIGBEE = "zigbee"
     IEEE802154 = "802154"
@@ -42,6 +45,8 @@ class TCategory(namedtuple("TCategory", "tech, iface, action")):
     SPI = "spi"
     UART = "uart"
 
+    # Other
+    CRYPTO = "crypto"
     # Auditors
     ZB_AUDITOR = "zbauditor"
     BUS_AUDITOR = "busauditor"
@@ -49,24 +54,28 @@ class TCategory(namedtuple("TCategory", "tech, iface, action")):
 
     _tech = [
         BLE,
+        BUS_AUDITOR,
         CAN,
         COAP,
         DICOM,
+        FW_AUDITOR,
         I2C,
         IEEE802154,
         JTAG,
+        MDNS,
         MODBUS,
         MQTT,
         SPI,
         UART,
         UDP,
-        ZIGBEE,
+        TCP,
+        HTTP,
+        CRYPTO,
         ZB_AUDITOR,
-        BUS_AUDITOR,
-        FW_AUDITOR,
+        ZIGBEE,
     ]
 
-    # Interface category. Whether the test is for software, hardware or radio
+# Interface category. Whether the test is for software, hardware or radio
     HW = "hardware"
     RD = "radio"
     SW = "software"
@@ -109,6 +118,22 @@ class TTarget(namedtuple("TTarget", "name, version, vendor")):
     """
 
     GENERIC = "generic"
+
+    # Target name
+    TP_LINK_IOT = "tpliot"
+    AWS = "aws"
+    _name = [
+        AWS,
+    ]
+
+    # Target version
+
+    # Target vendor
+    TP_LINK = "tplink"
+    AMAZON = "amazon"
+    _vendor = [
+        AMAZON,
+    ]
 
     def __init__(self, name, version, vendor):
         """Initialize the test target."""
@@ -283,7 +308,7 @@ class Test:
         TLog.generic("{:<13} {}".format("Author Email:", self.email))
         TLog.generic("{:<13} {}".format("Reference(s):", self.ref))
         TLog.generic(
-            "{:<13} technology={}|Interface={}|Action={}".format(
+            "{:<13} Technology={}|Interface={}|Action={}".format(
                 "Category:",
                 self.category.tech,
                 self.category.iface,
@@ -298,28 +323,38 @@ class Test:
         TLog.generic("")
 
     def run(self, arglist):
-        """Run the test."""
-        # Not keeping parse_args in try block because it raises SystemExit
-        # in case of -h/--help which gets handled by cmd or argparse I think.
-        # If we keep in it below try block run plugin with -h/--help catches
-        # the exception and fails the test case due to the below except
-        self.args = self.argparser.parse_args(arglist)
-        for i in range(0, 1):  # try:
-            # Log Test Intro messages
-            self.intro()
+        """
+        Run the test.
 
-            # Check if the plugin needs root privileges and the program has
-            # the required privileges
-            self._assertpriv()
+        Args:
+            arglist (list): The argument list of the plugin.
 
-            # Test pre() method is used for setup related tasks, if any.
-            self.pre()
+        Returns:
+            Nothing.
+        """
+        try:
+            self.args = self.argparser.parse_args(arglist)
+        except SystemExit:
+            # Nothing to do here. SystemExit occurs in case of wrong arguments or help
+            # Cmd2 does not catch SystemExit from v1.0.2 - https://github.com/python-cmd2/cmd2/issues/932
+            # returning instead of raising Cmd2ArgparseError so in future any post command hooks implemented can run
+            return
 
-            # Test execute() method is for the main test case execution.
-            self.execute()
+        # Log Test Intro messages
+        self.intro()
 
-            # Test post() method is used for cleanup related tasks, if any.
-            self.post()
+        # Check if the plugin needs root privileges and the program has
+        # the required privileges
+        self._assertpriv()
+
+        # Test pre() method is used for setup related tasks, if any.
+        self.pre()
+
+        # Test execute() method is for the main test case execution.
+        self.execute()
+
+        # Test post() method is used for cleanup related tasks, if any.
+        self.post()
         # except:
         #    self.result.exception()
 
@@ -327,10 +362,15 @@ class Test:
         self._logstatus()
 
     def _assertpriv(self):
-        """Raise an exception if the plugin needs root privileges but program
+        """
+        Raise an exception if the plugin needs root privileges but program
         is not executing as root.
 
-        :return:
+        Args:
+            None
+
+        Returns:
+            Nothing
         """
         if self.needroot and geteuid() != 0:
             raise PermissionError(
@@ -338,9 +378,14 @@ class Test:
             )
 
     def _setid(self):
-        """Set the Unique Test ID. The ID is the plugin class name in lowercase.
+        """
+        Set the Unique Test ID. The ID is the plugin class name in lowercase.
 
-        :return:
+        Args:
+            None
+
+        Returns:
+            Nothing
         """
         # self.id = self.__class__.__name__.lower()
         self.id = "{}.{}.{}".format(
@@ -348,9 +393,14 @@ class Test:
         ).lower()
 
     def _logstatus(self):
-        """Handle the log status.
+        """
+        Handle the log status.
 
-        :return:
+        Args:
+            None
+
+        Returns:
+            Nothing
         """
         if self.result.passed:
             TLog.success("Test {} passed".format(self.id))

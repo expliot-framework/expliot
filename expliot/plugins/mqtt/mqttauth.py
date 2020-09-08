@@ -1,8 +1,9 @@
 """Test the authentication of a MQTT broker."""
 from expliot.core.common.fileutils import readlines
-from expliot.core.protocols.internet.mqtt import SimpleMqttClient
+from expliot.core.protocols.internet.mqtt import \
+    SimpleMqttClient, DEFAULT_MQTT_PORT
 from expliot.core.tests.test import Test, TCategory, TTarget, TLog
-from expliot.plugins.mqtt import DEFAULT_MQTT_PORT, MQTT_REFERENCE
+from expliot.plugins.mqtt import MQTT_REFERENCE
 
 
 # pylint: disable=bare-except
@@ -14,7 +15,7 @@ class MqttAuth(Test):
         super().__init__(
             name="crackauth",
             summary="MQTT authentication cracker",
-            descr="This test case attempts to crack the MQTT authentication"
+            descr="This test case attempts to crack the MQTT authentication "
             "with the specified credentials. You need specify the user "
             "and password or password dictionary.",
             author="Aseem Jakhar",
@@ -40,7 +41,7 @@ class MqttAuth(Test):
         self.argparser.add_argument(
             "-i",
             "--id",
-            help="The client ID to be used for the connection. Default is"
+            help="The client ID to be used for the connection. Default is "
             "random client ID",
         )
         self.argparser.add_argument(
@@ -52,11 +53,11 @@ class MqttAuth(Test):
         self.argparser.add_argument(
             "-f",
             "--pfile",
-            help="Specify the file containing passwords, one per line. If"
-            "this option is present, --pass option will be ignored",
+            help="Specify the file containing passwords, one per line. If "
+            "this option is present, --passwd option will be ignored",
         )
         self.argparser.add_argument(
-            "-v", "--verbose", action="store_true", help="Show verbose output)"
+            "-v", "--verbose", action="store_true", help="Show verbose output"
         )
 
     def execute(self):

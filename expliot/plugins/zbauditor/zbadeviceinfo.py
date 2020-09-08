@@ -10,7 +10,7 @@ class ZbAuditorDevInfo(Test):
     def __init__(self):
         super().__init__(
             name="devinfo",
-            summary="Displays Zigbee Auditor device informations",
+            summary="Displays Zigbee Auditor device information",
             descr="This plugin displays information about Zigbee Auditor.",
             author="Dattatray Hinge",
             email="dattatray@expliot.io",

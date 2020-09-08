@@ -16,7 +16,7 @@ class CANRead(Test):
             descr="This plugin allows you to read message(s) from the CAN bus. "
             "As of now it uses socketcan but if you want to extend it to"
             " other interfaces, just open an issue on the official"
-            "expliot project repository.",
+            " expliot project repository.",
             author="Aseem Jakhar",
             email="aseemjakhar@gmail.com",
             ref=["https://en.wikipedia.org/wiki/CAN_bus"],

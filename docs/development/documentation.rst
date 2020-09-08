@@ -22,15 +22,15 @@ is rendering the documentation.
 
 .. code-block:: console
 
-   $ pip3 install sphinx
+   $ pip3 install -r docs/requirements.txt
 
 Review the changes locally
 --------------------------
 
 Use ``make html`` in the ``docs`` directory to render the documentation. The
 output will be available in ``_build/html``.
-  
-For large changes it could be useful to live-reloading documentation. 
+
+For large changes it could be useful to live-reloading documentation.
 Install the ``sphinx-reload`` Python module:
 
 .. code-block:: console

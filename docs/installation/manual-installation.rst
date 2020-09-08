@@ -1,3 +1,5 @@
+.. _installation-manual:
+
 Manual installation
 ===================
 
@@ -78,6 +80,14 @@ The fastest way to get a copy of ``expliot`` is to clone the Git repository.
    $ cd expliot
    $ python3 setup.py install --user
 
+For system-wide installation, you can use ``sudo`` and not use ``--user``.
+
+.. code-block:: console
+
+   $ git clone https://gitlab.com/expliot_framework/expliot.git
+   $ cd expliot
+   $ sudo python3 setup.py install 
+
 .. warning::
 
    If you are performing the installation as ``root``, e.g., on Kali Linux,
@@ -107,3 +117,4 @@ Troubleshooting
 
 - If you are using Ubuntu then you need to logout and login after the
   installation.
+

@@ -58,7 +58,7 @@ class CFind(Test):
             "-n",
             "--name",
             default="*",
-            help="Specify the patient name to search. Pleas note you can use wild cards like * ? as mentioned in http://dicom.nema.org/MEDICAL/dicom/2016a/output/chtml/part04/sect_C.2.2.2.html",
+            help="Specify the patient name to search. Please note you can use wild cards like * or ? as mentioned in http://dicom.nema.org/MEDICAL/dicom/2016a/output/chtml/part04/sect_C.2.2.2.html",
         )
         self.argparser.add_argument(
             "-c",
