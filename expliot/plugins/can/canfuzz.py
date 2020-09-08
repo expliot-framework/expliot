@@ -1,12 +1,21 @@
 """Testcase for fuzzing the CAN bus data message."""
 from time import sleep
 from random import randint
-from expliot.core.tests.test import Test, TCategory, TTarget, TLog
+from expliot.core.tests.test import Test, TCategory, TTarget, \
+    TLog, LOGNORMAL
 from expliot.core.protocols.hardware.can import CanBus, CanMessage
 
 
 class CANFuzz(Test):
-    """Test for reading from the CAN bus."""
+    """
+    Test for reading from the CAN bus.
+
+    Output Format:
+    [
+        {"count": 1, "fuzzdata": "00000042FF"},
+        # ... May be more than one fuzzdata sent
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -80,7 +89,7 @@ class CANFuzz(Test):
                     "Illegal wait value {}".format(
                         self.args.wait))
             bus = CanBus(bustype="socketcan", channel=self.args.iface)
-            for count in range(self.args.count):
+            for count in range(1, self.args.count + 1):
                 datacan = self.args.data
                 while datacan.find("xx") >= 0:
                     datacan = datacan.replace("xx", "{:02x}".format(
@@ -91,7 +100,7 @@ class CANFuzz(Test):
                     data=list(
                         bytes.fromhex(datacan)))
                 bus.send(message)
-                TLog.success("{} : Wrote message {}  ".format(count, datacan))
+                self.output_handler(logkwargs=LOGNORMAL, count=count, fuzzdata=datacan)
                 if self.args.wait > 0:
                     sleep(self.args.wait)
         except BaseException:

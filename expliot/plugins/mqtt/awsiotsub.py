@@ -10,7 +10,17 @@ from expliot.core.common.timer import Timer
 
 # pylint: disable=bare-except
 class AwsIotSub(Test):
-    """Subscribe to a topic on an AWS IoT endpoint."""
+    """
+    Subscribe to a topic on an AWS IoT endpoint.
+
+    Output Format:
+    [
+        {
+           "topic": "foobar/topic", "payload": "Foobar payload"
+        },
+        # ... May be zero or more entries
+    ]
+    """
 
     def __init__(self):
         """Initialize the plugin."""
@@ -95,14 +105,13 @@ class AwsIotSub(Test):
             "Default is {} secs".format(DEFAULT_AWSIOT_TIMEOUT),
         )
 
-    @classmethod
-    def subcb(cls, client, userdata, message):
+    def subcb(self, client, userdata, message):
         """
         A callback method that is called when the thing
         receives a message on the subscribed topic from
         an AWS IoT endpoint.
         """
-        TLog.success("(topic={})(payload={})".format(message.topic, message.payload))
+        self.output_handler(topic=message.topic, payload=message.payload)
 
     def execute(self):
         """Execute the plugin."""

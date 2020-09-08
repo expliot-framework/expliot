@@ -4,7 +4,12 @@ from collections import namedtuple
 from os import geteuid
 import sys
 
+from expliot.core.common import recurse_list_dict, bstr
 from expliot.core.common.exceptions import sysexcinfo
+
+LOGNO = 0
+LOGPRETTY = 1
+LOGNORMAL = 2
 
 
 class TCategory(namedtuple("TCategory", "tech, iface, action")):
@@ -33,7 +38,7 @@ class TCategory(namedtuple("TCategory", "tech, iface, action")):
     TCP = "tcp"
     HTTP = "http"
 
-# Radio protocols
+    # Radio protocols
     BLE = "ble"
     ZIGBEE = "zigbee"
     IEEE802154 = "802154"
@@ -47,35 +52,37 @@ class TCategory(namedtuple("TCategory", "tech, iface, action")):
 
     # Other
     CRYPTO = "crypto"
-    # Auditors
+    # Auditors/Utilities
     ZB_AUDITOR = "zbauditor"
     BUS_AUDITOR = "busauditor"
     FW_AUDITOR = "fwauditor"
+    NMAP = "nmap"
 
     _tech = [
         BLE,
         BUS_AUDITOR,
         CAN,
         COAP,
+        CRYPTO,
         DICOM,
         FW_AUDITOR,
+        HTTP,
         I2C,
         IEEE802154,
         JTAG,
         MDNS,
         MODBUS,
         MQTT,
+        NMAP,
         SPI,
+        TCP,
         UART,
         UDP,
-        TCP,
-        HTTP,
-        CRYPTO,
         ZB_AUDITOR,
         ZIGBEE,
     ]
 
-# Interface category. Whether the test is for software, hardware or radio
+    # Interface category. Whether the test is for software, hardware or radio
     HW = "hardware"
     RD = "radio"
     SW = "software"
@@ -141,14 +148,35 @@ class TTarget(namedtuple("TTarget", "name, version, vendor")):
 
 
 class TResult:
-    """Representation of a test result."""
+    """
+    Representation of a test result.
+
+    self.output is a list of dict. This is populated by the plugin
+    when it needs to push results during the execution. To make it
+    standardized, the plugin pushes a block of info in a dict object
+    as and when it has certain info. For ex. when enumerating on
+    something, each item identified will be push as a dict considering
+    there is more than one data point to be stored for that item and
+    once the plugin execution finishes we get a list of dicts containing
+    same/similar data for each of the items.
+    """
 
     defaultrsn = "No reason specified"
 
     def __init__(self):
-        """Initialize a test result."""
+        """
+        Initialize a test result.
+
+        NOTE: The output member MUST be populated as a list of dicts.
+              This is the responsibility of the plugin and based on
+              it's execution output it MUST document the format
+              of output member clearly and explain the keys and meaning,
+              type of values held by those keys.
+        """
         self.passed = True
         self.reason = None
+        # Test execution output list (of dicts)
+        self.output = []
 
     def setstatus(self, passed=True, reason=None):
         """Set the Test result status.
@@ -163,10 +191,33 @@ class TResult:
     def exception(self):
         """Set passed to False and reason to the exception message.
 
-        :return:
+        Returns:
+            Nothing
         """
         self.passed = False
         self.reason = "Exception caught: [{}]".format(sysexcinfo())
+
+    def getresult(self):
+        """
+        Returns a dict with result data. Caller needs to make sure
+        plugin execution (run()) is done before calling this.
+
+        Returns:
+            dict: the result data including status and output
+        NOTE: This is the standard dict format that will be used by EXPLIoT
+        for returning the plugin execution results. The dict keys and their
+        meaning:
+        status(int) - The execution status of the plugin. 0 if the test passed
+                      1 otherwise.
+        reason(str) - The reason the test failed. If it was successful, this
+                      will be None.
+        output(list) - The actual plugin execution output. This is a list of
+                      dicts and the plugins MUST adhere to this format and
+                      document their output format clearly in the plugin class.
+        """
+        return {"status": 0 if self.passed is True else 1,
+                "reason": self.reason,
+                "output": self.output}
 
 
 class TLog:
@@ -178,11 +229,17 @@ class TLog:
     with the output file using init() class method
     """
 
+    SUCCESS = 0
+    FAIL = 1
+    TRYDO = 2
+    GENERIC = 3
+
+    _prefix = ["[+]",  # SUCCESS prefix
+               "[-]",  # FAIL prefix
+               "[?]",  # TRYDO (Try/do/search) prefix
+               "[*]"]  # GENERIC prefix]
+    _errprefix = "[.]"
     _file = sys.stdout
-    _success_prefix = "[+]"  # Success prefix
-    _fail_prefix = "[-]"  # Fail prefix
-    _trydo_prefix = "[?]"  # Try/search prefix
-    _generic_prefix = "[*]"  # Generic prefix
 
     @classmethod
     def init(cls, file=None):
@@ -209,16 +266,22 @@ class TLog:
             cls._file.close()
 
     @classmethod
-    def _print(cls, prefix, message):
+    def print(cls, prefixtype, message):
         """
         The actual print methods that write the formatted message to the _file
         file.
 
-        :param prefix: the prefix to be used for the message (defined above)
-        :param message: The actual message from the Test object
-        :return:
+        Args:
+            prefixtype(int): the prefix type to be used for the message (defined above)
+            message(str): The actual message from the Test object
+        Returns:
+            Nothing
         """
-        print("{} {}".format(prefix, message), file=cls._file)
+        try:
+            pre = cls._prefix[prefixtype]
+        except IndexError:
+            pre = cls._errprefix
+        print("{} {}".format(pre, message), file=cls._file)
 
     @classmethod
     def success(cls, message):
@@ -227,7 +290,7 @@ class TLog:
         :param message: The message to be written
         :return:
         """
-        cls._print(cls._success_prefix, message)
+        cls.print(cls.SUCCESS, message)
 
     @classmethod
     def fail(cls, message):
@@ -236,7 +299,7 @@ class TLog:
         :param message: The message to be written
         :return:
         """
-        cls._print(cls._fail_prefix, message)
+        cls.print(cls.FAIL, message)
 
     @classmethod
     def trydo(cls, message):
@@ -245,7 +308,7 @@ class TLog:
         :param message: The message to be written
         :return: void
         """
-        cls._print(cls._trydo_prefix, message)
+        cls.print(cls.TRYDO, message)
 
     @classmethod
     def generic(cls, message):
@@ -254,7 +317,7 @@ class TLog:
         :param message: The message to be written
         :return: void
         """
-        cls._print(cls._generic_prefix, message)
+        cls.print(cls.GENERIC, message)
 
 
 class Test:
@@ -322,6 +385,88 @@ class Test:
         )
         TLog.generic("")
 
+    def output_dict_iter(self, cblog, robj, rlevel, key=None, value=None):
+        """
+        Callback method for recurse_list_dict(). It iterates over the dict
+        output passed from a plugin to output_handler(). It performs two
+        operations on the dict
+            1. If the output data is to be TLog(ged) (LOGPRETTY) on the console,
+               then log the data recursively from the dict.
+            2. Convert any bytes or bytearray objects in the dict to binary string
+               and update the original dict object itself.
+
+        Args:
+            cblog (dict): Contains logging information i.e. to log the data or not?
+                and the Log prefix type.
+            robj (list or dict): The list or dict object at the specified recursion
+                level.
+            rlevel (int): The current recursion level at which this callback
+                instance is called.
+            key (str): The key if the robj is a dict.
+            value (can be any type): 1. The value of the key if robj is a dict or
+                                     2. A value from the robj if it is a list
+    Returns:
+        Nothing
+        """
+        spaces = "  " * rlevel
+
+        if robj.__class__ == dict and (value.__class__ == dict or value.__class__ == list):
+            if cblog["logkwargs"] == LOGPRETTY:
+                TLog.print(cblog["tlogtype"], "{}{}:".format(spaces, key))
+        else:
+            strval = value
+            isbval = False
+            if isinstance(value, bytes) or isinstance(value, bytearray):
+                strval = bstr(value)
+                isbval = True
+            if key:
+                if cblog["logkwargs"] == LOGPRETTY:
+                    TLog.print(cblog["tlogtype"], "{}{}: {}".format(spaces, key, strval))
+                if isbval:
+                    robj[key] = strval
+            else:
+                if cblog["logkwargs"] == LOGPRETTY:
+                    TLog.print(cblog["tlogtype"], "{}{}".format(spaces, strval))
+                if isbval:
+                    robj[robj.index(value)] = strval
+
+    def output_handler(self,
+                       tlogtype=TLog.SUCCESS,
+                       msg=None,
+                       logkwargs=LOGPRETTY,
+                       **kwargs):
+        """
+        Handle the Test execution output Data
+          - Add(append) data (dict) as an item in the TResult output (list).
+          - And/or Log (print) the output
+
+        Args:
+            tlogtype (int): TLog prefix type to use i.e. Success, fail etc.
+                Check TLog class for prefix details.
+            msg (str): Specify a message to be logged, if any, apart from
+                output data.
+            logkwargs=LOGPRETTY(int): There are three options for kwargs logging
+                LOGPRETTY(0) - formatted logging for dict or list.
+                LOGNORMAL(1) - Direct print of dict or list as is.
+                LOGNO(2) - Do not log kwargs.
+            **kwargs: plugin output keyword arguments (or a **dictObject)
+
+        Returns:
+            Nothing.
+        """
+        if msg is not None:
+            TLog.print(tlogtype, msg)
+        if not kwargs:
+            # empty dict
+            return
+        cblog = {"tlogtype": tlogtype,
+                 "logkwargs": logkwargs}
+        recurse_list_dict(kwargs, self.output_dict_iter, cblog)
+        if logkwargs == LOGNORMAL:
+            TLog.print(tlogtype, kwargs)
+        TLog.print(tlogtype, "")
+        self.result.output.append(kwargs)
+
     def run(self, arglist):
         """
         Run the test.
@@ -330,15 +475,18 @@ class Test:
             arglist (list): The argument list of the plugin.
 
         Returns:
-            Nothing.
+            dict: The plugin result (status and output) on success,
+                or an empty dict in case of any error.
         """
         try:
             self.args = self.argparser.parse_args(arglist)
         except SystemExit:
-            # Nothing to do here. SystemExit occurs in case of wrong arguments or help
-            # Cmd2 does not catch SystemExit from v1.0.2 - https://github.com/python-cmd2/cmd2/issues/932
-            # returning instead of raising Cmd2ArgparseError so in future any post command hooks implemented can run
-            return
+            # Nothing to do here. SystemExit occurs in case of wrong arguments
+            # or help. Cmd2 does not catch SystemExit from v1.0.2 -
+            # https://github.com/python-cmd2/cmd2/issues/932
+            # returning instead of raising Cmd2ArgparseError so in future any
+            # post command hooks implemented can run
+            return {}
 
         # Log Test Intro messages
         self.intro()
@@ -360,6 +508,10 @@ class Test:
 
         # Log Test status
         self._logstatus()
+
+        # Return test result
+        # print(self.result.getresult())
+        return self.result.getresult()
 
     def _assertpriv(self):
         """

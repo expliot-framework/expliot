@@ -8,7 +8,12 @@ from expliot.plugins.mqtt import MQTT_REFERENCE
 
 # pylint: disable=bare-except
 class MqttPub(Test):
-    """Publish a MQTT message to a given MQTT broker."""
+    """
+    Publish a MQTT message to a given MQTT broker.
+
+    Output Format:
+    There is no output.
+    """
 
     def __init__(self):
         """Initialize the test."""

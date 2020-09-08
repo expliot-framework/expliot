@@ -1,12 +1,24 @@
 """Plugin to check a connection to a DICOM instance."""
 from expliot.core.protocols.internet.dicom import AE, VerificationPresentationContexts
-from expliot.core.tests.test import TCategory, Test, TLog, TTarget
-from expliot.plugins.dicom import REFERENCE
+from expliot.core.tests.test import TCategory, TTarget, Test, TLog
+from expliot.plugins.dicom import REFERENCE, DICOMPORT
 
 
 # pylint: disable=bare-except
 class CEcho(Test):
-    """Test to check a connection to a DICOM instance."""
+    """
+    Test to check a connection to a DICOM instance.
+
+    Output Format:
+    [
+        {
+            "server_implementation_version_name": b"DicomObjects.NET",
+            "server_implementation_class_uid": "1.2.826.0.1.3680043.1.2.100.8.40.120.0"
+        },
+        {"cecho_response_status": "0x0000"} # This is present only if the connection
+                                            # is established.
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -37,9 +49,10 @@ class CEcho(Test):
         self.argparser.add_argument(
             "-p",
             "--rport",
-            default=104,
+            default=DICOMPORT,
             type=int,
-            help="The port number of the target DICOM Server (SCP). Default is 104",
+            help="The port number of the target DICOM Server (SCP). "
+                 "Default is {}".format(DICOMPORT),
         )
         self.argparser.add_argument(
             "-c",
@@ -77,28 +90,20 @@ class CEcho(Test):
             assoc = app_entity.associate(
                 self.args.rhost, self.args.rport, ae_title=self.args.aetscp
             )
-            TLog.trydo(
-                "Server implementation version name ({})".format(
-                    assoc.acceptor.implementation_version_name
-                )
-            )
-            TLog.trydo(
-                "Server implementation class UID ({})".format(
-                    assoc.acceptor.implementation_class_uid
-                )
+            self.output_handler(
+                tlogtype=TLog.TRYDO,
+                server_implementation_version_name=assoc.acceptor.implementation_version_name,
+                server_implementation_class_uid=assoc.acceptor.implementation_class_uid,
             )
             if assoc.is_established:
                 data_set = assoc.send_c_echo()
                 if data_set:
-                    TLog.success(
-                        "C-ECHO response status (0x{0:04x})".format(data_set.Status)
-                    )
+                    self.output_handler(cecho_response_status="0x{0:04x}".format(data_set.Status))
             else:
                 self.result.setstatus(
                     passed=False,
                     reason="Could not establish association with the server",
                 )
-
         except:  # noqa: E722
             self.result.exception()
         finally:

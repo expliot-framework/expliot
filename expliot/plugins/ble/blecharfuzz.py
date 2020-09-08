@@ -1,6 +1,7 @@
 """Support for testing BLE devices with fuzzing."""
 from random import randint
-from expliot.core.tests.test import Test, TCategory, TTarget, TLog
+from expliot.core.tests.test import Test, TCategory, TTarget, \
+    TLog, LOGNO
 from expliot.core.protocols.radio.ble import BlePeripheral, \
     ADDR_TYPE_RANDOM, ADDR_TYPE_PUBLIC
 from expliot.plugins.ble import BLE_REF
@@ -8,7 +9,15 @@ from expliot.plugins.ble import BLE_REF
 
 # pylint: disable=bare-except
 class BleCharFuzz(Test):
-    """Test Bluetooth LE device with fuzzing."""
+    """
+    Test Bluetooth LE device with fuzzing.
+
+    output Format:
+    [
+        {"fuzzvalue": "92abde110e"}, # The fuzzed characteristic value sent
+        # ... May be more than one fuzzvalue
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -97,7 +106,10 @@ class BleCharFuzz(Test):
                         "xx", "{:02x}".format(randint(0, 0xFF)), 1  # nosec
                     )
 
-                TLog.trydo("Writing the fuzzed value ({})".format(value))
+                self.output_handler(tlogtype=TLog.TRYDO,
+                                    msg="Writing the fuzzed value ({})".format(value),
+                                    logkwargs=LOGNO,
+                                    fuzzvalue=value)
                 device.writeCharacteristic(
                     self.args.handle,
                     bytes.fromhex(value),

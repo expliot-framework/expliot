@@ -3,12 +3,14 @@ from time import time
 
 from expliot.core.protocols.hardware.i2c import I2cEepromManager
 from expliot.core.interfaces.ftdi import DEFAULT_FTDI_URL
-from expliot.core.tests.test import TCategory, Test, TLog, TTarget
+from expliot.core.tests.test import TCategory, Test, TLog, \
+    TTarget, LOGNO
+from expliot.plugins.i2c import DEFAULT_ADDR
 
 DESCRIPTION = """
 This plugin reads data from an I2C EEPROM chip. It needs an FTDI interface to
 read data from the target EEPROM chip. You can buy an FTDI device online. If you
-are interested we have an FTDI based product - 'Expliot Nano' which you can
+are interested we have an FTDI based product - 'EXPLIoT Nano' which you can
 order online from www.expliot.io This plugin uses pyi2cflash package which in
 turn uses pyftdi python driver for ftdi chips. For more details on supported
 I2C EEPROM chips, check the readme at https://github.com/eblot/pyi2cflash Thank
@@ -18,7 +20,26 @@ get a USB error related to langid."""
 
 # pylint: disable=bare-except
 class I2cEepromRead(Test):
-    """Plugin to read data over i2c."""
+    """
+    Plugin to read data over i2c.
+
+    Output Format:
+    There are two types of output format -
+    1. When the read data is stored in a file (--wfile argument).
+    2. When the read data has to be displayed instead of storing in a file.
+
+    [
+        {
+            "data": "Foobar data", # Data read from the chip, this field is present
+                                   # if --wfile is not specified
+        },
+        {
+            chip_size=32768, # Size of the chip in bytes
+            bytes_read=1000,
+            time_taken_secs=1.67,
+        }
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -36,16 +57,17 @@ class I2cEepromRead(Test):
         self.argparser.add_argument(
             "-a",
             "--addr",
-            default=0,
+            default=DEFAULT_ADDR,
             type=int,
-            help="Specify the start address from where data is to be read. Default is 0",
+            help="Specify the start address from where data is to be "
+                 "read. Default is {}".format(DEFAULT_ADDR),
         )
         self.argparser.add_argument(
             "-l",
             "--length",
             type=int,
-            help="Specify the total length of data, in bytes, to be read from the start "
-            "address. If not specified, it reads till the end",
+            help="Specify the total length of data, in bytes, to be read from "
+                 "the start address. If not specified, it reads till the end",
         )
         self.argparser.add_argument(
             "-u",
@@ -84,7 +106,6 @@ class I2cEepromRead(Test):
                 self.args.url, self.args.chip, address=self.slaveaddr
             )
             length = self.args.length or (len(device) - self.args.addr)
-            TLog.success("(chip size={} bytes)".format(len(device)))
             TLog.trydo(
                 "Reading {} bytes from start address {}".format(length, self.args.addr)
             )
@@ -99,12 +120,12 @@ class I2cEepromRead(Test):
                 output_file.write(data)
                 output_file.close()
             else:
-                TLog.success("(data={})".format([hex(x) for x in data]))
-            TLog.success(
-                "Done. Total bytes read ({}) Time taken to read = {} secs".format(
-                    len(data), round(end_time - start_time, 2)
-                )
-            )
+                self.output_handler(msg="data: {}".format([hex(x) for x in data]),
+                                    logkwargs=LOGNO,
+                                    data=data)
+            self.output_handler(chip_size=len(device),
+                                bytes_read=len(data),
+                                time_taken_secs=round(end_time - start_time, 2))
         except:  # noqa: E722
             self.result.exception()
         finally:

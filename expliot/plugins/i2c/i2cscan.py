@@ -7,14 +7,28 @@ from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 
 # pylint: disable=bare-except
 class I2cScan(Test):
-    """Scan the I2C bus for connected units."""
+    """
+    Scan the I2C bus for connected units.
+
+    Output Format:
+
+    [
+        {"address_found"="0x51"},   # Address for an I2C device on PCB
+        # ... May be more than one address found
+        {
+            "total_found":6,
+            "total_not_found": 7
+        }
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
         super().__init__(
             name="scan",
             summary="I2C Scanner",
-            descr="This plugin scans the I2C bus and displays all the address connected to the bus.",
+            descr="This plugin scans the I2C bus and displays all the "
+                  "addresses connected to the bus.",
             author="Arun Magesh",
             email="arun.m@payatu.com",
             ref=["https://github.com/eblot/pyftdi"],
@@ -45,13 +59,12 @@ class I2cScan(Test):
                 port = i2c.get_port(address)
                 try:
                     port.read(0)
-                    TLog.success("Address found: {}".format(hex(address)))
+                    self.output_handler(address_found="{}".format(hex(address)))
                     passed = passed + 1
                 except I2cNackError:
                     fail = fail + 1
-            TLog.success(
-                "Done. Total found {} and not found {}".format(str(passed), str(fail))
-            )
+            self.output_handler(total_found=passed,
+                                total_not_found=fail)
         except:  # noqa: E722
             self.result.exception()
         finally:
