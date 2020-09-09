@@ -115,12 +115,16 @@ class KHijack(Test):
         )
 
         if encrypt is True:
-            padder = padding.PKCS7(algorithms.AES.block_size).padder()
-            padded_string = padder.update(message)
-            padded_string += padder.finalize()
-
+            # For some reason cryptograpy padding (13 bytes \x0d i.e \r)
+            # is not working and adding spaces at the end as padding works
+            # padder = padding.PKCS7(algorithms.AES.block_size).padder()
+            # padded_string = padder.update(message)
+            # padded_string += padder.finalize()
+            while len(message) % 16 != 0:
+                message = message + b" "
             encryptor = cipher.encryptor()
-            cipher_text = encryptor.update(padded_string) + encryptor.finalize()
+            # cipher_text = encryptor.update(padded_string) + encryptor.finalize()
+            cipher_text = encryptor.update(message) + encryptor.finalize()
             return cipher_text
         decryptor = cipher.decryptor()
         decrypted_text = decryptor.update(message) + decryptor.finalize()
