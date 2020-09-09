@@ -109,6 +109,20 @@ want to fuzz, you will have to replace the bytes that you want to fuzz with
 
    ef> run ble.generic.fuzzchar -h
 
+ble.generic.notifychar
+----------------------
+
+This plugin allows you to send a notify request for a characteristic, wait
+for notification data and display the values received from the BLE peripheral
+devices.
+
+**Usage details:**
+
+.. code-block:: console
+
+   ef> run ble.generic.notifychar -h
+
+
 ble.tapplock.unlock
 -------------------
 
