@@ -18,11 +18,11 @@
 # -- Project information -----------------------------------------------------
 
 project = 'EXPLIoT'
-copyright = '2019, The EXPLIoT developers'
+copyright = '2019-2020, The EXPLIoT developers'
 author = 'The EXPLIoT developers'
 
 # The full version, including alpha/beta/rc tags
-release = '0.6.0'
+release = '0.9.0'
 
 master_doc = 'index'
 source_suffix = ['.rst', '.md']
