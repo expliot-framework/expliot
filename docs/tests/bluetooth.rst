@@ -8,6 +8,28 @@ lifestyle, health care and enterprise IoT products.
 .. note:: All plugins requires root privileges to run as of now as it needs
           scan capabilities.
 
+ble.generic.enum
+----------------
+
+This test is used to enumerate the services and/or characteristics of the BLE
+devices.
+
+**Usage details:**
+
+.. code-block:: console
+
+   ef> run ble.generic.enum -h
+
+**Example:**
+
+Scan for Bluetooth LE devices with the default adapter of the system where
+``expliot`` is running.
+
+.. code-block:: console
+
+   ef> run ble.generic.enum -a CC:AA:FF:FF:AA:CC -s
+
+
 ble.generic.scan
 ----------------
 
