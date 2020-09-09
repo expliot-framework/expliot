@@ -17,4 +17,4 @@ contains **EXPLIoT**.
 
    $ sudo dnf -y install expliot
 
-It's also part of the Fedora Security Lab <https://labs.fedoraproject.org/en/security/>`_
+It's also part of the `Fedora Security Lab <https://labs.fedoraproject.org/en/security/>`_.
