@@ -38,7 +38,7 @@ setup(
         "pyspiflash>=0.6.3,<1",
         "python-can>=3.3.3,<4",
         "xmltodict>=0.12.0,<1",
-        "zeroconf>=0.27.1,<1",
+        "zeroconf>=0.27.1,<0.29",
     ],
     python_requires=">=3.5",
     classifiers=[
