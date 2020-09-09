@@ -1,12 +1,17 @@
 """Plugin to decrypt TPlink PCAP."""
 
 
-from expliot.core.tests.test import TCategory, Test, TLog, TTarget
+from expliot.core.tests.test import TCategory, Test, TTarget
 from expliot.core.vendors.tplink import crypto
 
 
 class TPlinkdecrypt(Test):
-    """Test for TPLink Smart devices."""
+    """
+    Test for TPLink Smart devices.
+
+    Output Format:
+    [{"decrypted_data": "{'foo': 'bar'}"}]
+    """
 
     def __init__(self):
         """Initialize the test for TPlink smart devices."""
@@ -36,4 +41,4 @@ class TPlinkdecrypt(Test):
     def execute(self):
         """Execute the test."""
         result = crypto.decrypt(self.args.data)
-        TLog.generic("Decrypted Data :" + str(result))
+        self.output_handler(decrypted_data=str(result))

@@ -6,7 +6,15 @@ from expliot.core.protocols.hardware.can import CanBus, CanMessage
 
 # pylint: disable=bare-except
 class CANWrite(Test):
-    """Test for writing from the CAN bus."""
+    """
+    Test for writing from the CAN bus.
+
+    Output Format:
+    [
+        {"message_sent": 1},
+        # ... May be more than one message sent
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -82,7 +90,7 @@ class CANWrite(Test):
             )
             for count in range(1, self.args.count + 1):
                 bus.send(message)
-                TLog.success("Wrote message {}".format(count))
+                self.output_handler(message_sent=count)
                 if self.args.wait and count < self.args.count:
                     sleep(self.args.wait)
         except:  # noqa: E722

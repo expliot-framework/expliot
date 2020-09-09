@@ -1,6 +1,6 @@
 """Constants for EXPLIoT."""
 MAJOR_VERSION = 0
-MINOR_VERSION = 8
+MINOR_VERSION = 9
 PATCH_VERSION = 0
 
 __short_version__ = "{}.{}".format(MAJOR_VERSION, MINOR_VERSION)

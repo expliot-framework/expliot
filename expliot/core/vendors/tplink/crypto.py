@@ -3,7 +3,7 @@
 
 import codecs
 from struct import pack
-from expliot.core.vendors.tplink import KEY
+from expliot.core.vendors.tplink import TPL_KEY
 
 
 # Encryption and Decryption of TP-Link Smart Home Protocol
@@ -22,7 +22,7 @@ def encrypt(string):
     # Step 1 : Add length of message as header
     result = pack(">I", len(string))
     result = list(map(hex, result))
-    key = KEY
+    key = TPL_KEY
     # Step 2 : Using XOR Autokey Cipher
     for iter_string in string:
         current_char = key ^ ord(iter_string)
@@ -55,7 +55,7 @@ def decrypt(string):
 
     result = ""
     string = codecs.decode(string, "hex")
-    key = KEY
+    key = TPL_KEY
 
     # Skipping initial 4 byte of message header
     string = string[4:]

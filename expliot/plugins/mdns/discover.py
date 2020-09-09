@@ -5,11 +5,53 @@ from expliot.plugins.mdns import MDNS_REFERENCE
 from expliot.core.discovery.mdns import MdnsDiscovery, DEFAULT_MDNS_TIMEOUT
 
 
-class Discovery(Test):
+class Discover(Test):
     """Discover devices with support for mDNS."""
 
     def __init__(self):
-        """Initialize the mDNS discovery."""
+        """
+        Initialize the mDNS discovery.
+
+        Output Format:
+        There are two different types of outputs
+        1. Information of devices discovered
+        [
+            {
+                "device_number": 1,
+                "name": "Foobar name",
+                "address": "192.168.1.1",
+                "port": 2002,
+                "server": "Foobar",
+                "type": "Foobar",
+                "priority: 2,
+                "weight": 1,
+                "properties": {
+                                "fookey": "foovalue",
+                                 # ... May be zero or more key value.
+                              },
+                # For more details please check class ServiceInfo in zeroconf
+                # https://github.com/jstasiak/python-zeroconf/blob/master/zeroconf/__init__.py
+            },
+            # ... May be zero or more devices. If zero devices found the above dict will not
+            # be present
+            {
+                "total_devices_discovered": 7
+            }
+        ]
+
+        2. List of supported devices for discovery (--list argument)
+        [
+            {
+                "supported_device_types": [
+                                            'aidroid',
+                                            'aiplay',
+                                            'ssh',
+                                            'workstation',
+                                            # ... and more
+                                          ]
+            }
+        ]
+        """
 
         super().__init__(
             name="discover",
@@ -44,11 +86,8 @@ class Discovery(Test):
 
         service_names = list(MDNS_SERVICE_TYPES)
         if self.args.list:
-            TLog.trydo("Supported Device types")
-            for name in service_names:
-                TLog.success("{}".format(name))
+            self.output_handler(supported_device_types=service_names)
             return
-
         TLog.generic("Search local network for mDNS enabled devices")
 
         if self.args.device:
@@ -64,14 +103,13 @@ class Discovery(Test):
             details.scan()
             for device in details.devices:
                 cnt += 1
-                TLog.success("Device {}".format(cnt))
-                TLog.success("  (name={})".format(device.name))
-                TLog.success("  (address={})".format(device.address))
-                TLog.success("  (port={})".format(device.port))
-                TLog.success("  (server={})".format(device.server))
-                TLog.success("  (type={})".format(device.type))
-                TLog.success("  (priority={})".format(device.priority))
-                TLog.success("  (weight={})".format(device.weight))
-                TLog.success("  (properties={})".format(device.properties))
-                TLog.success("")
-        TLog.success("Total devices discovered = {}".format(cnt))
+                self.output_handler(device_number=cnt,
+                                    name=device.name,
+                                    address=device.address,
+                                    port=device.port,
+                                    server=device.server,
+                                    type=device.type,
+                                    priority=device.priority,
+                                    weight=device.weight,
+                                    properties=device.properties)
+        self.output_handler(total_devices_discovered=cnt)

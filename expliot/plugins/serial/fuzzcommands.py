@@ -1,21 +1,54 @@
 """Support for fuzzing command over a serial connection."""
 import itertools
 
+from expliot.core.common import bstr
 from expliot.core.common.exceptions import sysexcinfo
 from expliot.core.protocols.hardware.serial import Serial
-from expliot.core.tests.test import TCategory, Test, TLog, TTarget
+from expliot.core.tests.test import TCategory, Test, TLog, \
+    TTarget, LOGNO
+from expliot.plugins.serial import (
+    DEFAULT_BAUD,
+    DEV_PORT,
+    DEFAULT_CHARS,
+    DEFAULT_WORDLEN,
+    TIMEOUT_SECS,
+    DEFAULT_BUFFSZ,
+)
 
 
 # pylint: disable=too-many-nested-blocks, bare-except
 class FuzzCommands(Test):
-    """Test to fuzz commands."""
+    """
+    Test to fuzz commands.
+
+    Output Format:
+    [
+        {
+            'command': 'aa',
+            'response': 'üàº\x00\x01errÿÚor\x02',
+            'num': 1,
+            'valid': True # or False if the criteria did not trigger
+        },
+        # .. May be more entries (depending on the --chars and --length)
+        {
+            'valid_commands_found': ['aa', 'ab', 'ba', 'bb'] # or [] if nothing found
+        }
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
         super().__init__(
             name="fuzzcmds",
             summary="Serial console command brute-forcer/fuzzer",
-            descr="This test helps in finding/fuzzing hidden commands/parameters/back doors in custom consoles, of devices exposed over the UART port on the board. It  sends random words as specified over the serial connection and matches the response to a specified string (case insensitive). Based on match or nomatch criteria it decides whether the word is a valid or invalid command.",
+            descr="This test helps in finding/fuzzing hidden "
+                  "commands/parameters/back doors in custom consoles, "
+                  "of devices exposed over the UART port on the board. "
+                  "It  sends random words as specified over the serial "
+                  "connection and matches the response to a specified "
+                  "string (case insensitive). Based on match or nomatch "
+                  "criteria it decides whether the word is a valid or "
+                  "invalid command.",
             author="Aseem Jakhar",
             email="aseemjakhar@gmail.com",
             ref=[
@@ -29,31 +62,34 @@ class FuzzCommands(Test):
             "-b",
             "--baud",
             type=int,
-            default=115200,
-            help="The Baud rate of the serial device. Default is 115200",
+            default=DEFAULT_BAUD,
+            help="The Baud rate of the serial device. Default is {}".format(DEFAULT_BAUD),
         )
         self.argparser.add_argument(
             "-p",
             "--port",
-            default="/dev/ttyUSB0",
+            default=DEV_PORT,
             required=True,
-            help="The device port on the system. Default is /dev/ttyUSB0",
+            help="The device port on the system. Default is {}".format(DEV_PORT),
         )
         self.argparser.add_argument(
             "-c",
             "--chars",
-            default="abcdefghijklmnopqrstuvwxyz",
-            help="The characters to use for generating random words. Default is abcdefghijklmnopqrstuvwxyz",
+            default=DEFAULT_CHARS,
+            help="The characters to use for generating random words. "
+                 "Default is {}".format(DEFAULT_CHARS),
         )
         self.argparser.add_argument(
             "-l",
             "--length",
             type=int,
-            default=3,
-            help="Specify the character length for each generated word. Default is 3 characters",
+            default=DEFAULT_WORDLEN,
+            help="Specify the length for each generated word. "
+                 "Default is {} characters".format(DEFAULT_WORDLEN),
         )
         self.argparser.add_argument(
-            "-x", "--prefix", default="", help="Prefix a string to the generated word"
+            "-x", "--prefix", default="",
+            help="Prefix a string to the generated word"
         )
         self.argparser.add_argument(
             "-a",
@@ -64,12 +100,20 @@ class FuzzCommands(Test):
         self.argparser.add_argument(
             "-m",
             "--match",
-            help="Specify a match criteria string. If the response contains this thring, then the word is a valid command. Assumption is based on different responses for valid and invalid commands. Must not be used along with --nomatch",
+            help="Specify a match criteria string. If the response "
+                 "contains this thring, then the word is a valid "
+                 "command. Assumption is based on different responses "
+                 "for valid and invalid commands. Must not be used "
+                 "along with --nomatch",
         )
         self.argparser.add_argument(
             "-n",
             "--nomatch",
-            help="Specify a nomatch criteria string. If the response doesn't contain this string, then the word is a valid command. Assumption is based on different responses for valid and invalid commands. Must not used along with --match",
+            help="Specify a nomatch criteria string. If the response "
+                 "doesn't contain this string, then the word is a valid "
+                 "command. Assumption is based on different responses "
+                 "for valid and invalid commands. Must not used along "
+                 "with --match",
         )
         self.argparser.add_argument(
             "-s",
@@ -81,15 +125,17 @@ class FuzzCommands(Test):
             "-t",
             "--timeout",
             type=float,
-            default=0.5,
-            help="Read timeout, in secs, for the serial device. Default is 0.5",
+            default=TIMEOUT_SECS,
+            help="Read timeout, in secs, for the serial device. "
+                 "Default is {}".format(TIMEOUT_SECS),
         )
         self.argparser.add_argument(
             "-z",
             "--buffsize",
             type=int,
-            default=1,
-            help="Read buffer size. change this and timeout to increase efficiency. Default is 1",
+            default=DEFAULT_BUFFSZ,
+            help="Read buffer size. change this and timeout to increase "
+                 "efficiency. Default is {} byte".format(DEFAULT_BUFFSZ),
         )
         self.argparser.add_argument(
             "-v",
@@ -98,16 +144,17 @@ class FuzzCommands(Test):
             help="Show verbose output i.e. each word",
         )
 
-    def pre(self):
-        """Pre task for the test."""
-        if self.args.match is None:
-            if self.args.nomatch is None:
-                raise AttributeError("Specify either --match or --nomatch")
-        elif self.args.nomatch is not None:
-            raise AttributeError("Can't specify both --match and --nomatch")
-
     def execute(self):
         """Execute the test."""
+        if self.args.match is None:
+            if self.args.nomatch is None:
+                self.result.setstatus(passed=False,
+                                      reason="Specify either --match or --nomatch")
+                return
+        elif self.args.nomatch is not None:
+            self.result.setstatus(passed=False,
+                                  reason="Can't specify both --match and --nomatch")
+            return
         TLog.generic(
             "Connecting to the the serial port ({}) with baud ({})".format(
                 self.args.port, self.args.baud
@@ -127,6 +174,7 @@ class FuzzCommands(Test):
                 cmd = self.args.prefix + "".join(word) + self.args.append
                 sock.write(cmd.encode())
                 received_data = sock.readfull(self.args.buffsize)
+                received_data = bstr(received_data)
                 sock.flush()
                 tries += 1
                 if tries % 20 == 0:
@@ -137,7 +185,7 @@ class FuzzCommands(Test):
                         "Command=({}) response({})".format(cmd.rstrip(), received_data)
                     )
                 if self.args.match is not None:
-                    if self.args.match.lower() in received_data.decode().lower():
+                    if self.args.match.lower() in received_data.lower():
                         TLog.success(
                             "Command=({}) found. --match criteria in Response=({})".format(
                                 cmd.rstrip(), received_data
@@ -145,10 +193,8 @@ class FuzzCommands(Test):
                         )
                         found = True
                         commands.append(cmd.rstrip())
-                        if self.args.stop is True:
-                            break
                 elif self.args.nomatch is not None:
-                    if self.args.nomatch.lower() not in received_data.decode().lower():
+                    if self.args.nomatch.lower() not in received_data.lower():
                         TLog.success(
                             "Command=({}) found. --nomatch criteria in response=({})".format(
                                 cmd.rstrip(), received_data
@@ -156,14 +202,18 @@ class FuzzCommands(Test):
                         )
                         found = True
                         commands.append(cmd.rstrip())
-                        if self.args.stop is True:
-                            break
+                self.output_handler(logkwargs=LOGNO,
+                                    command=cmd.rstrip(),
+                                    response=received_data,
+                                    num=tries,
+                                    valid=found)
+                if (found is True) and (self.args.stop is True):
+                    break
         except:  # noqa: E722
             reason = "Exception caught: {}".format(sysexcinfo())
         finally:
             if sock:
                 sock.close()
-        if found is True:
-            TLog.success("Valid commands found: ({})".format(commands))
-        else:
-            self.result.setstatus(passed=False, reason=reason)
+            self.output_handler(valid_commands_found=commands)
+            if not found:
+                self.result.setstatus(passed=False, reason=reason)

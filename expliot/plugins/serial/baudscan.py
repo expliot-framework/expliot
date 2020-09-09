@@ -3,12 +3,36 @@ import string
 
 from expliot.core.common.exceptions import sysexcinfo
 from expliot.core.protocols.hardware.serial import Serial
-from expliot.core.tests.test import TCategory, Test, TLog, TTarget
+from expliot.core.tests.test import TCategory, Test, TLog, \
+    TTarget, LOGNO
+from expliot.plugins.serial import (
+    DEV_PORT,
+    DEFAULT_BYTES,
+    READ_TIMEOUT,
+)
 
 
 # pylint: disable=bare-except
 class BaudScan(Test):
-    """Test the available baud rate of a device."""
+    """
+    Test the available baud rate of a device.
+
+    Output Format:
+    [
+        {
+            "baud": 9600,
+            "ascii_percent": 70.0,
+            "received_data": "\xf00bar\x01",
+            "ascii_data": "0bar",
+            "status": "Data received", # or "No data received" if nothing is received
+            "exception": None, # or "Error message" in case an exception occurred during
+                               # serial communication, in which case the other information
+                               # may be empty or incomplete
+        },
+        # ... More than one entry based on no. of baud rates scanned.
+
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -43,22 +67,26 @@ class BaudScan(Test):
         self.argparser.add_argument(
             "-p",
             "--port",
-            default="/dev/ttyUSB0",
-            help="The device port on the system. Default is /dev/ttyUSB0",
+            default=DEV_PORT,
+            help="The device port on the system. Default is {}".format(DEV_PORT),
         )
         self.argparser.add_argument(
             "-c",
             "--count",
             type=int,
-            default=30,
-            help="Total count of bytes to read per baud rate. Default is 30",
+            default=DEFAULT_BYTES,
+            help="Total count of bytes to read per baud rate. Default is {}".format(
+                DEFAULT_BYTES
+            ),
         )
         self.argparser.add_argument(
             "-t",
             "--timeout",
             type=float,
-            default=3,
-            help="Read timeout, in secs, for each baud rate test. Default is 3",
+            default=READ_TIMEOUT,
+            help="Read timeout, in secs, for each baud rate test. Default is {}".format(
+                READ_TIMEOUT
+            ),
         )
         self.argparser.add_argument(
             "-v",
@@ -75,34 +103,46 @@ class BaudScan(Test):
         :return: Percentage of ASCII characters present in the received data
         """
         sock = None
-        percentage_ascii = -1
-        TLog.success("Checking baud rate: {}".format(baud))
+        output = {"baud": baud,
+                  "ascii_percent": -1,
+                  "received_data": None,
+                  "ascii_data": None,
+                  "status": None,
+                  "exception": None}
+        TLog.trydo("Checking baud rate: {}".format(baud))
         try:
             sock = Serial(self.args.port, baud, timeout=self.args.timeout)
-            received = sock.read(self.args.count)
+            output["received_data"] = sock.read(self.args.count)
             sock.flush()
-            ascii_data = "".join(
-                [chr(entry) for entry in received if chr(entry) in string.printable]
+            output["ascii_data"] = "".join(
+                [chr(entry) for entry in output["received_data"] if chr(entry) in string.printable]
             )
-            received_length = len(received)
-            ascii_length = len(ascii_data)
+            received_length = len(output["received_data"])
+            ascii_length = len(output["ascii_data"])
             if received_length == 0:
-                TLog.fail("\tNo data received")
+                output["status"] = "No data received"
+                TLog.fail("\t{}".format(output["status"]))
             else:
-                percentage_ascii = round(ascii_length / received_length * 100, 2)
+                output["status"] = "Data received"
+                output["ascii_percent"] = round(ascii_length / received_length * 100, 2)
                 if self.args.verbose:
-                    TLog.success("\tdata: {}, ASCII: {}".format(received, ascii_data))
+                    TLog.success("\tdata: {}, ASCII: {}".format(
+                        output["received_data"],
+                        output["ascii_data"])
+                    )
                 TLog.success(
                     "\tASCII ratio: {}/{}, {} %".format(
-                        ascii_length, received_length, percentage_ascii
+                        ascii_length, received_length, output["ascii_percent"]
                     )
                 )
         except:  # noqa: E722
-            TLog.fail("\tError: {}".format(sysexcinfo()))
+            output["exception"] = sysexcinfo()
+            TLog.fail("\tError: {}".format(output["exception"]))
         finally:
             if sock:
                 sock.close()
-        return percentage_ascii
+            self.output_handler(logkwargs=LOGNO, **output)
+        return output["ascii_percent"]
 
     def execute(self):
         """Execute the test."""

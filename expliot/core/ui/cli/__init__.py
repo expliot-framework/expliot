@@ -74,7 +74,7 @@ class Cli(Cmd):
             Cmd.do_py,
             Cmd.do_run_pyscript,
             Cmd.do_run_script,
-            Cmd.do_set,
+            # Cmd.do_set,
             Cmd.do_shell,
             Cmd.do_shortcuts,
         ]

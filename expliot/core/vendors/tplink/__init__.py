@@ -1,4 +1,4 @@
 """ TP Link IoT specific code"""
 
-KEY = 171
-PORT = 9999
+TPL_KEY = 171
+TPL_PORT = 9999

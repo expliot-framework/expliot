@@ -2,13 +2,30 @@
 from expliot.core.common.fileutils import readlines
 from expliot.core.protocols.internet.mqtt import \
     SimpleMqttClient, DEFAULT_MQTT_PORT
-from expliot.core.tests.test import Test, TCategory, TTarget, TLog
+from expliot.core.tests.test import Test, TCategory, \
+    TTarget, TLog
 from expliot.plugins.mqtt import MQTT_REFERENCE
 
 
 # pylint: disable=bare-except
 class MqttAuth(Test):
-    """Test the authentication of a MQTT broker."""
+    """
+    Test the authentication of a MQTT broker.
+
+    Output Format:
+    If the auth is successful i.e. correct password found, then it's
+    details are present in the output. If the auth fails for all passwords
+    from the --pfile (or single password from --passwd), then the Test fails
+    and output is empty as for any other Test failure case.
+    [
+        {
+            "user": "foouser",
+            "password": "foopass",
+            "reason_code": 0,
+            reason_code_str": "Connection Accepted."
+        }
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -84,13 +101,16 @@ class MqttAuth(Test):
                         port=self.args.rport,
                     )
                     if return_code == 0:
-                        TLog.success(
-                            "FOUND - (user={})(passwd={})(return code={}:{})".format(
-                                self.args.user, password, return_code, state
-                            )
+                        self.output_handler(
+                            msg="FOUND",
+                            user=self.args.user,
+                            password=password,
+                            reason_code=return_code,
+                            reason_code_str=state,
                         )
                         found = True
-                    elif self.args.verbose:
+                        break
+                    if self.args.verbose:
                         TLog.fail(
                             "Auth failed - (user={})(passwd={})(return code={}:{})".format(
                                 self.args.user, password, return_code, state
@@ -109,10 +129,12 @@ class MqttAuth(Test):
                     port=self.args.rport,
                 )
                 if return_code == 0:
-                    TLog.success(
-                        "FOUND - (user={})(passwd={})(return code={}:{})".format(
-                            self.args.user, self.args.passwd, return_code, state
-                        )
+                    self.output_handler(
+                        msg="FOUND",
+                        user=self.args.user,
+                        password=self.args.passwd,
+                        reason_code=return_code,
+                        reason_code_str=state,
                     )
                 else:
                     self.result.setstatus(passed=False, reason=state)
