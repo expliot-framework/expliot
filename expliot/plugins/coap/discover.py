@@ -9,25 +9,26 @@ from expliot.core.tests.test import (
 
 from expliot.core.protocols.internet.coap import (
     CoapClient,
-    ROOTPATH,
+    WKRPATH,
     COAP_PORT,
+    WKResource,
 )
 
 
-class CoapGet(Test):
-    """Test for getting data from a CoAP device."""
+class Discover(Test):
+    """Test for discovering and listing resources available on a CoAP server"""
 
     def __init__(self):
         """Initialize the test."""
         super().__init__(
-            name="get",
-            summary="CoAP GET",
-            descr="This test allows you to send a CoAP GET request (Message) "
-                  "to a CoAP server on a specified resource path.",
+            name="discover",
+            summary="CoRE Resource Discovery",
+            descr="This test allows you to discover and list the well-known "
+                  "resources advertised as CoRE link format on a CoAP server.",
             author="Aseem Jakhar",
             email="aseemjakhar@gmail.com",
-            ref=["https://tools.ietf.org/html/rfc7252"],
-            category=TCategory(TCategory.COAP, TCategory.SW, TCategory.RECON),
+            ref=["https://tools.ietf.org/html/rfc6690"],
+            category=TCategory(TCategory.COAP, TCategory.SW, TCategory.DISCOVERY),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
         )
 
@@ -45,26 +46,21 @@ class CoapGet(Test):
             help="Port number of the target CoAP Server. Default "
                  "is {}".format(COAP_PORT),
         )
-        self.argparser.add_argument(
-            "-u",
-            "--path",
-            default=ROOTPATH,
-            help="Resource URI path of the GET request. Default "
-                 "is discover URI path {}".format(ROOTPATH),
-        )
 
     def execute(self):
         """Execute the test."""
         TLog.generic(
-            "Sending GET request for URI Path ({}) "
+            "Sending GET request to CoRE discovery URI Path ({}) "
             "to CoAP Server {} on port {}".format(
-                self.args.path,
+                WKRPATH,
                 self.args.rhost,
                 self.args.rport
             )
         )
+        count = 0
+        resources = []
         client = CoapClient(self.args.rhost, self.args.rport)
-        response = client.get(path=self.args.path)
+        response = client.get(path=WKRPATH)
         if not response.code.is_successful():
             self.result.setstatus(
                 passed=False,
@@ -73,7 +69,10 @@ class CoapGet(Test):
                 )
             )
             return
-        self.output_handler(
-            response_code=response.code,
-            response_payload=response.payload
-        )
+
+        for link in response.payload.split(b","):
+            count += 1
+            resource = WKResource(link)
+            rdict = resource.linkdict()
+            self.output_handler(**rdict)
+        self.output_handler(total_resources=count)

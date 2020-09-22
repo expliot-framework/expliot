@@ -24,10 +24,10 @@ setup(
     packages=find_packages(),
     entry_points={"console_scripts": ["expliot=expliot.expliot:EfCli.main"]},
     install_requires=[
+        "aiocoap>=0.3,<2"
         "AWSIoTPythonSDK>=1.4.8,<2",
         "bluepy>=1.3.0,<2",
         "cmd2>=1.1.0,<2",
-        "coapthon3>=1.0.1,<2",
         "cryptography>=3.0,<4",
         "paho-mqtt>=1.5.0,<2",
         "pyi2cflash>=0.2.2,<1",
@@ -37,6 +37,7 @@ setup(
         "pyserial>=3.4,<4",
         "pyspiflash>=0.6.3,<1",
         "python-can>=3.3.3,<4",
+        "UPnPy>=1.1.8, <1.2",
         "xmltodict>=0.12.0,<1",
         "zeroconf>=0.27.1,<0.29",
     ],

@@ -31,17 +31,18 @@ class TCategory(namedtuple("TCategory", "tech, iface, action")):
     # Network Protocols
     COAP = "coap"
     DICOM = "dicom"
+    HTTP = "http"
     MDNS = "mdns"
     MODBUS = "modbus"
     MQTT = "mqtt"
-    UDP = "udp"
     TCP = "tcp"
-    HTTP = "http"
+    UDP = "udp"
+    UPNP = "upnp"
 
     # Radio protocols
     BLE = "ble"
-    ZIGBEE = "zigbee"
     IEEE802154 = "802154"
+    ZIGBEE = "zigbee"
 
     # Hardware protocols
     CAN = "can"
@@ -78,6 +79,7 @@ class TCategory(namedtuple("TCategory", "tech, iface, action")):
         TCP,
         UART,
         UDP,
+        UPNP,
         ZB_AUDITOR,
         ZIGBEE,
     ]

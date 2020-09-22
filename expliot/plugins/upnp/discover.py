@@ -1,0 +1,73 @@
+"""Support for UPNP discovery."""
+from expliot.core.tests.test import TCategory, Test, TLog, TTarget
+from expliot.core.protocols.internet.upnp import SSDPRequest, SSDPDevice
+from expliot.plugins.upnp import UPNP_REFERENCE, DEFAULT_UPNP_TIMEOUT
+
+
+class Discover(Test):
+    """Discover devices with support for UPNP."""
+
+    def __init__(self):
+        """
+        Initialize the UPNP discovery.
+
+        Output Format:
+        [
+            {
+            }
+        ]
+        """
+
+        super().__init__(
+            name="discover",
+            summary="Discover devices with support for UPNP.",
+            descr="This plugin tries to detect devices in the local network "
+                  "which support UPNP (Universal Plug aNd Play.",
+            author="Aseem Jakhar",
+            email="aseem@expliot.io",
+            ref=[UPNP_REFERENCE],
+            category=TCategory(TCategory.UPNP, TCategory.SW, TCategory.DISCOVERY),
+            target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
+        )
+
+        self.argparser.add_argument(
+            "-v", "--verbose", action="store_true", help="Show verbose output"
+        )
+        self.argparser.add_argument(
+            "-t", "--timeout", default=DEFAULT_UPNP_TIMEOUT,
+            type=float, help="Timeout in seconds for each device type. "
+            "Default is {} seconds.".format(DEFAULT_UPNP_TIMEOUT)
+        )
+
+    def execute(self):
+        """Execute the UPNP discovery."""
+
+        ssdp = SSDPRequest()
+        devs = ssdp.m_search(discover_delay=self.args.timeout, st=DISCOVER_ALL)
+        TLog.generic("Search local network for UPNP enabled devices")
+
+        for dev in devs:
+            print("Found dev({})".format(dev))
+        # if self.args.device:
+        #     if self.args.device not in service_names:
+        #         self.result.setstatus(passed=False, reason="Unknown device type specified")
+        #         return
+        #     service_names = [self.args.device]
+        # cnt = 0
+        # for name in service_names:
+        #     if self.args.verbose:
+        #         TLog.trydo("Looking for {} devices".format(name))
+        #     details = MdnsDiscovery(name, scan_timeout=self.args.timeout)
+        #     details.scan()
+        #     for device in details.devices:
+        #         cnt += 1
+        #         self.output_handler(device_number=cnt,
+        #                             name=device.name,
+        #                             address=device.address,
+        #                             port=device.port,
+        #                             server=device.server,
+        #                             type=device.type,
+        #                             priority=device.priority,
+        #                             weight=device.weight,
+        #                             properties=device.properties)
+        # self.output_handler(total_devices_discovered=cnt)

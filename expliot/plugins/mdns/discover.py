@@ -62,7 +62,7 @@ class Discover(Test):
             author="Fabian Affolter",
             email="fabian@affolter-engineering.ch",
             ref=[MDNS_REFERENCE],
-            category=TCategory(TCategory.MDNS, TCategory.SW, TCategory.RECON),
+            category=TCategory(TCategory.MDNS, TCategory.SW, TCategory.DISCOVERY),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
         )
 
