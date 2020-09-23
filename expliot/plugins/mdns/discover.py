@@ -1,8 +1,8 @@
 """Support for zero-configuration networking discovery."""
-from expliot.core.discovery.mdns.constants import MDNS_SERVICE_TYPES
+from expliot.core.protocols.internet.mdns import MDNS_SERVICE_TYPES
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 from expliot.plugins.mdns import MDNS_REFERENCE
-from expliot.core.discovery.mdns import MdnsDiscovery, DEFAULT_MDNS_TIMEOUT
+from expliot.core.protocols.internet.mdns import MdnsDiscovery, DEFAULT_MDNS_TIMEOUT
 
 
 class Discover(Test):
@@ -101,7 +101,7 @@ class Discover(Test):
                 TLog.trydo("Looking for {} devices".format(name))
             details = MdnsDiscovery(name, scan_timeout=self.args.timeout)
             details.scan()
-            for device in details.devices:
+            for device in details.devices():
                 cnt += 1
                 self.output_handler(device_number=cnt,
                                     name=device.name,

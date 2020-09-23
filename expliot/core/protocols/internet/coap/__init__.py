@@ -1,85 +1,95 @@
 """Wrapper for the CoAP communication."""
 import logging
 import asyncio
-from collections import namedtuple
+
+# pylint: disable=no-name-in-module
+# pylint not able to fine GET, POST, PUT, DELETE. However
+# in aiocop __init__ they are imported as from .numbers import *
 from aiocoap import GET, POST, PUT, DELETE, Context, Message
+
+from expliot.core.common import bstr
+from expliot.core.discovery import Discovery
+
 
 COAP_STR = "coap"
 COAP_PORT = 5683
 ROOTPATH = "/"
 WKRPATH = "/.well-known/core"
 
+# Disable aiocoap logging
 logging.getLogger("coap").setLevel(logging.CRITICAL + 1)
 
 
 class WKResource:
     """
-    A resource on the CoAP server as advertised on the "/.well-known/core
-    path.
+    A resource on the CoAP server as advertised on "/.well-known/core"
+    in CoRE Link Format (RFC 6690). For more details on CoRE Link format,
+    https://tools.ietf.org/html/rfc6690
     """
-    def __init__(self, link):
-        self.path = None
-        self.title = None
-        self.iface = None
-        self.rt = None
-        self.ct = None
-        self.sz = None
-        self.unknown = []
 
-        if link:
-            self.parse(link)
+    def __init__(self, link):
+        """
+        Constructor. Creates an Resource object from the link provided.
+        An example of the link format:
+        '</resurce/path>;title="Foo Bar";if="Foo";rt="bar";sz=100'
+
+        Args:
+            link (bytes or str): The link format containing a single resource
+            from the response.
+
+        Returns:
+            Nothing
+        """
+        self._attributes = {}
+        self.unknown = []
+        self.parse(link)
 
     def parse(self, link):
+        """
+        Parses the link provided and extracts the attributes from it.
+        An example of the link format:
+        '</resurce/path>;title="Foo Bar";if="Foo";rt="bar";sz=100'
+        More details about the syntax can be found here -
+        https://tools.ietf.org/html/rfc6690#page-6
+
+        Args:
+            link (bytes or str): The link format containing a single link
+            resource from the response.
+
+        Returns:
+            Nothing
+        """
+        if not link:
+            raise ValueError("Empty CoRE link!")
+
         if link.__class__ == bytes:
-            link = link.decode()
+            link = bstr(link)
         for item in link.split(";"):
             attr = item.split("=")
             if len(attr) == 1:
                 if attr[0][0] == "<" and attr[0][-1] == ">":
-                    self.path = attr[0][1:-1]
+                    self._attributes["path"] = attr[0][1:-1]
                 else:
                     self.unknown.append(attr[0])
             elif len(attr) == 2:
-                if attr[0] == "title":
-                    self.title = attr[1]
-                elif attr[0] == "if":
-                    self.iface = attr[1]
-                elif attr[0] == "rt":
-                    self.rt = attr[1]
-                elif attr[0] == "ct":
-                    self.ct = attr[1]
-                elif attr[0] == "sz":
-                    self.sz = attr[1]
-                else:
-                    self.unknown.append(item)
+                self._attributes[attr[0]] = attr[1].strip("\"")
+            else:
+                self.unknown.append(item)
 
-    def link(self):
-        linkstr = "<{}>".format(self.path)
-        if self.title:
-            linkstr += ";title={}".format(self.title)
-        if self.iface:
-            linkstr += ";if={}".format(self.iface)
-        if self.rt:
-            linkstr += ";rt={}".format(self.rt)
-        if self.ct:
-            linkstr += ";ct={}".format(self.ct)
-        if self.sz:
-            linkstr += ";sz={}".format(self.sz)
-        return linkstr
+    def attributes(self):
+        """
+        Returns a dict containing all attributes of a sinle link.
+        The resource path is stored in "path" key for ease.
 
-    def linkdict(self):
-        ldict = {"path": self.path}
-        if self.title:
-            ldict["title"] = self.title
-        if self.iface:
-            ldict["if"] = self.iface
-        if self.rt:
-            ldict["rt"] = self.rt
-        if self.ct:
-            ldict["ct"] = self.ct
-        if self.sz:
-            ldict["sz"] = self.sz
-        return ldict
+        Returns:
+            dict: The dict containing all the attributes found in
+                  the parsed link.
+        """
+        return self._attributes
+
+    def path(self):
+        """Returns the path of the well-known resource"""
+        return self._attributes["path"]
 
 
 class CoapClient:
@@ -101,7 +111,6 @@ class CoapClient:
             raise ValueError("Empty host!")
         self.host = host
         self.port = port
-
 
     def makeuri(self, path=None, secure=False):
         """
@@ -203,19 +212,70 @@ class CoapClient:
         """
         return self.request(method=GET, path=path, secure=secure)
 
-    def discover(self, secure=False):
+    # def discover(self, secure=False):
+    #     """
+    #     Discover all resources available on the server. It does that
+    #     by sending a GET request to /.well-known/core according to
+    #     RFC 6690 - https://tools.ietf.org/html/rfc6690
+    #
+    #     Args:
+    #         Check async_request()
+    #     Returns:
+    #         list: A list of WKCResource objects corresponding to each
+    #               resource advertised by the CoAP server
+    #     """
+    #     response = self.request(path=WKCPATH, secure=secure)
+    #     if not response.code.is_successful():
+    #         # raise
+    #         return None
+
+
+class CoapDiscovery(Discovery):
+    """Discovery for Resources on a CoAP server."""
+
+    # pylint: disable=super-init-not-called
+    def __init__(self, host, port=COAP_PORT):
         """
-        Discover all resources available on the server. It does that
-        by sending a GET request to /.well-known/core according to
-        RFC 6690 - https://tools.ietf.org/html/rfc6690
+        Initialize the CoAP discovery.
 
         Args:
-            Check async_request()
+            host (str): The hostname or IP of the CoAP server
+            port (int): The CoAP port number on the host
         Returns:
-            list: A list of WKCResource objects corresponding to each
-                  resource advertised by the CoAP server
+            Nothing
         """
-        response = self.request(path=WKCPATH, secure=secure)
+        if not host:
+            raise ValueError("Empty host!")
+        self.host = host
+        self.port = port
+        self.resources = []
+
+    def scan(self):
+        """
+        Scan for resources advertised by the CoAP server on "/.well-known/core"
+        in CoRE Link Format (RFC 6690). For more details on CoRE Link Format
+        check - https://tools.ietf.org/html/rfc6690
+
+        Args:
+            Nothing
+        Returns:
+            Nothing
+        """
+        client = CoapClient(self.host, self.port)
+        response = client.get(path=WKRPATH)
         if not response.code.is_successful():
-            # raise
-            return None
+            raise ConnectionError("Response Error ({})".format(response.code))
+
+        for link in response.payload.split(b","):
+            self.resources.append(WKResource(link).attributes())
+
+    def services(self):
+        """
+        Returns the found resources on the CoAP server.
+
+        Args:
+            Nothing
+        Returns:
+            list: List of resources found
+        """
+        return self.resources

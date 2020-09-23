@@ -45,6 +45,9 @@ def recurse_list_dict(obj, callback, cbdata, rlevel=0):
     Args:
         cbdata (defined by callback): This callback method's specific data.
         robj (list or dict): The list or dict object at the specified recursion level.
+                             This object may be updated by the callback, which means
+                             the original obj passed to recurse_list_dict() will be
+                             eventually updated.
         rlevel (int): The current recursion level at which this callback instance is called.
         key (str): The key if the robj is a dict.
         value (can be any type): 1. The value of the key if robj is a dict or

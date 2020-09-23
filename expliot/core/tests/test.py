@@ -349,7 +349,8 @@ class Test:
         self.result = TResult()
 
         # Namespace returned by self.argparser.parser_args()
-        # This gets defined in the run() method and has a getter self.args for inherited class Plugin
+        # This gets defined in the run() method and has a getter
+        # self.args for inherited class Plugin
         self.args = None
 
     def pre(self):
@@ -401,7 +402,8 @@ class Test:
             cblog (dict): Contains logging information i.e. to log the data or not?
                 and the Log prefix type.
             robj (list or dict): The list or dict object at the specified recursion
-                level.
+                level. This is updated by this callback i.e. bytes and bytearray
+                objects found are converted to binary strings.
             rlevel (int): The current recursion level at which this callback
                 instance is called.
             key (str): The key if the robj is a dict.
@@ -463,6 +465,8 @@ class Test:
             return
         cblog = {"tlogtype": tlogtype,
                  "logkwargs": logkwargs}
+        # Any bytes or bytearray value in kwargs are converted to binary
+        # str using expliot.core.common.bstr().
         recurse_list_dict(kwargs, self.output_dict_iter, cblog)
         if logkwargs == LOGNORMAL:
             TLog.print(tlogtype, kwargs)
@@ -512,7 +516,7 @@ class Test:
         self._logstatus()
 
         # Return test result
-        # print(self.result.getresult())
+        print(self.result.getresult())
         return self.result.getresult()
 
     def _assertpriv(self):

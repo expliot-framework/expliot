@@ -6,7 +6,7 @@ import time
 from zeroconf import ServiceBrowser, Zeroconf
 
 from expliot.core.discovery import Discovery
-from expliot.core.discovery.mdns.constants import MDNS_SERVICE_TYPES
+from expliot.core.protocols.internet.mdns.constants import MDNS_SERVICE_TYPES
 
 
 DEFAULT_MDNS_TIMEOUT = 1.0
@@ -82,13 +82,12 @@ class MdnsDiscovery(Discovery):
         self.device_list = []
         self.scan_timeout = scan_timeout
 
-    @property
     def devices(self):
         """
-        Return the found devices.
+        Returns the found devices.
 
-        Returns (list):
-            List of devices found
+        Returns:
+            list: List of devices found
         """
         return self.device_list
 

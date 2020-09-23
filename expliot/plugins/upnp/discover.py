@@ -1,7 +1,10 @@
 """Support for UPNP discovery."""
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
-from expliot.core.protocols.internet.upnp import SSDPRequest, SSDPDevice
-from expliot.plugins.upnp import UPNP_REFERENCE, DEFAULT_UPNP_TIMEOUT
+from expliot.core.protocols.internet.upnp import (
+    UpnpDiscovery,
+    DEFAULT_UPNP_TIMEOUT,
+)
+from expliot.plugins.upnp import UPNP_REFERENCE
 
 
 class Discover(Test):
@@ -34,19 +37,22 @@ class Discover(Test):
             "-v", "--verbose", action="store_true", help="Show verbose output"
         )
         self.argparser.add_argument(
-            "-t", "--timeout", default=DEFAULT_UPNP_TIMEOUT,
-            type=float, help="Timeout in seconds for each device type. "
-            "Default is {} seconds.".format(DEFAULT_UPNP_TIMEOUT)
+            "-t",
+            "--timeout",
+            default=DEFAULT_UPNP_TIMEOUT,
+            type=float,
+            help="Timeout in seconds for each device type. "
+                 "Default is {} seconds.".format(DEFAULT_UPNP_TIMEOUT)
         )
 
     def execute(self):
         """Execute the UPNP discovery."""
 
-        ssdp = SSDPRequest()
-        devs = ssdp.m_search(discover_delay=self.args.timeout, st=DISCOVER_ALL)
         TLog.generic("Search local network for UPNP enabled devices")
+        scanner = UpnpDiscovery(timeout=self.args.timeout)
+        scanner.scan()
 
-        for dev in devs:
+        for dev in scanner.devices():
             print("Found dev({})".format(dev))
         # if self.args.device:
         #     if self.args.device not in service_names:

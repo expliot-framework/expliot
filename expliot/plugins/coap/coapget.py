@@ -14,8 +14,19 @@ from expliot.core.protocols.internet.coap import (
 )
 
 
+# pylint: disable=bare-except
 class CoapGet(Test):
-    """Test for getting data from a CoAP device."""
+    """
+    Test for getting data from a CoAP device.
+
+    Output Format:
+    [
+        {
+            "response_code": "2.05 Content",
+            "response_payload": "Foo bar"
+        }
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -25,7 +36,7 @@ class CoapGet(Test):
             descr="This test allows you to send a CoAP GET request (Message) "
                   "to a CoAP server on a specified resource path.",
             author="Aseem Jakhar",
-            email="aseemjakhar@gmail.com",
+            email="aseem@expliot.io",
             ref=["https://tools.ietf.org/html/rfc7252"],
             category=TCategory(TCategory.COAP, TCategory.SW, TCategory.RECON),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
@@ -63,17 +74,20 @@ class CoapGet(Test):
                 self.args.rport
             )
         )
-        client = CoapClient(self.args.rhost, self.args.rport)
-        response = client.get(path=self.args.path)
-        if not response.code.is_successful():
-            self.result.setstatus(
-                passed=False,
-                reason="Error Response: ({})".format(
-                    response.code
+        try:
+            client = CoapClient(self.args.rhost, port=self.args.rport)
+            response = client.get(path=self.args.path)
+            if not response.code.is_successful():
+                self.result.setstatus(
+                    passed=False,
+                    reason="Error Response: ({})".format(
+                        response.code
+                    )
                 )
+                return
+            self.output_handler(
+                response_code=str(response.code),
+                response_payload=response.payload
             )
-            return
-        self.output_handler(
-            response_code=response.code,
-            response_payload=response.payload
-        )
+        except:  # noqa: E722
+            self.result.exception()

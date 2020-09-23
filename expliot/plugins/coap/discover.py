@@ -8,15 +8,41 @@ from expliot.core.tests.test import (
 )
 
 from expliot.core.protocols.internet.coap import (
-    CoapClient,
+    CoapDiscovery,
     WKRPATH,
     COAP_PORT,
-    WKResource,
 )
 
 
+# pylint: disable=bare-except
 class Discover(Test):
-    """Test for discovering and listing resources available on a CoAP server"""
+    """
+    Test for discovering and listing resources available on a CoAP server
+
+    Output Format:
+    [
+        {
+            "path": "/foo", # Only Path key is mandatory.
+            "ct": "0",
+            "rt": "observe",
+            "title": "Foo Bar Title"
+        },
+        #...
+        {
+            "path": "/bar", # Only Path key is mandatory.
+            "sz": "0",
+            "if": "Foo If",
+        },
+        # ...May be more than one resource entries. Please note
+        # that only the "path" key is mandatory i.e. will be present
+        # in all, other attributes may or may not be present depending
+        # on what was advertised by the CoAP server
+        {
+            "total_resources": 35
+        },
+
+    ]
+    """
 
     def __init__(self):
         """Initialize the test."""
@@ -26,7 +52,7 @@ class Discover(Test):
             descr="This test allows you to discover and list the well-known "
                   "resources advertised as CoRE link format on a CoAP server.",
             author="Aseem Jakhar",
-            email="aseemjakhar@gmail.com",
+            email="aseem@expliot.io",
             ref=["https://tools.ietf.org/html/rfc6690"],
             category=TCategory(TCategory.COAP, TCategory.SW, TCategory.DISCOVERY),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
@@ -57,22 +83,12 @@ class Discover(Test):
                 self.args.rport
             )
         )
-        count = 0
-        resources = []
-        client = CoapClient(self.args.rhost, self.args.rport)
-        response = client.get(path=WKRPATH)
-        if not response.code.is_successful():
-            self.result.setstatus(
-                passed=False,
-                reason="Error Response: ({})".format(
-                    response.code
-                )
-            )
-            return
-
-        for link in response.payload.split(b","):
-            count += 1
-            resource = WKResource(link)
-            rdict = resource.linkdict()
-            self.output_handler(**rdict)
-        self.output_handler(total_resources=count)
+        try:
+            scanner = CoapDiscovery(self.args.rhost, port=self.args.rport)
+            scanner.scan()
+            resources = scanner.services()
+            for resource in resources:
+                self.output_handler(**resource)
+            self.output_handler(total_resources=len(resources))
+        except:  # noqa: E722
+            self.result.exception()
