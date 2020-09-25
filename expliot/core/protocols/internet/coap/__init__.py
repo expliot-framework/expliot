@@ -112,6 +112,26 @@ class CoapClient:
         self.host = host
         self.port = port
 
+    @staticmethod
+    def response_dict(response):
+        """
+        Creates and returns a dict containing response
+        code, string and payload from the Response Object.
+
+        Args:
+            response (aiocoap.message.Message): Response message
+                received from the CoAP server.
+
+        Returns:
+            dict: Dict object containing response code, string
+        and payload
+        """
+        return {
+            "code": int(response.code),
+            "code_string": str(response.code),
+            "payload": str(response.payload)
+        }
+
     def makeuri(self, path=None, secure=False):
         """
         Make a CoAP URI from the details provided
@@ -188,7 +208,7 @@ class CoapClient:
         Returns:
             Check async_request()
         """
-        return self.request(method=GET, path=path, payload=payload, secure=secure)
+        return self.request(method=POST, path=path, payload=payload, secure=secure)
 
     def put(self, path=None, payload=b"", secure=False):
         """
@@ -199,7 +219,7 @@ class CoapClient:
         Returns:
             Check async_request()
         """
-        return self.request(method=GET, path=path, payload=payload, secure=secure)
+        return self.request(method=PUT, path=path, payload=payload, secure=secure)
 
     def delete(self, path=None, secure=False):
         """
@@ -210,24 +230,7 @@ class CoapClient:
         Returns:
             Check async_request()
         """
-        return self.request(method=GET, path=path, secure=secure)
-
-    # def discover(self, secure=False):
-    #     """
-    #     Discover all resources available on the server. It does that
-    #     by sending a GET request to /.well-known/core according to
-    #     RFC 6690 - https://tools.ietf.org/html/rfc6690
-    #
-    #     Args:
-    #         Check async_request()
-    #     Returns:
-    #         list: A list of WKCResource objects corresponding to each
-    #               resource advertised by the CoAP server
-    #     """
-    #     response = self.request(path=WKCPATH, secure=secure)
-    #     if not response.code.is_successful():
-    #         # raise
-    #         return None
+        return self.request(method=DELETE, path=path, secure=secure)
 
 
 class CoapDiscovery(Discovery):
@@ -264,8 +267,9 @@ class CoapDiscovery(Discovery):
         client = CoapClient(self.host, self.port)
         response = client.get(path=WKRPATH)
         if not response.code.is_successful():
-            raise ConnectionError("Response Error ({})".format(response.code))
-
+            raise ConnectionError(
+                "Response Error. {}".format(CoapClient.response_dict(response))
+            )
         for link in response.payload.split(b","):
             self.resources.append(WKResource(link).attributes())
 

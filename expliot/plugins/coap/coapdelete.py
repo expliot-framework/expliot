@@ -1,4 +1,4 @@
-"""Test for getting data from a CoAP device."""
+"""Test for deleting data from a CoAP device."""
 
 from expliot.core.tests.test import (
     Test,
@@ -15,9 +15,9 @@ from expliot.core.protocols.internet.coap import (
 
 
 # pylint: disable=bare-except
-class CoapGet(Test):
+class CoapDelete(Test):
     """
-    Test for Sending GET request to a CoAP device.
+    Test for Sending DELETE request to a CoAP device.
 
     Output Format:
     [
@@ -32,9 +32,9 @@ class CoapGet(Test):
     def __init__(self):
         """Initialize the test."""
         super().__init__(
-            name="get",
-            summary="CoAP GET request",
-            descr="This test allows you to send a CoAP GET request (Message) "
+            name="delete",
+            summary="CoAP DELETE request",
+            descr="This test allows you to send a CoAP DELETE request (Message) "
                   "to a CoAP server on a specified resource path.",
             author="Aseem Jakhar",
             email="aseem@expliot.io",
@@ -61,14 +61,14 @@ class CoapGet(Test):
             "-u",
             "--path",
             default=ROOTPATH,
-            help="Resource URI path of the GET request. Default "
+            help="Resource URI path of the DELETE request. Default "
                  "is URI path {}".format(ROOTPATH),
         )
 
     def execute(self):
         """Execute the test."""
         TLog.generic(
-            "Sending GET request for URI Path ({}) "
+            "Sending DELETE request for URI Path ({}) "
             "to CoAP Server {} on port {}".format(
                 self.args.path,
                 self.args.rhost,
@@ -77,7 +77,7 @@ class CoapGet(Test):
         )
         try:
             client = CoapClient(self.args.rhost, port=self.args.rport)
-            response = client.get(path=self.args.path)
+            response = client.delete(path=self.args.path)
             if not response.code.is_successful():
                 self.result.setstatus(
                     passed=False,

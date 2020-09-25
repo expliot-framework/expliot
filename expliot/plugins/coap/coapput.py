@@ -1,4 +1,4 @@
-"""Test for getting data from a CoAP device."""
+"""Test for Sending PUT request to a CoAP device."""
 
 from expliot.core.tests.test import (
     Test,
@@ -15,15 +15,15 @@ from expliot.core.protocols.internet.coap import (
 
 
 # pylint: disable=bare-except
-class CoapGet(Test):
+class CoapPut(Test):
     """
-    Test for Sending GET request to a CoAP device.
+    Test for PUTting data on a specified resource path on a CoAP device.
 
     Output Format:
     [
         {
             "response_code": 69  # Ex. 69=0b01000101 (0b010=2, 0b00101=5)
-            "response_code_str": "2.05 Content",
+            "response_code": "2.05 Content",
             "response_payload": "Foo bar" # or "" if no payload in response
         }
     ]
@@ -32,9 +32,9 @@ class CoapGet(Test):
     def __init__(self):
         """Initialize the test."""
         super().__init__(
-            name="get",
-            summary="CoAP GET request",
-            descr="This test allows you to send a CoAP GET request (Message) "
+            name="put",
+            summary="CoAP PUT request",
+            descr="This test allows you to send a CoAP PUT request (Message) "
                   "to a CoAP server on a specified resource path.",
             author="Aseem Jakhar",
             email="aseem@expliot.io",
@@ -61,23 +61,33 @@ class CoapGet(Test):
             "-u",
             "--path",
             default=ROOTPATH,
-            help="Resource URI path of the GET request. Default "
+            help="Resource URI path of the PUT request. Default "
                  "is URI path {}".format(ROOTPATH),
+        )
+        self.argparser.add_argument(
+            "-d",
+            "--data",
+            required=True,
+            help="The PUT data/payload to be sent to the CoAP server",
         )
 
     def execute(self):
         """Execute the test."""
         TLog.generic(
-            "Sending GET request for URI Path ({}) "
-            "to CoAP Server {} on port {}".format(
+            "Sending PUT request to URI Path ({}) "
+            "to CoAP Server {} port {} with data ({})".format(
                 self.args.path,
                 self.args.rhost,
-                self.args.rport
+                self.args.rport,
+                self.args.data
             )
         )
         try:
             client = CoapClient(self.args.rhost, port=self.args.rport)
-            response = client.get(path=self.args.path)
+            response = client.put(
+                path=self.args.path,
+                payload=self.args.data.encode()
+            )
             if not response.code.is_successful():
                 self.result.setstatus(
                     passed=False,

@@ -40,7 +40,7 @@ class Discover(Test):
             "-t",
             "--timeout",
             default=DEFAULT_UPNP_TIMEOUT,
-            type=float,
+            type=int,
             help="Timeout in seconds for each device type. "
                  "Default is {} seconds.".format(DEFAULT_UPNP_TIMEOUT)
         )
