@@ -63,7 +63,7 @@ class ZbAuditorNwkScan(Test):
             ref=[
                 "https://www.zigbee.org/wp-content/uploads/2014/11/docs-05-3474-20-0csg-zigbee-specification.pdf"
             ],
-            category=TCategory(TCategory.ZB_AUDITOR, TCategory.RD, TCategory.RECON),
+            category=TCategory(TCategory.ZB_AUDITOR, TCategory.RD, TCategory.DISCOVERY),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
             needroot=True,
         )
