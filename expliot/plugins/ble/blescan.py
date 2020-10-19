@@ -91,7 +91,7 @@ class BleScan(Test):
                                                    "description": scan_data[1],
                                                    "value": scan_data[2]})
                 self.output_handler(**outdict)
-            self.output_handler(total_devices_discovered=len(devices))
+            # self.output_handler(total_devices_discovered=len(devices))
         except:  # noqa: E722
             self.result.setstatus(passed=False,
                                   reason="Exception caught: {}".format(sysexcinfo()))

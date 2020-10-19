@@ -51,9 +51,15 @@ class Discover(Test):
         TLog.generic("Search local network for UPNP enabled devices")
         scanner = UpnpDiscovery(timeout=self.args.timeout)
         scanner.scan()
+        count = 0
 
         for dev in scanner.devices():
-            print("Found dev({})".format(dev))
+            count += 1
+            TLog.success("Device {}:".format(count))
+            self.output_handler(**dev)
+        self.output_handler(total_devices_discovered=count)
+
+        #    print("Found dev.__class__({}) dev({})".format(dev.__class__, dev))
         # if self.args.device:
         #     if self.args.device not in service_names:
         #         self.result.setstatus(passed=False, reason="Unknown device type specified")
@@ -77,3 +83,8 @@ class Discover(Test):
         #                             weight=device.weight,
         #                             properties=device.properties)
         # self.output_handler(total_devices_discovered=cnt)
+
+#    def print_details(self, dev):
+#        for k, v in dev:
+#            if k == "description" or k == :
+
