@@ -9,19 +9,19 @@ DISCOVER_ALL = "ssdp:all"
 
 def device_dict(self):
     """
-    Get the details of the Device in a dict.
+    Returns the details of the Device in a dict.
 
     Args:
         None
     Returns:
-        dict: Dictionary containing the device details. Dict
-        keys are:
+        dict: Dictionary containing the device details. Dict keys are:
             1. host
             2. port
             3. description
             4. friendly_name
             5. type
             6. base_url
+            7. services
     """
     details = {
         "host": self.host,
@@ -41,7 +41,23 @@ setattr(SSDPDevice, "device_dict", device_dict)
 
 def service_dict(self):
     """
+    Returns the details of a device's service in a dict.
 
+    Args:
+        None
+    Returns:
+        dict: Dictionary containing the service details. Dict keys are:
+            1. name
+            2. type
+            3. version
+            4. id
+            5. description
+            6. scpd_url
+            7. control_url
+            8. event_sub_url
+            9. base_url
+            10. actions
+            11. state_variables
     """
     details = {
         "name": self.service,
@@ -64,7 +80,12 @@ setattr(SSDPDevice.Service, "service_dict", service_dict)
 
 def action_dict(self):
     """
+    Returns the name and argument details of a service.
 
+    Args:
+        None
+    Returns:
+        dict: Dictionary containing the action details.
     """
     details = {
         "name": self.name,
@@ -78,7 +99,12 @@ setattr(SSDPDevice.Service.Action, "action_dict", action_dict)
 
 def state_variable_dict(self):
     """
+    Returns the details of the state variable s of a service.
 
+    Args:
+        None
+    Returns:
+        dict: Dictionary containing the state variable details.
     """
     details = {
         "name": self.name,
@@ -90,9 +116,15 @@ def state_variable_dict(self):
 
 setattr(SSDPDevice.Service.StateVariable, "state_variable_dict", state_variable_dict)
 
+
 def argument_dict(self):
     """
+    Returns the details of an argument to an action.
 
+    Args:
+        None
+    Returns:
+        dict: Dictionary containing the argument details.
     """
     details = {
         "name": self.name,
@@ -110,7 +142,7 @@ setattr(SSDPDevice.Service.Action.Argument, "argument_dict", argument_dict)
 class UpnpDiscovery(Discovery):
     """Discovery for UPNP devices on a network."""
 
-    # pylint: disable=super-init-not-called
+    # pylint: disable=super-init-not-called, invalid-name
     def __init__(self, timeout=DEFAULT_UPNP_TIMEOUT, st=DISCOVER_ALL):
         self.timeout = timeout
         self.st = st
@@ -118,20 +150,17 @@ class UpnpDiscovery(Discovery):
 
     def scan(self):
         ssdp = SSDPRequest()
-        # devs = ssdp.m_search(discover_delay=self.timeout, st=DISCOVER_ALL)
         devs = ssdp.m_search(discover_delay=self.timeout, st=self.st)
         for dev in devs:
             self._devices.append(dev.device_dict())
-            print("Found dev({})".format(dev))
 
     def devices(self):
         """
          Returns the UPNP devices found in the network.
 
          Args:
-             Nothing
+             None
          Returns:
              list: List of devices found
          """
-
         return self._devices

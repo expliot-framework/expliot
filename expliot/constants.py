@@ -13,6 +13,8 @@ DOCS = "https://expliot.readthedocs.io"
 NAME = "EXPLIoT"
 URL = "https://www.expliot.io"
 BANNER_ART = r"""
+
+
           ____|   \    /    __ \    |       __  __|           __  __|
          |         \  /    |    |   |          |       __ \      |
           __|        (      ___/    |          |      /    \     |
