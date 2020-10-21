@@ -1,5 +1,6 @@
 """Support for UPNP discovery."""
-from expliot.core.tests.test import TCategory, Test, TLog, TTarget
+from expliot.core.common import recurse_list_dict
+from expliot.core.tests.test import TCategory, Test, TLog, TTarget, LOGNO
 from expliot.core.protocols.internet.upnp import (
     UpnpDiscovery,
     DEFAULT_UPNP_TIMEOUT,
@@ -34,7 +35,10 @@ class Discover(Test):
         )
 
         self.argparser.add_argument(
-            "-v", "--verbose", action="store_true", help="Show verbose output"
+            "-v",
+            "--verbose",
+            action="store_true",
+            help="Show verbose output (response and xml)"
         )
         self.argparser.add_argument(
             "-t",
@@ -42,7 +46,7 @@ class Discover(Test):
             default=DEFAULT_UPNP_TIMEOUT,
             type=int,
             help="Timeout in seconds for each device type. "
-                 "Default is {} seconds.".format(DEFAULT_UPNP_TIMEOUT)
+                 "Default is {} seconds".format(DEFAULT_UPNP_TIMEOUT)
         )
 
     def execute(self):
@@ -51,29 +55,35 @@ class Discover(Test):
         TLog.generic("Search local network for UPNP enabled devices")
         scanner = UpnpDiscovery(timeout=self.args.timeout)
         scanner.scan()
+        count = 0
 
         for dev in scanner.devices():
-            print("Found dev({})".format(dev))
-        # if self.args.device:
-        #     if self.args.device not in service_names:
-        #         self.result.setstatus(passed=False, reason="Unknown device type specified")
-        #         return
-        #     service_names = [self.args.device]
-        # cnt = 0
-        # for name in service_names:
-        #     if self.args.verbose:
-        #         TLog.trydo("Looking for {} devices".format(name))
-        #     details = MdnsDiscovery(name, scan_timeout=self.args.timeout)
-        #     details.scan()
-        #     for device in details.devices:
-        #         cnt += 1
-        #         self.output_handler(device_number=cnt,
-        #                             name=device.name,
-        #                             address=device.address,
-        #                             port=device.port,
-        #                             server=device.server,
-        #                             type=device.type,
-        #                             priority=device.priority,
-        #                             weight=device.weight,
-        #                             properties=device.properties)
-        # self.output_handler(total_devices_discovered=cnt)
+            count += 1
+            TLog.generic("")
+            TLog.success("Device {}:".format(count))
+            self.output_handler(logkwargs=LOGNO, **dev)
+            recurse_list_dict(dev, self.log_callback, None)
+        self.output_handler(total_devices_discovered=count)
+
+    def log_callback(self, cbdata, robj, rlevel, key=None, value=None):
+        """
+        Callback for recursive iteration of dict. It logs everything
+        except for response data and description(xml) unless the
+        user runs the plugin in verbose mode.
+
+        Args:
+            Check recurse_list_dict() documentation for argument details
+        Returns:
+            Nothing
+        """
+        spaces = "  " * rlevel
+        if key in ("description", "response") and (not self.args.verbose):
+            return
+        if robj.__class__ == dict and \
+                (value.__class__ == dict or value.__class__ == list):
+            TLog.success("{}{}:".format(spaces, key))
+        else:
+            if key:
+                TLog.success("{}{}: {}".format(spaces, key, value))
+            else:
+                TLog.success("{}{}".format(spaces, value))

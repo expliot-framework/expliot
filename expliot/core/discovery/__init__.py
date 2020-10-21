@@ -5,7 +5,7 @@ class Discovery:
     """Representation of a discovery entity."""
 
     def __init__(self):
-        """Initiali ze the discovery."""
+        """Initialize the discovery."""
         pass
 
     def devices(self):
