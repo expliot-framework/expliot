@@ -112,18 +112,22 @@ class ZbAuditorServices(BaseServices):
         }
 
 
-class BusAuditorServices(Services):
-    """Class to store Bus Auditor's Services."""
+class BusAuditorServices(BaseServices):
+    """Class to store BusAuditor's Services."""
 
-    JTAG_SCAN = "JTAG_SCAN"
-    SWD_SCAN = "SWD_SCAN"
+    JTAG_SCAN = "JTAG Port Scan"
+    SWD_SCAN = "SWD Port Scan"
+    UART_SCAN = "UART Port Scan"
+    I2C_SCAN = "I2C Bus Scan"
 
     def __init__(self):
-        """Init Bus Auditor services to default."""
+        """Init BusAuditor services to default."""
 
         super().__init__()
 
         self.device_services = {
             self.JTAG_SCAN: False,
             self.SWD_SCAN: False,
+            self.UART_SCAN: False,
+            self.I2C_SCAN: False,
         }
