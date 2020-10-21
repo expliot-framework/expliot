@@ -42,7 +42,7 @@ class BusAuditorDevInfo(Test):
     def display_device_info(info_dict):
         """
         Displays Device information.
-        
+
         Args:
             info_dict (dict): Dict of Device information
         Returns:

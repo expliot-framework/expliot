@@ -10,7 +10,7 @@ class BusAuditorJtagIdCodeScan(Test):
 
     Output Format:
     [{
-        "devices": 
+        "devices":
         [
             {
                 "jtag_id": "0x4ba00477",
@@ -86,7 +86,7 @@ class BusAuditorJtagIdCodeScan(Test):
     def display_jtag_scan_result(result_dict):
         """
         Displays JTAG idcode scan result.
-        
+
         Args:
             result_dict (dict): Dict of JTAG idcode scan information
         Returns:
@@ -95,25 +95,25 @@ class BusAuditorJtagIdCodeScan(Test):
             Nothing
         """
 
-        TLog.success("JTAG port scan result: ")
-        
+        TLog.success("JTAG port scan result:")
+
         count = 1
         devices = result_dict["devices"]
         for dev in devices:
             TLog.success("Device: {}".format(count))
 
             TLog.success("\t{:<8}: {}".format("ID Code", dev["jtag_id"]))
-            
+
             pins = dev["pins"]
             TLog.success("\t{:<8}: {}".format("TCK", pins["tck"]))
             TLog.success("\t{:<8}: {}".format("TMS", pins["tms"]))
             TLog.success("\t{:<8}: {}".format("TDO", pins["tdo"]))
             TLog.success("\t{:<8}: {}".format("TDI", pins["tdi"]))
-            
+
             if "trst" in pins:
                 TLog.generic("\t{:<8}: {}".format("TRST", pins["trst"]))
             count = count + 1
-            
+
             TLog.generic(" ")
 
     def execute(self):
@@ -141,7 +141,7 @@ class BusAuditorJtagIdCodeScan(Test):
                                      )
             if resp:
                 found = True
-                #self.output_handler(**resp)
+                # self.output_handler(**resp)
 
                 self.output_handler(logkwargs=LOGNO, **resp)
                 self.display_jtag_scan_result(resp)

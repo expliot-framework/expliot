@@ -7,7 +7,7 @@ class BusAuditor:
     """BusAuditor interface class."""
 
     def __init__(self):
-        """ 
+        """
         Constructor: BusAuditor interface for STM32F411 USB driver.
 
         Args:
@@ -57,7 +57,7 @@ class BusAuditor:
             include_trst (boolean): Include NRST pin in scan.
                                     NRST pin excluded by default
 
-        Return: 
+        Return:
             dict: The dictionary containing JTAG ID and pin info
 
         Raises:

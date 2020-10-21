@@ -375,7 +375,7 @@ class STM32F411(BusAuditorServices):
 
             data_len = resp[1] - 1
             data = resp[3:]
-            
+
             # data represent as below:
             # data = device_count (1byte)
             #       +tck (1byte) + tms (1byte) + tdo (1byte) + tdi (1byte)
@@ -549,7 +549,7 @@ class STM32F411(BusAuditorServices):
             idcodes = value["idcodes"]
             for _, idcode in enumerate(idcodes):
                 final_dict.update({idcode: value["pins"]})
-        
+
         devices_dict = dict()
         device_list = []
 
@@ -558,7 +558,7 @@ class STM32F411(BusAuditorServices):
             device_dict["jtag_id"] = "0x{:08x}".format(idcode)
             device_dict["pins"] = value
             device_list.append(device_dict)
-        
+
         devices_dict["devices"] = device_list
         return devices_dict
 
@@ -587,7 +587,7 @@ class STM32F411(BusAuditorServices):
             idcode_list = self.device_jtag_idcode_scan(start, end, volts)
             time.sleep(2)
             pattern_dict = self.device_jtag_pattern_scan(start, end, volts)
-        
+
         # Extract ID code and jtag pin info:
         if idcode_list and pattern_dict:
             return self.__extract_jtag_idcode_pins_data(idcode_list, pattern_dict)
@@ -632,13 +632,13 @@ class STM32F411(BusAuditorServices):
 
         devices_dict = dict()
         device_list = []
-        
+
         for idcode, value in idcode_disc.items():
             device_dict = dict()
             device_dict["swd_id"] = "0x{:08x}".format(idcode)
             device_dict["pins"] = value
             device_list.append(device_dict)
-        
+
         devices_dict["devices"] = device_list
         return devices_dict
 
@@ -728,7 +728,7 @@ class STM32F411(BusAuditorServices):
             for item in uart_array:
                 abaud = item["baud"]
                 pins_array = item["pins"]
-                
+
                 if abaud == baud:
                     new_baud = False
                     new_pins = True
@@ -869,7 +869,7 @@ class STM32F411(BusAuditorServices):
                         addr : {"scl": data[0], "sda": data[1]}
                     }
                 )
-        
+
         devices_dict = dict()
         device_list = []
 

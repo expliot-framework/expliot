@@ -7,10 +7,10 @@ from expliot.core.tests.test import TCategory, Test, TLog, TTarget, LOGNO
 class BusAuditorI2CScan(Test):
     """
     Test selected channels for I2C communication protocol.
-    
+
     Output Format:
     [{
-        "devices": 
+        "devices":
         [
             {
                 "i2c_addr": "0x48",
@@ -74,7 +74,7 @@ class BusAuditorI2CScan(Test):
     def display_i2c_scan_result(result_dict):
         """
         Displays I2C idcode scan result.
-        
+
         Args:
             result_dict (dict): Dict of I2C scan information
         Returns:
@@ -84,7 +84,7 @@ class BusAuditorI2CScan(Test):
         """
 
         TLog.success("I2C port scan result:")
-        
+
         indx = 1
         devices = result_dict["devices"]
         for dev in devices:
@@ -96,7 +96,6 @@ class BusAuditorI2CScan(Test):
             TLog.success("\t{:<8}: {}".format("SDA", pins["sda"]))
             indx = indx + 1
             TLog.generic(" ")
-
 
     def execute(self):
         """Execute the test."""

@@ -10,7 +10,7 @@ class BusAuditorSwdScan(Test):
 
     Output Format:
     [{
-        "devices": 
+        "devices":
         [
             {
                 "swd_id": "0x2ba01477",
@@ -67,7 +67,7 @@ class BusAuditorSwdScan(Test):
     def display_swd_scan_result(result_dict):
         """
         Displays SWD idcode scan result.
-        
+
         Args:
             result_dict (dict): Dict of SWD idcode scan information
         Returns:
@@ -77,7 +77,7 @@ class BusAuditorSwdScan(Test):
         """
 
         TLog.success("SWD port scan result:")
-        
+
         count = 1
         devices = result_dict["devices"]
         for dev in devices:
@@ -107,7 +107,7 @@ class BusAuditorSwdScan(Test):
                                     )
             if resp:
                 found = True
-                #self.output_handler(**resp)
+                # self.output_handler(**resp)
 
                 self.output_handler(logkwargs=LOGNO, **resp)
                 self.display_swd_scan_result(resp)

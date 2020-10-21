@@ -10,7 +10,7 @@ class BusAuditorUartScan(Test):
 
     Output Format:
     [{
-        "uart_port": 
+        "uart_port":
         [
             {
                 "baud": 115200,
@@ -71,7 +71,7 @@ class BusAuditorUartScan(Test):
     @staticmethod
     def display_uart_scan_result(result_dict):
         """Displays uart scan result.
-        
+
         Args:
             result_dict (dict): Dict of UART port scan result
         Returns:
@@ -106,7 +106,7 @@ class BusAuditorUartScan(Test):
                 for index, pin in enumerate(pins):
                     TLog.success(
                         "\t{}. Tx pin: {}, Rx pin: {}".format(
-                            index+1, pin["tx"], pin["rx"]
+                            index + 1, pin["tx"], pin["rx"]
                         )
                     )
 
@@ -120,7 +120,7 @@ class BusAuditorUartScan(Test):
                 self.args.start, self.args.end
             )
         )
-        
+
         TLog.generic(
             "Target Voltage ({})".format(
                 self.args.volts
@@ -138,7 +138,7 @@ class BusAuditorUartScan(Test):
                                      )
             if resp:
                 found = True
-                #self.output_handler(**resp)
+                # self.output_handler(**resp)
 
                 self.output_handler(logkwargs=LOGNO, **resp)
                 self.display_uart_scan_result(resp)
