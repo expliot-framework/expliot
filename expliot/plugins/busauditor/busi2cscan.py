@@ -57,7 +57,7 @@ class BusAuditorI2CScan(Test):
             "-s",
             "--start",
             type=int,
-            default=8,
+            default=0,
             help="First pin to start the scan. If "
             "not specified, it will start the scan from pin 0",
         )
@@ -65,7 +65,7 @@ class BusAuditorI2CScan(Test):
             "-e",
             "--end",
             type=int,
-            default=12,
+            default=15,
             help="Last pin. If "
             "not specified, it will scan until pin 15",
         )

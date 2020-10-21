@@ -69,7 +69,7 @@ class BusAuditorJtagIdCodeScan(Test):
             "-e",
             "--end",
             type=int,
-            default=4,
+            default=15,
             help="Last pin. If "
             "not specified, it will scan until pin 15",
         )

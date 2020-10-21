@@ -63,7 +63,7 @@ class BusAuditorUartScan(Test):
             "-e",
             "--end",
             type=int,
-            default=1,
+            default=15,
             help="Last pin. If "
             "not specified, it will scan until pin 15",
         )
