@@ -39,7 +39,7 @@ class BusAuditorJtagIdCodeScan(Test):
     def __init__(self):
         super().__init__(
             name="jtagscan",
-            summary="Displays jtag scan information",
+            summary="JTAG port scan",
             descr="This plugin scans and display jtag pins of target hardware.",
             author="Dattatray Hinge",
             email="dattatray@expliot.io",
@@ -141,10 +141,10 @@ class BusAuditorJtagIdCodeScan(Test):
                                      )
             if resp:
                 found = True
-                # self.output_handler(**resp)
+                self.output_handler(**resp)
 
-                self.output_handler(logkwargs=LOGNO, **resp)
-                self.display_jtag_scan_result(resp)
+                # self.output_handler(logkwargs=LOGNO, **resp)
+                # self.display_jtag_scan_result(resp)
 
         except:  # noqa: E722
             self.result.exception()

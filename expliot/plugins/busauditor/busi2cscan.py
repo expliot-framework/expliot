@@ -33,7 +33,7 @@ class BusAuditorI2CScan(Test):
     def __init__(self):
         super().__init__(
             name="i2cscan",
-            summary="Displays i2c scan information",
+            summary="I2C bus scan",
             descr="This plugin scans and display i2c pins of target hardware.",
             author="Dattatray Hinge",
             email="dattatray@expliot.io",
@@ -114,10 +114,10 @@ class BusAuditorI2CScan(Test):
                                     )
             if resp:
                 found = True
-                # self.output_handler(**resp)
+                self.output_handler(**resp)
 
-                self.output_handler(logkwargs=LOGNO, **resp)
-                self.display_i2c_scan_result(resp)
+                # self.output_handler(logkwargs=LOGNO, **resp)
+                # self.display_i2c_scan_result(resp)
 
         except:  # noqa: E722
             self.result.exception()

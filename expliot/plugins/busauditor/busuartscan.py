@@ -30,7 +30,7 @@ class BusAuditorUartScan(Test):
     def __init__(self):
         super().__init__(
             name="uartscan",
-            summary="Displays uart scan information",
+            summary="UART port scan",
             descr="This plugin scans and display UART pins of target hardware.",
             author="Dattatray Hinge",
             email="dattatray@expliot.io",
@@ -138,10 +138,10 @@ class BusAuditorUartScan(Test):
                                      )
             if resp:
                 found = True
-                # self.output_handler(**resp)
+                self.output_handler(**resp)
 
-                self.output_handler(logkwargs=LOGNO, **resp)
-                self.display_uart_scan_result(resp)
+                # self.output_handler(logkwargs=LOGNO, **resp)
+                # self.display_uart_scan_result(resp)
 
         except:  # noqa: E722
             self.result.exception()

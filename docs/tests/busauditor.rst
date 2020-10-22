@@ -25,7 +25,7 @@ Examples
   [+] Bus Auditor Details:
   [+] Device Name:	Payatu BusAuditor
   [+] Serial Number:	348435533437
-  [+] FW Revision:	0.0.52
+  [+] FW Revision:	1.0.1
   [+] HW Revision:	0.1
   [*]  
   [+] Services:
@@ -46,7 +46,7 @@ This plugin scans the target device for JTAG pins and JTAG IDCODE using
 IDCODE scan and pattern scan method.
 
 Note:
-By default, TRST excluded from a scan. To included TRST pin detection use -i option
+By default, TRST excluded from a scan. To included TRST pin detection use `-i` option
 
 **Usage details:**
 

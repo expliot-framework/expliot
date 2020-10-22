@@ -28,7 +28,7 @@ class BusAuditorDevInfo(Test):
     def __init__(self):
         super().__init__(
             name="devinfo",
-            summary="Displays BusAuditor device information",
+            summary="BusAuditor device information",
             descr="This plugin displays information about BusAuditor.",
             author="Dattatray Hinge",
             email="dattatray@expliot.io",
@@ -97,9 +97,9 @@ class BusAuditorDevInfo(Test):
             auditor = BusAuditor()
             dev_info_dict = auditor.get_interface_info()
 
-            # self.output_handler(**dev_info_dict)
-            self.output_handler(logkwargs=LOGNO, **dev_info_dict)
-            self.display_device_info(dev_info_dict)
+            self.output_handler(**dev_info_dict)
+            # self.output_handler(logkwargs=LOGNO, **dev_info_dict)
+            # self.display_device_info(dev_info_dict)
 
         except:  # noqa: E722
             self.result.exception()

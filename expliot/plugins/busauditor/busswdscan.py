@@ -27,7 +27,7 @@ class BusAuditorSwdScan(Test):
     def __init__(self):
         super().__init__(
             name="swdscan",
-            summary="Displays swd scan information",
+            summary="SWD port scan",
             descr="This plugin scans and display SWD pins of target hardware.",
             author="Dattatray Hinge",
             email="dattatray@expliot.io",
@@ -107,10 +107,10 @@ class BusAuditorSwdScan(Test):
                                     )
             if resp:
                 found = True
-                # self.output_handler(**resp)
+                self.output_handler(**resp)
 
-                self.output_handler(logkwargs=LOGNO, **resp)
-                self.display_swd_scan_result(resp)
+                # self.output_handler(logkwargs=LOGNO, **resp)
+                # self.display_swd_scan_result(resp)
 
         except:  # noqa: E722
             self.result.exception()
