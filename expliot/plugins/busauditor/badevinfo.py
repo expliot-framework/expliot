@@ -39,7 +39,6 @@ class BaDevInfo(Test):
             ref=[BUSAUDITOR_REFERENCE],
             category=TCategory(TCategory.BUS_AUDITOR, TCategory.HW, TCategory.RECON),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
-            needroot=True,
         )
 
     def execute(self):

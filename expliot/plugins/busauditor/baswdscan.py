@@ -41,7 +41,6 @@ class BaSwdScan(Test):
             ref=[SWD_REFERENCE],
             category=TCategory(TCategory.BUS_AUDITOR, TCategory.HW, TCategory.RECON),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
-            needroot=True,
         )
 
         self.argparser.add_argument(

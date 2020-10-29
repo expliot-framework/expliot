@@ -47,7 +47,6 @@ class BaI2cScan(Test):
             ref=[I2C_REFERENCE],
             category=TCategory(TCategory.BUS_AUDITOR, TCategory.HW, TCategory.RECON),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
-            needroot=True,
         )
 
         self.argparser.add_argument(
