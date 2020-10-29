@@ -2,7 +2,7 @@
 from expliot.core.interfaces.busauditor import BusAuditor
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 from expliot.plugins.busauditor import (
-    JTAG_REFERENCE, DEFAFULT_START, DEFAFULT_END, 
+    JTAG_REFERENCE, DEFAFULT_START, DEFAFULT_END,
     DEFAULT_VOLTS, VOLTAGE_RANGE
 )
 
@@ -138,7 +138,7 @@ class BaJtagScan(Test):
         count = 1
         for _ in range(self.args.start, self.args.end):
             count += 1
-        
+
         if self.args.include_trst:
             if count < 5:
                 self.result.setstatus(

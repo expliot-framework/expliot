@@ -2,7 +2,7 @@
 from expliot.core.interfaces.busauditor import BusAuditor
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget, LOGNO
 from expliot.plugins.busauditor import (
-    UART_REFERENCE, DEFAFULT_START, DEFAFULT_END, 
+    UART_REFERENCE, DEFAFULT_START, DEFAFULT_END,
     DEFAULT_VOLTS, VOLTAGE_RANGE
 )
 

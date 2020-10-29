@@ -2,7 +2,7 @@
 from expliot.core.interfaces.busauditor import BusAuditor
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 from expliot.plugins.busauditor import (
-    SWD_REFERENCE, DEFAFULT_START, DEFAFULT_END, 
+    SWD_REFERENCE, DEFAFULT_START, DEFAFULT_END,
     DEFAULT_VOLTS, VOLTAGE_RANGE
 )
 
