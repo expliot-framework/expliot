@@ -516,7 +516,7 @@ class Test:
         self._logstatus()
 
         # Return test result
-        # print(self.result.getresult())
+        print(self.result.getresult())
         return self.result.getresult()
 
     def _assertpriv(self):

@@ -4,7 +4,6 @@ import time
 import usb.core
 import usb.util
 from expliot.core.interfaces.common_services import BusAuditorServices
-# from expliot.core.common.timer import Timer
 
 
 class STM32F411(BusAuditorServices):
@@ -27,35 +26,35 @@ class STM32F411(BusAuditorServices):
     # USB timeout error code
     USB_OP_TIMEOUT_ERROR = 110
 
-    # Services
-    SRV_GET_REVISIONS = 0x01                # 0x01
-    SRV_GET_SERVICES = 0x02                 # 0x02
+    # Bus Auditor services 
+    SRV_GET_REVISIONS = 0x01
+    SRV_GET_SERVICES = 0x02
 
-    SRV_JTAG_IDCODE_SCAN = 0x11             # 0x11
-    SRV_JTAG_PATTERN_SCAN = 0x12            # 0x12
-    SRV_JTAG_IDCODE_TRST_SCAN = 0x13        # 0x13
-    SRV_JTAG_PATTERN_TRST_SCAN = 0x14       # 0x14
+    SRV_JTAG_IDCODE_SCAN = 0x11
+    SRV_JTAG_PATTERN_SCAN = 0x12
+    SRV_JTAG_IDCODE_TRST_SCAN = 0x13
+    SRV_JTAG_PATTERN_TRST_SCAN = 0x14
 
-    SRV_SWD_IDCODE_SCAN = 0x1B              # 0x1B
+    SRV_SWD_IDCODE_SCAN = 0x1B
 
-    SRV_UART_TX_SCAN = 0x21                 # 0x21
-    SRV_UART_TX_RX_SCAN = 0x22              # 0x22
+    SRV_UART_TX_SCAN = 0x21
+    SRV_UART_TX_RX_SCAN = 0x22
 
-    SRV_I2C_ADDR_SCAN = 0x23                # 0x23
-    SRV_SPI_SCAN = 0x24                     # 0x24
+    SRV_I2C_ADDR_SCAN = 0x23
+    SRV_SPI_SCAN = 0x24
 
     # Response mask for service
     SERVICE_RESP_BIT = 0x80
 
     # Service response byte
-    SRV_GET_REVISIONS_RESP = SERVICE_RESP_BIT | SRV_GET_REVISIONS
-    SRV_GET_SERVICES_RESP = SERVICE_RESP_BIT | SRV_GET_SERVICES
+    SRV_GET_REVISIONS_RESP = SERVICE_RESP_BIT | SRV_GET_REVISIONS       # 0x81
+    SRV_GET_SERVICES_RESP = SERVICE_RESP_BIT | SRV_GET_SERVICES         # 0x82
 
     # Service Resp data lengths
     SRV_GET_REVISIONS_RESP_LEN = 8
     SRV_GET_SERVICES_RESP_LEN = 7
 
-    # Service bits
+    # Supported service bits
     SRV_JTAG_SCAN_BIT = 0x01
     SRV_SWD_SCAN_BIT = 0x02
 
@@ -103,7 +102,10 @@ class STM32F411(BusAuditorServices):
         self.__serial_num = None
         self.__maxpacketsize = 64        # default USB packet size
 
-        self.dev = usb.core.find(idVendor=self.USB_VID, idProduct=self.USB_PID)
+        self.dev = usb.core.find(
+            idVendor=self.USB_VID, 
+            idProduct=self.USB_PID
+        )
 
         if self.dev is None:
             raise OSError("Device not found")
@@ -139,7 +141,8 @@ class STM32F411(BusAuditorServices):
         """
 
         pdata = self.usb_cntrl_read(
-            self.SRV_GET_REVISIONS, data_or_wlength=self.SRV_GET_REVISIONS_RESP_LEN
+            self.SRV_GET_REVISIONS, 
+            data_or_wlength=self.SRV_GET_REVISIONS_RESP_LEN
         )
 
         if (
@@ -167,9 +170,10 @@ class STM32F411(BusAuditorServices):
             ValueError("Invalid response for Get Services")
         """
 
-        resp = self.usb_cntrl_read(self.SRV_GET_SERVICES,
-                                   data_or_wlength=self.SRV_GET_SERVICES_RESP_LEN
-                                   )
+        resp = self.usb_cntrl_read(
+            self.SRV_GET_SERVICES,
+            data_or_wlength=self.SRV_GET_SERVICES_RESP_LEN
+        )
 
         if (
             len(resp) == self.SRV_GET_SERVICES_RESP_LEN
@@ -194,7 +198,7 @@ class STM32F411(BusAuditorServices):
         raise ValueError("Invalid response for Get services")
 
     @staticmethod
-    def __build_jtag_idcode_trst_dict(resp_array):
+    def __build_jtag_idcode_dict(resp_array, include_trst=False):
         """
         Build JTAG idcode list from idcode scan response array
 
@@ -210,173 +214,17 @@ class STM32F411(BusAuditorServices):
         idcode_array = []
 
         for resp in resp_array:
+
             data_len = resp[1] - 1
             data = resp[3:]
 
-            # data represent as below:
+            # When TRST included in scan, data represent as below:
             # data = device_count (1byte)
             #       + trst (1byte) + tck (1byte) + tms (1byte)
             #       + tdo (1byte) + tdi (1byte)
             #       + device_count * idcode (4byte)
-
-            if len(data) != data_len:
-                continue
-
-            idcode_dict = dict()
-            idcode_dict["count"] = data[0]
-            pin_dict = dict()
-            pin_dict["trst"] = data[1]
-            pin_dict["tck"] = data[2]
-            pin_dict["tms"] = data[3]
-            pin_dict["tdo"] = data[4]
-            pin_dict["tdi"] = data[5]
-            idcode_dict["pins"] = pin_dict
-            idcodes = data[6:]
-            idcodes_num = len(idcodes) / 4
-            if idcode_dict["count"] != idcodes_num:
-                continue
-
-            code_array = []
-            for i in range(idcode_dict["count"]):
-                s_id = i * 4
-                e_id = s_id + 4
-                idcode = idcodes[s_id:e_id]
-                code_list = ["", ]
-                code_list = struct.unpack_from("<I", idcode)
-                code_array.append(int(code_list[0]))
-
-            idcode_dict["idcodes"] = code_array
-            idcode_array.append(idcode_dict)
-        return idcode_array
-
-    def device_jtag_idcode_scan_trst(self, start, end, volts):
-        """
-        Send request for JTAG idcode scan, TRST pin included.
-
-        Args:
-            start (int): First pin (channel number) to start the scan
-            stop (int): Last pin (channel number) to stop the scan
-            volts (str): Target voltage out
-        Returns:
-            list: List of device ID code and corresponding JTAG pins
-        Raises:
-            Nothing
-        """
-
-        (decmstr, fractstr) = volts.rstrip().split(".")
-        indata = [start, end, int(decmstr), int(fractstr)]
-
-        self.usb_cntrl_write(brequest=self.SRV_JTAG_IDCODE_TRST_SCAN,
-                             wvalue=0, windex=0,
-                             data_or_wlength=indata
-                             )
-
-        resp_array = self.__read_service_response(self.SRV_JTAG_IDCODE_TRST_SCAN)
-        if resp_array:
-            return self.__build_jtag_idcode_trst_dict(resp_array)
-        return None
-
-    @staticmethod
-    def __build_jtag_patten_trst_dict(resp_array):
-        """
-        Build JTAG pin dict from pattern scan response array
-
-        Args:
-            resp_array (byte array): Jtag pattern scan service response
-            from BusAuditor
-        Returns:
-            dict: dict of JTAG pins on which pattern found
-            and dict of active pins where pattern not found but pins are active
-        Raises:
-            Nothing
-        """
-
-        pattern_dict = dict()
-        matched_list = []
-        active_list = []
-
-        for resp in resp_array:
-            data_len = resp[1] - 1
-            data = resp[3:]
-
-            # data represent as below:
-            # data = found/active (1byte)
-            #       + trst (1byte) + tck (1byte) + tms (1byte)
-            #       + tdo (1byte) + tdi (1byte)
-            #       + pattern_matchcount
-
-            if len(data) != data_len:
-                continue
-
-            idcode_dict = dict()
-            if data[0] == 1:
-                idcode_dict["trst"] = data[1]
-                idcode_dict["tck"] = data[2]
-                idcode_dict["tms"] = data[3]
-                idcode_dict["tdo"] = data[4]
-                idcode_dict["tdi"] = data[5]
-                matched_list.append(idcode_dict)
-            else:
-                idcode_dict["trst"] = data[1]
-                idcode_dict["tck"] = data[2]
-                idcode_dict["tms"] = data[3]
-                idcode_dict["tdo"] = data[4]
-                idcode_dict["tdi"] = data[5]
-                active_list.append(idcode_dict)
-        pattern_dict["matched"] = matched_list
-        pattern_dict["active"] = active_list
-
-        return pattern_dict
-
-    def device_jtag_pattern_scan_trst(self, start, end, volts):
-        """
-        Send request for JTAG pattern scan, TRST pin included.
-
-        Args:
-            start (int): First pin (channel number) to start the scan
-            stop (int): Last pin (channel number) to stop the scan
-            volts (str): Target voltage out
-        Returns:
-            dict: dict of JTAG pins on which pattern found
-            and dict of active pins where pattern not found but pins are active
-        Raises:
-            Nothing
-        """
-        (decmstr, fractstr) = volts.rstrip().split(".")
-        indata = [start, end, int(decmstr), int(fractstr)]
-
-        self.usb_cntrl_write(brequest=self.SRV_JTAG_PATTERN_TRST_SCAN,
-                             wvalue=0, windex=0,
-                             data_or_wlength=indata
-                             )
-
-        resp_array = self.__read_service_response(self.SRV_JTAG_PATTERN_TRST_SCAN)
-        if resp_array:
-            return self.__build_jtag_patten_trst_dict(resp_array)
-        return None
-
-    @staticmethod
-    def __build_jtag_idcode_dict(resp_array):
-        """
-        Build JTAG idcode list from idcode scan response array
-
-        Args:
-            resp_array (byte array): Jtag idcode scan service response
-            from BusAuditor
-        Returns:
-            list: List of device ID code and corresponding JTAG pins
-        Raises:
-            Nothing
-        """
-
-        idcode_array = []
-
-        for resp in resp_array:
-
-            data_len = resp[1] - 1
-            data = resp[3:]
-
-            # data represent as below:
+            #
+            # When TRST not included in scan, data represent as below:
             # data = device_count (1byte)
             #       +tck (1byte) + tms (1byte) + tdo (1byte) + tdi (1byte)
             #       + device_count * idcode (4byte)
@@ -387,12 +235,22 @@ class STM32F411(BusAuditorServices):
             idcode_dict = dict()
             idcode_dict["count"] = data[0]
             pin_dict = dict()
-            pin_dict["tck"] = data[1]
-            pin_dict["tms"] = data[2]
-            pin_dict["tdo"] = data[3]
-            pin_dict["tdi"] = data[4]
+            if include_trst:
+                pin_dict["trst"] = data[1]
+                pin_dict["tck"] = data[2]
+                pin_dict["tms"] = data[3]
+                pin_dict["tdo"] = data[4]
+                pin_dict["tdi"] = data[5]
+                idcodes = data[6:]
+            else:
+                pin_dict["tck"] = data[1]
+                pin_dict["tms"] = data[2]
+                pin_dict["tdo"] = data[3]
+                pin_dict["tdi"] = data[4]
+                idcodes = data[5:]
+
             idcode_dict["pins"] = pin_dict
-            idcodes = data[5:]
+            
             idcodes_num = len(idcodes) / 4
             if idcode_dict["count"] != idcodes_num:
                 continue
@@ -410,7 +268,7 @@ class STM32F411(BusAuditorServices):
             idcode_array.append(idcode_dict)
         return idcode_array
 
-    def device_jtag_idcode_scan(self, start, end, volts):
+    def device_jtag_idcode_scan(self, start, end, volts, include_trst=False):
         """
         Send request for JTAG pattern scan, TRST pin not included.
 
@@ -424,21 +282,31 @@ class STM32F411(BusAuditorServices):
             Nothing
         """
 
-        (decmstr, fractstr) = volts.rstrip().split(".")
-        indata = [start, end, int(decmstr), int(fractstr)]
+        # Target voltage is split in to digit str and fraction str
+        (digitstr, fractstr) = volts.rstrip().split(".")
 
-        self.usb_cntrl_write(brequest=self.SRV_JTAG_IDCODE_SCAN,
-                             wvalue=0, windex=0,
-                             data_or_wlength=indata
-                             )
+        # create sevice data as an array of 
+        # [start, end, int(digitstr), int(fractstr)]
+        indata = [start, end, int(digitstr), int(fractstr)]
 
-        resp_array = self.__read_service_response(self.SRV_JTAG_IDCODE_SCAN)
+        if include_trst:
+            service = self.SRV_JTAG_IDCODE_TRST_SCAN
+        else:
+            service = self.SRV_JTAG_IDCODE_SCAN
+    
+        self.usb_cntrl_write(
+            brequest=service,
+            wvalue=0, windex=0,
+            data_or_wlength=indata
+        )
+
+        resp_array = self.__read_service_response(service)
         if resp_array:
-            return self.__build_jtag_idcode_dict(resp_array)
+            return self.__build_jtag_idcode_dict(resp_array, include_trst)
         return None
 
     @staticmethod
-    def __build_jtag_patten_dict(resp_array):
+    def __build_jtag_patten_dict(resp_array, include_trst=False):
         """
         Build JTAG pin dict from pattern scan response array
 
@@ -460,7 +328,13 @@ class STM32F411(BusAuditorServices):
             data_len = resp[1] - 1
             data = resp[3:]
 
-            # data represent as below:
+            # When TRST included in scan, data represent as below:
+            # data = found/active (1byte)
+            #       + trst (1byte) + tck (1byte) + tms (1byte)
+            #       + tdo (1byte) + tdi (1byte)
+            #       + pattern_matchcount
+
+            # # When TRST not included in scan, data represent as below:
             # data = found/active (1byte)
             #       + tck (1byte) + tms (1byte) + tdo (1byte) + tdi (1byte)
             #       + pattern_matchcount
@@ -469,24 +343,40 @@ class STM32F411(BusAuditorServices):
                 continue
 
             idcode_dict = dict()
-            if data[0] == 1:
-                idcode_dict["tck"] = data[1]
-                idcode_dict["tms"] = data[2]
-                idcode_dict["tdo"] = data[3]
-                idcode_dict["tdi"] = data[4]
-                matched_list.append(idcode_dict)
+            if include_trst:
+                if data[0] == 1:
+                    idcode_dict["trst"] = data[1]
+                    idcode_dict["tck"] = data[2]
+                    idcode_dict["tms"] = data[3]
+                    idcode_dict["tdo"] = data[4]
+                    idcode_dict["tdi"] = data[5]
+                    matched_list.append(idcode_dict)
+                else:
+                    idcode_dict["trst"] = data[1]
+                    idcode_dict["tck"] = data[2]
+                    idcode_dict["tms"] = data[3]
+                    idcode_dict["tdo"] = data[4]
+                    idcode_dict["tdi"] = data[5]
+                    active_list.append(idcode_dict)
             else:
-                idcode_dict["tck"] = data[1]
-                idcode_dict["tms"] = data[2]
-                idcode_dict["tdo"] = data[3]
-                idcode_dict["tdi"] = data[4]
-                active_list.append(idcode_dict)
+                if data[0] == 1:
+                    idcode_dict["tck"] = data[1]
+                    idcode_dict["tms"] = data[2]
+                    idcode_dict["tdo"] = data[3]
+                    idcode_dict["tdi"] = data[4]
+                    matched_list.append(idcode_dict)
+                else:
+                    idcode_dict["tck"] = data[1]
+                    idcode_dict["tms"] = data[2]
+                    idcode_dict["tdo"] = data[3]
+                    idcode_dict["tdi"] = data[4]
+                    active_list.append(idcode_dict)
 
         pattern_dict["matched"] = matched_list
         pattern_dict["active"] = active_list
         return pattern_dict
 
-    def device_jtag_pattern_scan(self, start, end, volts):
+    def device_jtag_pattern_scan(self, start, end, volts, include_trst=False):
         """
         Send request for JTAG pattern scan, TRST pin not included.
 
@@ -501,17 +391,27 @@ class STM32F411(BusAuditorServices):
             Nothing
         """
 
-        (decmstr, fractstr) = volts.rstrip().split(".")
-        indata = [start, end, int(decmstr), int(fractstr)]
+        # Target voltage is split in to digit str and fraction str
+        (digitstr, fractstr) = volts.rstrip().split(".")
 
-        self.usb_cntrl_write(brequest=self.SRV_JTAG_PATTERN_SCAN,
-                             wvalue=0, windex=0,
-                             data_or_wlength=indata
-                             )
+        # create sevice data as an array of 
+        # [start, end, int(digitstr), int(fractstr)]
+        indata = [start, end, int(digitstr), int(fractstr)]
 
-        resp_array = self.__read_service_response(self.SRV_JTAG_PATTERN_SCAN)
+        if include_trst:
+            service = self.SRV_JTAG_PATTERN_TRST_SCAN
+        else:
+            service = self.SRV_JTAG_PATTERN_SCAN
+
+        self.usb_cntrl_write(
+            brequest=service,
+            wvalue=0, windex=0,
+            data_or_wlength=indata
+        )
+
+        resp_array = self.__read_service_response(service)
         if resp_array:
-            return self.__build_jtag_patten_dict(resp_array)
+            return self.__build_jtag_patten_dict(resp_array, include_trst)
         return None
 
     @staticmethod
@@ -530,7 +430,7 @@ class STM32F411(BusAuditorServices):
         """
 
         tmp_id_list = []
-        final_dict = dict()
+        device_list = []
 
         matched_list = pattern_dict["matched"]
         if len(matched_list) == 0:
@@ -545,26 +445,20 @@ class STM32F411(BusAuditorServices):
         if len(tmp_id_list) == 0:
             return None
 
+        # print("Temp id list {}".format(tmp_id_list))
+
         for _, value in enumerate(tmp_id_list):
             idcodes = value["idcodes"]
             for _, idcode in enumerate(idcodes):
-                final_dict.update({idcode: value["pins"]})
-
-        devices_dict = dict()
-        device_list = []
-
-        for idcode, value in final_dict.items():
-            device_dict = dict()
-            device_dict["jtag_id"] = "0x{:08x}".format(idcode)
-            device_dict["pins"] = value
-            device_list.append(device_dict)
-
-        devices_dict["devices"] = device_list
-        return devices_dict
+                device_dict = dict()
+                device_dict["jtag_id"] = "0x{:08x}".format(idcode)
+                device_dict["pins"] = value["pins"]
+                device_list.append(device_dict)
+        return device_list
 
     def device_jtag_scan(self, start, end, volts, include_trst=False):
         """
-        This method, initiate JTAG ID code scan and followed by Pattern scan
+        This method initiates JTAG ID code scan and followed by Pattern scan
 
         Args:
             start (int): First pin (channel number) to start the scan
@@ -579,18 +473,29 @@ class STM32F411(BusAuditorServices):
             Nothing
         """
 
-        if include_trst is True:
-            idcode_list = self.device_jtag_idcode_scan_trst(start, end, volts)
-            time.sleep(2)
-            pattern_dict = self.device_jtag_pattern_scan_trst(start, end, volts)
-        else:
-            idcode_list = self.device_jtag_idcode_scan(start, end, volts)
-            time.sleep(2)
-            pattern_dict = self.device_jtag_pattern_scan(start, end, volts)
+        idcode_list = self.device_jtag_idcode_scan(
+            start,
+            end,
+            volts,
+            include_trst
+        )
+        time.sleep(2)
+        pattern_dict = self.device_jtag_pattern_scan(
+            start,
+            end,
+            volts,
+            include_trst
+        )
 
+        # print("idcode: {}".format(idcode_list))
+        # print("pattern: {}".format(pattern_dict))
+        
         # Extract ID code and jtag pin info:
         if idcode_list and pattern_dict:
-            return self.__extract_jtag_idcode_pins_data(idcode_list, pattern_dict)
+            return self.__extract_jtag_idcode_pins_data(
+                idcode_list, 
+                pattern_dict
+            )
         return None
 
     @staticmethod
@@ -608,7 +513,7 @@ class STM32F411(BusAuditorServices):
             Nothing
         """
 
-        idcode_disc = dict()
+        idcode_dist = dict()
         for resp in resp_array:
             data = resp[3:]
             data_len = resp[1] - 1
@@ -623,28 +528,24 @@ class STM32F411(BusAuditorServices):
             code_list = struct.unpack_from("<I", data[2:6])
 
             idcode = int(code_list[0])
-            if idcode not in idcode_disc:
-                idcode_disc.update(
+            if idcode not in idcode_dist:
+                idcode_dist.update(
                     {
                         idcode: {"swclk": data[0], "swdio": data[1]}
                     }
                 )
 
-        devices_dict = dict()
         device_list = []
-
-        for idcode, value in idcode_disc.items():
+        for idcode, value in idcode_dist.items():
             device_dict = dict()
             device_dict["swd_id"] = "0x{:08x}".format(idcode)
             device_dict["pins"] = value
             device_list.append(device_dict)
-
-        devices_dict["devices"] = device_list
-        return devices_dict
+        return device_list
 
     def device_swd_scan(self, start, end, volts):
         """
-        This method, initiate SWD ID code scan to find SWD pins
+        This method initiates SWD ID code scan to find SWD pins
 
         Args:
             start (int): First pin (channel number) to start the scan
@@ -652,18 +553,23 @@ class STM32F411(BusAuditorServices):
             volts (str): Target voltage out
 
         Returns:
-            dict: dict of JTAG device ID code and JTAG pins
+            dict: dict of SWD device ID code and SWD pins
         Raises:
             Nothing
         """
 
-        (decmstr, fractstr) = volts.rstrip().split(".")
-        indata = [start, end, int(decmstr), int(fractstr)]
+        # Target voltage is split in to digit str and fraction str
+        (digitstr, fractstr) = volts.rstrip().split(".")
 
-        self.usb_cntrl_write(brequest=self.SRV_SWD_IDCODE_SCAN,
-                             wvalue=0, windex=0,
-                             data_or_wlength=indata
-                             )
+        # create sevice data as an array of 
+        # [start, end, int(digitstr), int(fractstr)]
+        indata = [start, end, int(digitstr), int(fractstr)]
+
+        self.usb_cntrl_write(
+            brequest=self.SRV_SWD_IDCODE_SCAN,
+            wvalue=0, windex=0,
+            data_or_wlength=indata
+        )
 
         resp_array = self.__read_service_response(self.SRV_SWD_IDCODE_SCAN)
         if resp_array:
@@ -685,7 +591,6 @@ class STM32F411(BusAuditorServices):
             Nothing
         """
 
-        uart_dict = dict()
         baud_array = []
 
         for resp in resp_array:
@@ -747,12 +652,14 @@ class STM32F411(BusAuditorServices):
                 uart_array.append({"baud": baud, "pins": [pins]})
                 new_baud = False
 
-        uart_dict["uart_port"] = uart_array
-        return uart_dict
+        return uart_array
+
+        # uart_dict["uart_port"] = uart_array
+        # return uart_dict
 
     def device_uart_tx_scan(self, start, end, volts):
         """
-        This method, initiate UART port scan for TX pin and Baudrate
+        This method initiates UART port scan for TX pin and Baudrate
 
         Args:
             start (int): First pin (channel number) to start the scan
@@ -760,18 +667,23 @@ class STM32F411(BusAuditorServices):
             volts (str): Target voltage out
 
         Returns:
-            dict: dict of JTAG device ID code and JTAG pins
+            dict: dict of RX, TX and Baudrate of UART port
         Raises:
             Nothing
         """
 
-        (decmstr, fractstr) = volts.rstrip().split(".")
-        indata = [start, end, int(decmstr), int(fractstr)]
+        # Target voltage is split in to digit str and fraction str
+        (digitstr, fractstr) = volts.rstrip().split(".")
 
-        self.usb_cntrl_write(brequest=self.SRV_UART_TX_SCAN,
-                             wvalue=0, windex=0,
-                             data_or_wlength=indata
-                             )
+        # create sevice data as an array of 
+        # [start, end, int(digitstr), int(fractstr)]
+        indata = [start, end, int(digitstr), int(fractstr)]
+
+        self.usb_cntrl_write(
+            brequest=self.SRV_UART_TX_SCAN,
+            wvalue=0, windex=0,
+            data_or_wlength=indata
+        )
 
         resp_array = self.__read_service_response(self.SRV_UART_TX_SCAN)
         if resp_array:
@@ -780,7 +692,7 @@ class STM32F411(BusAuditorServices):
 
     def device_uart_tx_rx_scan(self, start, end, volts):
         """
-        This method, initiate UART port scan for TX, RX pin and Baudrate
+        This method initiates UART port scan for TX, RX pin and Baudrate
 
         Args:
             start (int): First pin (channel number) to start the scan
@@ -793,13 +705,18 @@ class STM32F411(BusAuditorServices):
             Nothing
         """
 
-        (decmstr, fractstr) = volts.rstrip().split(".")
-        indata = [start, end, int(decmstr), int(fractstr)]
+        # Target voltage is split in to digit str and fraction str
+        (digitstr, fractstr) = volts.rstrip().split(".")
 
-        self.usb_cntrl_write(brequest=self.SRV_UART_TX_RX_SCAN,
-                             wvalue=0, windex=0,
-                             data_or_wlength=indata
-                             )
+        # create sevice data as an array of 
+        # [start, end, int(digitstr), int(fractstr)]
+        indata = [start, end, int(digitstr), int(fractstr)]
+
+        self.usb_cntrl_write(
+            brequest=self.SRV_UART_TX_RX_SCAN,
+            wvalue=0, windex=0,
+            data_or_wlength=indata
+        )
 
         resp_array = self.__read_service_response(self.SRV_UART_TX_RX_SCAN)
         if resp_array:
@@ -808,7 +725,7 @@ class STM32F411(BusAuditorServices):
 
     def device_uart_scan(self, start, end, volts):
         """
-        This method, initiate UART port scan for TX pin first,
+        This method initiates UART port scan for TX pin first,
         followed by TX, RX pins scan.
         if tx pin is actively transmitting data then method
         returns TX pin and baudrate.
@@ -851,40 +768,30 @@ class STM32F411(BusAuditorServices):
             Nothing
         """
 
-        addr_disc = dict()
+        device_list = []
         for resp in resp_array:
             data = resp[3:]
             data_len = resp[1] - 1
 
             # data represent as below:
-            # data = scl (1byte) + sda (1byte) + addr (1bytes) + addr (1bytes) ...
+            # data = scl (1byte) + sda (1byte)
+            #        + addr1 (1bytes) + addr2 (1bytes) ...
 
             if len(data) != data_len:
                 continue
 
             addr_list = data[2:]
             for _, addr in enumerate(addr_list):
-                addr_disc.update(
-                    {
-                        addr : {"scl": data[0], "sda": data[1]}
-                    }
-                )
+                device_dict = dict()
+                device_dict["i2c_addr"] = "0x{:02x}".format(addr)
+                device_dict["pins"] = {"scl": data[0], "sda": data[1]}
+                device_list.append(device_dict)
 
-        devices_dict = dict()
-        device_list = []
-
-        for dev_addr, value in addr_disc.items():
-            device_dict = dict()
-            device_dict["i2c_addr"] = "0x{:02x}".format(dev_addr)
-            device_dict["pins"] = value
-            device_list.append(device_dict)
-
-        devices_dict["devices"] = device_list
-        return devices_dict
+        return device_list
 
     def device_i2c_scan(self, start, end, volts):
         """
-        This method, initiate I2C bus scan for active I2C devices
+        This method initiates I2C bus scan for active I2C devices
 
         Args:
             start (int): First pin (channel number) to start the scan
@@ -897,13 +804,18 @@ class STM32F411(BusAuditorServices):
             Nothing
         """
 
-        (decmstr, fractstr) = volts.rstrip().split(".")
-        indata = [start, end, int(decmstr), int(fractstr)]
+        # Target voltage is split in to digit str and fraction str
+        (digitstr, fractstr) = volts.rstrip().split(".")
 
-        self.usb_cntrl_write(brequest=self.SRV_I2C_ADDR_SCAN,
-                             wvalue=0, windex=0,
-                             data_or_wlength=indata
-                             )
+        # create sevice data as an array of 
+        # [start, end, int(digitstr), int(fractstr)]
+        indata = [start, end, int(digitstr), int(fractstr)]
+
+        self.usb_cntrl_write(
+            brequest=self.SRV_I2C_ADDR_SCAN,
+            wvalue=0, windex=0,
+            data_or_wlength=indata
+        )
 
         resp_array = self.__read_service_response(self.SRV_I2C_ADDR_SCAN)
         if resp_array:
@@ -1098,7 +1010,7 @@ class STM32F411(BusAuditorServices):
 
     def close(self):
         """
-        Cloase usb device and cleanup.
+        Close usb device and cleanup.
 
         Args:
             Nothing

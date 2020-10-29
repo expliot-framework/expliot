@@ -1,53 +1,50 @@
-"""Support for Zigbee Auditor Device Information."""
+"""Support for Bus Auditor Device Information."""
 from expliot.core.interfaces.busauditor import BusAuditor
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget, LOGNO
+from expliot.plugins.busauditor import (
+    UART_REFERENCE, DEFAFULT_START, DEFAFULT_END, DEFAULT_VOLTS
+)
 
 
 # pylint: disable=bare-except
-class BusAuditorUartScan(Test):
+class BaUartScan(Test):
     """
     Test selected channels for UART communication protocol.
 
     Output Format:
-    [{
-        "uart_port":
-        [
-            {
-                "baud": 115200,
-                "pins": [
-                    {
-                        "tx": 9,
-                        "rx": 8
-                    },
-                    #...
-                ]
-            },
-            #...
-        ]
-    }]
+    [
+        {
+            'baud': 115200,
+            'pins': [{
+                'tx': 6,
+                'rx': 5
+            }, 
+            # more than one possible pin combinations
+            ]
+        }
+    ]
     """
 
     def __init__(self):
+        """Initialize the test."""
         super().__init__(
             name="uartscan",
             summary="UART port scan",
-            descr="This plugin scans and display UART pins of target hardware.",
+            descr="This plugin scans UART port, UART pins (Tx, Rx) and "
+            " Baudrate on the target hardware. You need to connect Bus "
+            "Auditor channels (pins) to the suspected pinouts on the target "
+            "pcb board. Bus Auditor pins must be connected in a sequential "
+            "range and specified by the start and end pin arguments. "
+            "When Rx pin is not active on target, and more than two pins are "
+            "selected for scan, this will give you possible Rx and Tx pins "
+            "combinations. If you are seeing permission issues, kindly add a "
+            "udev rule for your user for the Bus Auditor device.",
             author="Dattatray Hinge",
             email="dattatray@expliot.io",
-            ref=[
-                "https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter"
-            ],
+            ref=[UART_REFERENCE],
             category=TCategory(TCategory.BUS_AUDITOR, TCategory.HW, TCategory.RECON),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
             needroot=True,
-        )
-
-        self.argparser.add_argument(
-            "-v",
-            "--volts",
-            type=str,
-            default="3.3",
-            help="voltage out. If not specified, volts will be 3.3",
         )
 
         self.argparser.add_argument(
@@ -55,8 +52,8 @@ class BusAuditorUartScan(Test):
             "--start",
             type=int,
             default=0,
-            help="First pin to start the scan. If "
-            "not specified, it will start the scan from pin 0",
+            help="First Bus Auditor channel for the scan. If not specified, "
+            "it will start the scan from channel '{}'".format(DEFAFULT_START),
         )
 
         self.argparser.add_argument(
@@ -64,12 +61,21 @@ class BusAuditorUartScan(Test):
             "--end",
             type=int,
             default=15,
-            help="Last pin. If "
-            "not specified, it will scan until pin 15",
+            help="Last Bus Auditor channel for the scan. If not specified, "
+            "it will scan until channel '{}'".format(DEFAFULT_END),
+        )
+
+        self.argparser.add_argument(
+            "-v",
+            "--volts",
+            type=str,
+            default="3.3",
+            help="Target voltage out. If not specified, "
+            "volts will be '{}'".format(DEFAULT_VOLTS),
         )
 
     @staticmethod
-    def display_uart_scan_result(result_dict):
+    def display_uart_scan_result(result_list):
         """Displays uart scan result.
 
         Args:
@@ -82,9 +88,7 @@ class BusAuditorUartScan(Test):
 
         TLog.success("UART port scan result:")
 
-        uart_port = result_dict["uart_port"]
-
-        for ports in uart_port:
+        for ports in result_list:
             TLog.success(
                 "{:<8}: {}".format(
                     "BaudRate", ports["baud"]
@@ -110,45 +114,41 @@ class BusAuditorUartScan(Test):
                         )
                     )
 
-            TLog.generic(" ")
+            TLog.generic("")
 
     def execute(self):
         """Execute the test."""
 
         TLog.generic(
-            "Start Pin ({}), End Pin ({})".format(
+            "Start Pin '{}', End Pin '{}'".format(
                 self.args.start, self.args.end
             )
         )
-
-        TLog.generic(
-            "Target Voltage ({})".format(
-                self.args.volts
-            )
-        )
+        TLog.generic("Target Voltage '{}'".format(self.args.volts))
 
         auditor = None
         found = False
 
         try:
             auditor = BusAuditor()
-            resp = auditor.uart_scan(self.args.start,
-                                     self.args.end,
-                                     self.args.volts
-                                     )
+            resp = auditor.uart_scan(
+                self.args.start,
+                self.args.end,
+                self.args.volts
+            )
             if resp:
                 found = True
-                self.output_handler(**resp)
-
-                # self.output_handler(logkwargs=LOGNO, **resp)
-                # self.display_uart_scan_result(resp)
+                for dev in resp:
+                    self.output_handler(logkwargs=LOGNO, **dev)
+                
+                self.display_uart_scan_result(resp)
 
         except:  # noqa: E722
             self.result.exception()
 
         finally:
             if auditor:
-                auditor.stop()
+                auditor.close()
 
             if found is False:
                 TLog.fail("Couldn't find uart pins")

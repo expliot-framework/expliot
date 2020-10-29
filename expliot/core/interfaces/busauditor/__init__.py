@@ -31,7 +31,7 @@ class BusAuditor:
             Nothing
 
         Return:
-            dict: The dictionary containing Device Name, FW, HW Revision, Services
+            dict: The dict containing Device Name, FW, HW Revision, Services
 
         Raises:
             Nothing
@@ -48,17 +48,18 @@ class BusAuditor:
 
     def jtag_scan(self, start, end, volts, include_trst=False):
         """
-        Call BusAuditor driver to scan JTAG port pins using IDCODE and pattern scan.
+        Call BusAuditor driver to scan JTAG port pins using IDCODE 
+        and pattern scan.
 
         Args:
             start (int): First pin (channel number) to start the scan
             stop (int): Last pin (channel number) to stop the scan
             volts (str): Target voltage out
-            include_trst (boolean): Include NRST pin in scan.
-                                    NRST pin excluded by default
+            include_trst (boolean): Include TRST pin in scan.
+                                    TRST pin excluded by default
 
         Return:
-            dict: The dictionary containing JTAG ID and pin info
+            list: The list of dict containing JTAG ID and pin info
 
         Raises:
             Nothing
@@ -76,7 +77,7 @@ class BusAuditor:
             volts (str): Target voltage out
 
         Return:
-            dict: The dictionary containing SWD ID and pin info
+            list: The list of dict containing SWD ID and pin info
 
         Raises:
             Nothing
@@ -94,7 +95,7 @@ class BusAuditor:
             volts (str): Target voltage out
 
         Return:
-            dict: The dictionary containing UART baudrate and pin info
+            list: The list of dict containing UART baudrate and pin info
 
         Raises:
             Nothing
@@ -112,14 +113,14 @@ class BusAuditor:
             volts (str): Target voltage out
 
         Return:
-            dict: The dictionary containing I2C device addr, and pin info
+            list: The list of dict containing I2C device addr and pin info
         Raises:
             Nothing
         """
 
         return self.driver.device_i2c_scan(start, end, volts)
 
-    def stop(self):
+    def close(self):
         """
         Close USB port of BUS Auditor.
 

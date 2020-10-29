@@ -70,8 +70,8 @@ class Services:
 class BaseServices(Services):
     """Class to store Base Services."""
 
-    GET_FW_REV = "Read Revision"
-    GET_FW_SERV = "Read Services"
+    GET_FW_REV = "read_revision"
+    GET_FW_SERV = "read_services"
 
     def __init__(self):
         """Init Base Services to default."""
@@ -115,10 +115,10 @@ class ZbAuditorServices(BaseServices):
 class BusAuditorServices(BaseServices):
     """Class to store BusAuditor's Services."""
 
-    JTAG_SCAN = "JTAG Port Scan"
-    SWD_SCAN = "SWD Port Scan"
-    UART_SCAN = "UART Port Scan"
-    I2C_SCAN = "I2C Bus Scan"
+    JTAG_SCAN = "jtag_port_scan"
+    SWD_SCAN = "swd_port_scan"
+    UART_SCAN = "uart_port_scan"
+    I2C_SCAN = "i2c_bus_scan"
 
     def __init__(self):
         """Init BusAuditor services to default."""
