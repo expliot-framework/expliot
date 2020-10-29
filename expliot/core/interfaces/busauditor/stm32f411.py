@@ -417,7 +417,7 @@ class STM32F411(BusAuditorServices):
     @staticmethod
     def __extract_jtag_idcode_pins_data(idcode_list, pattern_dict):
         """
-        This method, compares matched pins from pattern_dict to pins from
+        This method compares matched pins from pattern_dict to pins from
         idcode_list and build idcode list for JTAG devices from idcode_list.
 
         Args:
@@ -670,7 +670,7 @@ class STM32F411(BusAuditorServices):
         # Target voltage is split in to digit str and fraction str
         (digitstr, fractstr) = volts.rstrip().split(".")
 
-        # create sevice data as an array of 
+        # create sevice data as an array of
         # [start, end, int(digitstr), int(fractstr)]
         indata = [start, end, int(digitstr), int(fractstr)]
 
@@ -819,7 +819,7 @@ class STM32F411(BusAuditorServices):
 
     def __read_service_response(self, service):
         """
-        This method, read data from USB core driver on fixed EP of BusAuditor
+        This method read data from USB core driver on fixed EP of BusAuditor
 
         Args:
             service (int): Service response to be verified.

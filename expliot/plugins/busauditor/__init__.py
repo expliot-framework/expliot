@@ -6,6 +6,7 @@ I2C_REFERENCE = "https://www.nxp.com/docs/en/user-guide/UM10204.pdf"
 UART_REFERENCE = "https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter"
 
 
-DEFAFULT_START = "0"
-DEFAFULT_END = "15"
+DEFAFULT_START = 0
+DEFAFULT_END = 15
 DEFAULT_VOLTS = "3.3"
+VOLTAGE_RANGE = ["3.3", "1.8", "1.2"]
