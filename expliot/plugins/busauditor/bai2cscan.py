@@ -82,7 +82,7 @@ class BaI2cScan(Test):
         TLog.generic(
             "Start Pin '{}', End Pin '{}'".format(
                 self.args.start, self.args.end
-                )
+            )
         )
         TLog.generic("Target Voltage '{}'".format(self.args.volts))
         TLog.generic("")

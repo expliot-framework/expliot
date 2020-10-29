@@ -48,7 +48,7 @@ class BusAuditor:
 
     def jtag_scan(self, start, end, volts, include_trst=False):
         """
-        Call BusAuditor driver to scan JTAG port pins using IDCODE 
+        Call BusAuditor driver to scan JTAG port pins using IDCODE
         and pattern scan.
 
         Args:

@@ -18,7 +18,7 @@ class BaUartScan(Test):
             'pins': [{
                 'tx': 6,
                 'rx': 5
-            }, 
+            },
             # more than one possible pin combinations
             ]
         }
@@ -140,7 +140,7 @@ class BaUartScan(Test):
                 found = True
                 for dev in resp:
                     self.output_handler(logkwargs=LOGNO, **dev)
-                
+
                 self.display_uart_scan_result(resp)
 
         except:  # noqa: E722

@@ -26,7 +26,7 @@ class STM32F411(BusAuditorServices):
     # USB timeout error code
     USB_OP_TIMEOUT_ERROR = 110
 
-    # Bus Auditor services 
+    # Bus Auditor services
     SRV_GET_REVISIONS = 0x01
     SRV_GET_SERVICES = 0x02
 
@@ -103,7 +103,7 @@ class STM32F411(BusAuditorServices):
         self.__maxpacketsize = 64        # default USB packet size
 
         self.dev = usb.core.find(
-            idVendor=self.USB_VID, 
+            idVendor=self.USB_VID,
             idProduct=self.USB_PID
         )
 
@@ -141,7 +141,7 @@ class STM32F411(BusAuditorServices):
         """
 
         pdata = self.usb_cntrl_read(
-            self.SRV_GET_REVISIONS, 
+            self.SRV_GET_REVISIONS,
             data_or_wlength=self.SRV_GET_REVISIONS_RESP_LEN
         )
 
@@ -250,7 +250,7 @@ class STM32F411(BusAuditorServices):
                 idcodes = data[5:]
 
             idcode_dict["pins"] = pin_dict
-            
+
             idcodes_num = len(idcodes) / 4
             if idcode_dict["count"] != idcodes_num:
                 continue
@@ -285,7 +285,7 @@ class STM32F411(BusAuditorServices):
         # Target voltage is split in to digit str and fraction str
         (digitstr, fractstr) = volts.rstrip().split(".")
 
-        # create sevice data as an array of 
+        # create sevice data as an array of
         # [start, end, int(digitstr), int(fractstr)]
         indata = [start, end, int(digitstr), int(fractstr)]
 
@@ -293,7 +293,7 @@ class STM32F411(BusAuditorServices):
             service = self.SRV_JTAG_IDCODE_TRST_SCAN
         else:
             service = self.SRV_JTAG_IDCODE_SCAN
-    
+
         self.usb_cntrl_write(
             brequest=service,
             wvalue=0, windex=0,
@@ -394,7 +394,7 @@ class STM32F411(BusAuditorServices):
         # Target voltage is split in to digit str and fraction str
         (digitstr, fractstr) = volts.rstrip().split(".")
 
-        # create sevice data as an array of 
+        # create sevice data as an array of
         # [start, end, int(digitstr), int(fractstr)]
         indata = [start, end, int(digitstr), int(fractstr)]
 
@@ -445,8 +445,6 @@ class STM32F411(BusAuditorServices):
         if len(tmp_id_list) == 0:
             return None
 
-        # print("Temp id list {}".format(tmp_id_list))
-
         for _, value in enumerate(tmp_id_list):
             idcodes = value["idcodes"]
             for _, idcode in enumerate(idcodes):
@@ -487,13 +485,10 @@ class STM32F411(BusAuditorServices):
             include_trst
         )
 
-        # print("idcode: {}".format(idcode_list))
-        # print("pattern: {}".format(pattern_dict))
-        
         # Extract ID code and jtag pin info:
         if idcode_list and pattern_dict:
             return self.__extract_jtag_idcode_pins_data(
-                idcode_list, 
+                idcode_list,
                 pattern_dict
             )
         return None
@@ -561,7 +556,7 @@ class STM32F411(BusAuditorServices):
         # Target voltage is split in to digit str and fraction str
         (digitstr, fractstr) = volts.rstrip().split(".")
 
-        # create sevice data as an array of 
+        # create sevice data as an array of
         # [start, end, int(digitstr), int(fractstr)]
         indata = [start, end, int(digitstr), int(fractstr)]
 
@@ -708,7 +703,7 @@ class STM32F411(BusAuditorServices):
         # Target voltage is split in to digit str and fraction str
         (digitstr, fractstr) = volts.rstrip().split(".")
 
-        # create sevice data as an array of 
+        # create sevice data as an array of
         # [start, end, int(digitstr), int(fractstr)]
         indata = [start, end, int(digitstr), int(fractstr)]
 
@@ -807,7 +802,7 @@ class STM32F411(BusAuditorServices):
         # Target voltage is split in to digit str and fraction str
         (digitstr, fractstr) = volts.rstrip().split(".")
 
-        # create sevice data as an array of 
+        # create sevice data as an array of
         # [start, end, int(digitstr), int(fractstr)]
         indata = [start, end, int(digitstr), int(fractstr)]
 
