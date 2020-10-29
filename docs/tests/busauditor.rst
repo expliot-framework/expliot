@@ -21,21 +21,18 @@ Examples
 
   ef> run busauditor.generic.devinfo
   [...]
+  [+] device_name: BusAuditor
+  [+] serial_number: 348435533437
+  [+] fw_revision: 0.0.54
+  [+] hw_revision: 0.1
+  [+] services:
+  [+]   read_revision: True
+  [+]   read_services: True
+  [+]   jtag_port_scan: True
+  [+]   swd_port_scan: True
+  [+]   uart_port_scan: True
+  [+]   i2c_bus_scan: True
   [+] 
-  [+] Bus Auditor Details:
-  [+] Device Name:	Payatu BusAuditor
-  [+] Serial Number:	348435533437
-  [+] FW Revision:	1.0.1
-  [+] HW Revision:	0.1
-  [*]  
-  [+] Services:
-  [+] 	Read Revision:	True
-  [+] 	Read Services:	True
-  [+] 	JTAG Port Scan:	True
-  [+] 	SWD Port Scan:	True
-  [+] 	UART Port Scan:	True
-  [+] 	I2C Bus Scan:	True
-  [*] 
   [+] Test busauditor.generic.devinfo passed
 
 
@@ -61,52 +58,50 @@ Examples
 
   ef> run busauditor.generic.jtagscan -s 0 -e 4 -v 3.3
   [...]
-  [*] Start Pin (0), End Pin (4)
-  [*] Target Voltage (3.3)
+  [*] Start Pin '0', End Pin '4'
+  [*] Target Voltage '3.3'
   [*] TRST pin excluded from scan
   [*]
+  [+] JTAG Devices:
+  [+] jtag_id: 0x4ba00477
+  [+] pins:
+  [+]   tck: 0
+  [+]   tms: 1
+  [+]   tdo: 3
+  [+]   tdi: 2
   [+] 
-  [+] JTAG port scan result:
-  [+] Device: 1
-  [+] 	ID Code : 0x4ba00477
-  [+] 	TCK     : 0
-  [+] 	TMS     : 1
-  [+] 	TDO     : 3
-  [+] 	TDI     : 2
-  [*]  
-  [+] Device: 2
-  [+] 	ID Code : 0x06431041
-  [+] 	TCK     : 0
-  [+] 	TMS     : 1
-  [+] 	TDO     : 3
-  [+] 	TDI     : 2
-  [*]  
+  [+] jtag_id: 0x06431041
+  [+] pins:
+  [+]   tck: 0
+  [+]   tms: 1
+  [+]   tdo: 3
+  [+]   tdi: 2
+  [+] 
   [+] Test busauditor.generic.jtagscan passed
 
   ef> run busauditor.generic.jtagscan -s 0 -e 4 -i -v 3.3
   [...]
-  [*] Start Pin (0), End Pin (4)
-  [*] Target Voltage (3.3)
+  [*] Start Pin '0', End Pin '4'
+  [*] Target Voltage '3.3'
   [*] TRST pin included in scan
   [*]
+  [+] JTAG Devices:
+  [+] jtag_id: 0x4ba00477
+  [+] pins:
+  [+]   trst: 4
+  [+]   tck: 0
+  [+]   tms: 1
+  [+]   tdo: 3
+  [+]   tdi: 2
   [+] 
-  [+] JTAG port scan result:
-  [+] Device: 1
-  [+] 	ID Code : 0x4ba00477
-  [+] 	TCK     : 0
-  [+] 	TMS     : 1
-  [+] 	TDO     : 3
-  [+] 	TDI     : 2
-  [*] 	TRST    : 4
-  [*]  
-  [+] Device: 2
-  [+] 	ID Code : 0x06431041
-  [+] 	TCK     : 0
-  [+] 	TMS     : 1
-  [+] 	TDO     : 3
-  [+] 	TDI     : 2
-  [*] 	TRST    : 4
-  [*]  
+  [+] jtag_id: 0x06431041
+  [+] pins:
+  [+]   trst: 4
+  [+]   tck: 0
+  [+]   tms: 1
+  [+]   tdo: 3
+  [+]   tdi: 2
+  [+]
   [+] Test busauditor.generic.jtagscan passed
 
 
@@ -128,15 +123,15 @@ Examples
 
   ef> run busauditor.generic.swdscan -s 0 -e 4 -v 3.3
   [...]
-  [*] Start Pin (0), End Pin (4)
-  [*] Target Voltage (3.3)
+  [*] Start Pin '0', End Pin '4'
+  [*] Target Voltage '3.3'
+  [*]
+  [+] SWD Devices:
+  [+] swd_id: 0x2ba01477
+  [+] pins:
+  [+]   swclk: 0
+  [+]   swdio: 1
   [+] 
-  [+] SWD port scan result:
-  [+] Device: 1
-  [+] 	ID code : 0x2ba01477
-  [+] 	SW CLK  : 0
-  [+] 	SW DIO  : 1
-  [*]  
   [+] Test busauditor.generic.swdscan passed
 
 
@@ -156,29 +151,29 @@ Examples
 
 .. code-block:: text
 
-  ef> run busauditor.generic.i2cscan -s 5 -e 7 -v 3.3
+  ef> run busauditor.generic.i2cscan -s 8 -e 9 -v 3.3
   [...]
-  [*] Start Pin (5), End Pin (6)
-  [*] Target Voltage (3.3)
+  [*] Start Pin '8', End Pin '9'
+  [*] Target Voltage '3.3'
+  [*] 
+  [+] I2C Devices:
+  [+] i2c_addr: 0x48
+  [+] pins:
+  [+]   scl: 8
+  [+]   sda: 9
   [+] 
-  [+] I2C port scan result: 
-  [+] Device 1:
-  [+] 	I2C Address: 0x48
-  [+] 	SCL     : 5
-  [+] 	SDA     : 6
-  [*]  
-  [+] Device 2:
-  [+] 	I2C Address: 0x50
-  [+] 	SCL     : 5
-  [+] 	SDA     : 6
-  [*]  
+  [+] i2c_addr: 0x50
+  [+] pins:
+  [+]   scl: 8
+  [+]   sda: 9
+  [+]
   [+] Test busauditor.generic.i2cscan passed
 
 
 busauditor.generic.uartscan
 -------------------------
 
-This plugin scans the target device for UART pins and BaudRate.
+This plugin scans the target device for UART pins and Baudrate.
 
 **Usage details:**
 
@@ -191,21 +186,21 @@ Examples
 
 .. code-block:: text
 
-  ef> run busauditor.generic.uartscan -s 8 -e 9 -v 3.3
+  ef> run busauditor.generic.uartscan -s 6 -e 7 -v 3.3
   [...]
-  [*] Start Pin (8), End Pin (9)
-  [*] Target Voltage (3.3)
+  [*] Start Pin '6', End Pin '7'
+  [*] Target Voltage '3.3'
   [+] 
   [+] UART port scan result:
   [+] BaudRate: 115200
   [+] UART pins:
-  [+] 	Tx pin: 9, Rx pin: 8
+  [+] 	Tx pin: 6, Rx pin: 7
   [*]  
   [+] Test busauditor.generic.uartscan passed
 
   ef> run busauditor.generic.uartscan -s 8 -e 10 -v 3.3
-  [*] Start Pin (8), End Pin (10)
-  [*] Target Voltage (3.3)
+  [*] Start Pin '8', End Pin '10'
+  [*] Target Voltage '3.3'
   [+] 
   [+] UART port scan result:
   [+] BaudRate: 115200
