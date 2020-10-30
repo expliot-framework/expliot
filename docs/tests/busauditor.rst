@@ -1,6 +1,19 @@
 BusAuditor
 ======
 
+BUS Auditor is a compact multi-protocol tool used for scanning and identifying
+debugging and communication interfaces exposed on any hardware board. It can 
+brute force several hardware protocols including JTAG, arm SWD, UART, and I2C.
+The device has 16 channels, every channel can be used to interface with 
+a pin-out on the target board.
+Bus Auditor channels must be connected in a sequential range and specified by 
+the start and end pin arguments.
+
+.. note:: 
+   All Bus Auditor plugins need root privileges to access lowlevel usb driver. 
+   If you are seeing permission issues, kindly add a udev rule for your user 
+   for the Bus Auditor device.
+
 busauditor.generic.devinfo
 -------------------------
 
