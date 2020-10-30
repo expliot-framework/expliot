@@ -23,7 +23,7 @@ class ZbAuditorDevInfo(Test):
                 '802.15.4_injection': True,
                 '802.15.4_network_scan': True,
                 '2.4_ghz': True
-	        }
+            }
         }
     ]
     """
