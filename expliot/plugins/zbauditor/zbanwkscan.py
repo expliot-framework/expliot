@@ -65,7 +65,6 @@ class ZbAuditorNwkScan(Test):
             ],
             category=TCategory(TCategory.ZB_AUDITOR, TCategory.RD, TCategory.DISCOVERY),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
-            needroot=True,
         )
 
         self.argparser.add_argument(

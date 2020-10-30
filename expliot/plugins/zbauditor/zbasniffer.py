@@ -31,7 +31,6 @@ class ZbAuditorSniffer(Test):
             ],
             category=TCategory(TCategory.ZB_AUDITOR, TCategory.RD, TCategory.RECON),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
-            needroot=True,
         )
 
         self.argparser.add_argument(

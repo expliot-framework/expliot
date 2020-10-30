@@ -110,6 +110,7 @@ class NRF52840(ZbAuditorServices):
         self.__radio_on = False
         self.__sniffer_on = False
         self.__fw_version = None
+        self.__serial_num = None
         self.rxcount = 0
         self.txcount = 0
 
@@ -123,6 +124,7 @@ class NRF52840(ZbAuditorServices):
         self.dev.set_configuration()
 
         self._dev_name = usb.util.get_string(self.dev, self.dev.iProduct)
+        self.__serial_num = self.dev.serial_number
 
         # Get wMaxPacketSize from the data endpoint
         for cfg in self.dev:
@@ -653,6 +655,11 @@ class NRF52840(ZbAuditorServices):
     def set_sniffer_on_flag(self, flag):
         """Set sniffer_on flag value."""
         self.__sniffer_on = flag
+
+    def get_device_serial_num(self):
+        """Return the device serial number."""
+
+        return self.__serial_num
 
     def close(self):
         """Turn off sniffer and radio before closing."""

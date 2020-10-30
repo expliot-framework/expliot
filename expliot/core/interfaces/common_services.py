@@ -87,15 +87,15 @@ class BaseServices(Services):
 class ZbAuditorServices(BaseServices):
     """Class to Zigbee Auditor's Services."""
 
-    SET_MAC_POWER = "Radio ON/OFF"
-    SET_CH_CHNG = "Channel Selection"
-    RAW_CAPTURE = "802.15.4 Sniffer"
-    RAW_INJECT = "802.15.4 Injection"
-    NWK_SCAN = "802.15.4 Network Scan"
-    SUPP_FREQ_2400 = "2.4 GHz"
-    SUPP_FREQ_784 = "784 MHz"
-    SUPP_FREQ_868 = "868 MHz"
-    SUPP_FREQ_915 = "915 MHz"
+    SET_MAC_POWER = "radio on_off"
+    SET_CH_CHNG = "channel_selection"
+    RAW_CAPTURE = "802.15.4_sniffer"
+    RAW_INJECT = "802.15.4_injection"
+    NWK_SCAN = "802.15.4_network_scan"
+    SUPP_FREQ_2400 = "2.4_ghz"
+    SUPP_FREQ_784 = "784 _mhz"
+    SUPP_FREQ_868 = "868 mhz"
+    SUPP_FREQ_915 = "915 mhz"
 
     def __init__(self):
         """Init Zigbee Auditor services to default."""
