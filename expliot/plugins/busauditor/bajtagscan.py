@@ -3,7 +3,7 @@ from expliot.core.interfaces.busauditor import BusAuditor
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 from expliot.plugins.busauditor import (
     JTAG_REFERENCE, DEFAFULT_START, DEFAFULT_END,
-    DEFAULT_VOLTS, VOLTAGE_RANGE
+    DEFAULT_VOLTS, VOLTAGE_RANGE, CHANNEL_MIN, CHANNEL_MAX
 )
 
 
@@ -103,7 +103,7 @@ class BaJtagScan(Test):
         """Execute the test."""
 
         # Start channel cannot be less than zero or greater than 15
-        if self.args.start < DEFAFULT_START or self.args.start > DEFAFULT_END:
+        if self.args.start < CHANNEL_MIN  or self.args.start > CHANNEL_MAX:
             self.result.setstatus(
                 passed=False,
                 reason="Invalid start channel."
@@ -111,7 +111,7 @@ class BaJtagScan(Test):
             return
 
         # End channel cannot be less than zero or greater than 15
-        if self.args.end < DEFAFULT_START or self.args.end > DEFAFULT_END:
+        if self.args.end < CHANNEL_MIN or self.args.end > CHANNEL_MAX:
             self.result.setstatus(
                 passed=False,
                 reason="Invalid end channel."
