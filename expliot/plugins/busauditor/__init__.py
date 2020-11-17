@@ -7,7 +7,7 @@ UART_REFERENCE = "https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-
 
 
 DEFAFULT_START = 0
-DEFAFULT_END = 15
+DEFAFULT_END = 4
 CHANNEL_MIN = 0
 CHANNEL_MAX = 15
 DEFAULT_VOLTS = "3.3"

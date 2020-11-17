@@ -1,4 +1,5 @@
 """Support for Bus Auditor Device Information."""
+from itertools import permutations
 from expliot.core.interfaces.busauditor import BusAuditor
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 from expliot.plugins.busauditor import (
@@ -72,7 +73,7 @@ class BaJtagScan(Test):
             type=int,
             default=DEFAFULT_START,
             help="First Bus Auditor channel for the scan. If not specified, "
-            "it will start the scan from channel '{}'".format(DEFAFULT_START),
+            "it will start the scan from channel ({})".format(DEFAFULT_START),
         )
 
         self.argparser.add_argument(
@@ -81,7 +82,7 @@ class BaJtagScan(Test):
             type=int,
             default=DEFAFULT_END,
             help="Last Bus Auditor channel for the scan. If not specified, "
-            "it will scan until channel '{}'".format(DEFAFULT_END),
+            "it will scan until channel ({})".format(DEFAFULT_END),
         )
 
         self.argparser.add_argument(
@@ -90,8 +91,8 @@ class BaJtagScan(Test):
             type=str,
             default=DEFAULT_VOLTS,
             help="Target voltage out. "
-            "Supported target volts are '{}', '{}', and '{}' If not specified, "
-            "target voltage will be '{}' volts".format(
+            "Supported target volts are ({}), ({}), and ({}) If not specified, "
+            "target voltage will be ({}) volts".format(
                 VOLTAGE_RANGE[0],
                 VOLTAGE_RANGE[1],
                 VOLTAGE_RANGE[2],
@@ -101,9 +102,11 @@ class BaJtagScan(Test):
 
     def execute(self):
         """Execute the test."""
+        ch_list = []
+        possible_permutations = 0
 
         # Start channel cannot be less than zero or greater than 15
-        if self.args.start < CHANNEL_MIN  or self.args.start > CHANNEL_MAX:
+        if self.args.start < CHANNEL_MIN or self.args.start > CHANNEL_MAX:
             self.result.setstatus(
                 passed=False,
                 reason="Invalid start channel."
@@ -134,24 +137,26 @@ class BaJtagScan(Test):
             )
             return
 
-        count = 1
-        for _ in range(self.args.start, self.args.end):
-            count += 1
+        # compute channel list
+        for item in range(self.args.start, self.args.end + 1):
+            ch_list.append(item)
 
         if self.args.include_trst:
-            if count < 5:
+            if len(ch_list) < 5:
                 self.result.setstatus(
                     passed=False,
                     reason="Minimum 5 pins required for jtag scan."
                 )
                 return
+            possible_permutations = permutations(ch_list, 5)
         else:
-            if count < 4:
+            if len(ch_list) < 4:
                 self.result.setstatus(
                     passed=False,
                     reason="Minimum 4 pins required for jtag scan."
                 )
                 return
+            possible_permutations = permutations(ch_list, 4)
 
         if self.args.volts not in VOLTAGE_RANGE:
             self.result.setstatus(
@@ -161,17 +166,22 @@ class BaJtagScan(Test):
             return
 
         TLog.generic(
-            "Start Pin '{}', End Pin '{}'".format(
+            "Start Pin ({}), End Pin ({})".format(
                 self.args.start, self.args.end
             )
         )
-        TLog.generic("Target Voltage '{}'".format(self.args.volts))
+        TLog.generic("Target Voltage ({})".format(self.args.volts))
 
         if self.args.include_trst:
             TLog.generic("TRST pin included in scan")
         else:
             TLog.generic("TRST pin excluded from scan")
 
+        TLog.generic(
+            "Possible permutations to be tested: ({})".format(
+                len(list(possible_permutations))
+            )
+        )
         TLog.generic("")
 
         auditor = None

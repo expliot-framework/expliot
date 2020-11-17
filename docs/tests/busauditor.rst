@@ -74,6 +74,7 @@ Examples
   [*] Start Pin '0', End Pin '4'
   [*] Target Voltage '3.3'
   [*] TRST pin excluded from scan
+  [*] Possible permutations to be tested: (120)
   [*]
   [+] JTAG Devices:
   [+] jtag_id: 0x4ba00477
@@ -97,6 +98,7 @@ Examples
   [*] Start Pin '0', End Pin '4'
   [*] Target Voltage '3.3'
   [*] TRST pin included in scan
+  [*] Possible permutations to be tested: (120)
   [*]
   [+] JTAG Devices:
   [+] jtag_id: 0x4ba00477
@@ -138,6 +140,7 @@ Examples
   [...]
   [*] Start Pin '0', End Pin '4'
   [*] Target Voltage '3.3'
+  [*] Possible permutations to be tested: (20)
   [*]
   [+] SWD Devices:
   [+] swd_id: 0x2ba01477
@@ -168,6 +171,7 @@ Examples
   [...]
   [*] Start Pin '8', End Pin '9'
   [*] Target Voltage '3.3'
+  [*] Possible permutations to be tested: (2)
   [*] 
   [+] I2C Devices:
   [+] i2c_addr: 0x48
@@ -203,6 +207,7 @@ Examples
   [...]
   [*] Start Pin '6', End Pin '7'
   [*] Target Voltage '3.3'
+  [*] Possible permutations to be tested: (2)
   [+] 
   [+] UART port scan result:
   [+] BaudRate: 115200
@@ -214,6 +219,7 @@ Examples
   ef> run busauditor.generic.uartscan -s 8 -e 10 -v 3.3
   [*] Start Pin '8', End Pin '10'
   [*] Target Voltage '3.3'
+  [*] Possible permutations to be tested: (2)
   [+] 
   [+] UART port scan result:
   [+] BaudRate: 115200

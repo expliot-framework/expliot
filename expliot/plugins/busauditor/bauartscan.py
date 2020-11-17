@@ -1,4 +1,5 @@
 """Support for Bus Auditor Device Information."""
+from itertools import permutations
 from expliot.core.interfaces.busauditor import BusAuditor
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget, LOGNO
 from expliot.plugins.busauditor import (
@@ -53,7 +54,7 @@ class BaUartScan(Test):
             type=int,
             default=DEFAFULT_START,
             help="First Bus Auditor channel for the scan. If not specified, "
-            "it will start the scan from channel '{}'".format(DEFAFULT_START),
+            "it will start the scan from channel ({})".format(DEFAFULT_START),
         )
 
         self.argparser.add_argument(
@@ -62,7 +63,7 @@ class BaUartScan(Test):
             type=int,
             default=DEFAFULT_END,
             help="Last Bus Auditor channel for the scan. If not specified, "
-            "it will scan until channel '{}'".format(DEFAFULT_END),
+            "it will scan until channel ({})".format(DEFAFULT_END),
         )
 
         self.argparser.add_argument(
@@ -71,8 +72,8 @@ class BaUartScan(Test):
             type=str,
             default=DEFAULT_VOLTS,
             help="Target voltage out. "
-            "Supported target volts are '{}', '{}', and '{}' If not specified, "
-            "target voltage will be '{}' volts".format(
+            "Supported target volts are ({}), ({}), and ({}) If not specified, "
+            "target voltage will be ({}) volts".format(
                 VOLTAGE_RANGE[0],
                 VOLTAGE_RANGE[1],
                 VOLTAGE_RANGE[2],
@@ -124,9 +125,10 @@ class BaUartScan(Test):
 
     def execute(self):
         """Execute the test."""
+        ch_list = []
 
         # Start channel cannot be less than zero or greater than 15
-        if self.args.start < CHANNEL_MIN or self.args.start > CHANNEL_MIN:
+        if self.args.start < CHANNEL_MIN or self.args.start > CHANNEL_MAX:
             self.result.setstatus(
                 passed=False,
                 reason="Invalid start channel."
@@ -165,11 +167,21 @@ class BaUartScan(Test):
             return
 
         TLog.generic(
-            "Start Pin '{}', End Pin '{}'".format(
+            "Start Pin ({}), End Pin ({})".format(
                 self.args.start, self.args.end
             )
         )
-        TLog.generic("Target Voltage '{}'".format(self.args.volts))
+        TLog.generic("Target Voltage ({})".format(self.args.volts))
+
+        # compute channel list
+        for item in range(self.args.start, self.args.end + 1):
+            ch_list.append(item)
+
+        TLog.generic(
+            "Possible permutations to be tested: ({})".format(
+                len(list(permutations(ch_list, 2)))
+            )
+        )
 
         auditor = None
         found = False

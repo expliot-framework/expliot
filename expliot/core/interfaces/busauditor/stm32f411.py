@@ -449,9 +449,10 @@ class STM32F411(BusAuditorServices):
             idcodes = value["idcodes"]
             for _, idcode in enumerate(idcodes):
                 device_dict = dict()
-                device_dict["jtag_id"] = "0x{:08x}".format(idcode)
+                device_dict["jtag_idcode"] = "0x{:08x}".format(idcode)
                 device_dict["pins"] = value["pins"]
                 device_list.append(device_dict)
+
         return device_list
 
     def device_jtag_scan(self, start, end, volts, include_trst=False):
@@ -477,7 +478,9 @@ class STM32F411(BusAuditorServices):
             volts,
             include_trst
         )
+
         time.sleep(2)
+
         pattern_dict = self.device_jtag_pattern_scan(
             start,
             end,
@@ -533,7 +536,7 @@ class STM32F411(BusAuditorServices):
         device_list = []
         for idcode, value in idcode_dist.items():
             device_dict = dict()
-            device_dict["swd_id"] = "0x{:08x}".format(idcode)
+            device_dict["swd_idcode"] = "0x{:08x}".format(idcode)
             device_dict["pins"] = value
             device_list.append(device_dict)
         return device_list
