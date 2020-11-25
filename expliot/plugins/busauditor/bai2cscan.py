@@ -1,5 +1,5 @@
 """Support for Bus Auditor Device Information."""
-from itertools import permutations
+from math import factorial
 from expliot.core.interfaces.busauditor import BusAuditor
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 from expliot.plugins.busauditor import (
@@ -16,18 +16,14 @@ class BaI2cScan(Test):
     Output Format:
     [
         {
-        'i2c_addr': '0x48',
-        'pins': {
-            'scl': 8,
-            'sda': 9
-        }
-        }, {
-            'i2c_addr': '0x50',
-            'pins': {
-                'scl': 8,
-                'sda': 9
-            }
-        }
+            "i2c_addr": "0x48",
+            "pins": {
+                        "scl": 8,
+                        "sda": 9
+                    }
+        },
+        # ... May be zero or more entries.
+        # If zero i2c devices found the above dict will not be present
     ]
     """
 
@@ -85,7 +81,6 @@ class BaI2cScan(Test):
 
     def execute(self):
         """Execute the test."""
-        ch_list = []
 
         # Start channel cannot be less than zero or greater than 15
         if self.args.start < CHANNEL_MIN or self.args.start > CHANNEL_MAX:
@@ -133,13 +128,15 @@ class BaI2cScan(Test):
         )
         TLog.generic("Target Voltage ({})".format(self.args.volts))
 
-        # compute channel list
-        for item in range(self.args.start, self.args.end + 1):
-            ch_list.append(item)
+        # compute possible permutations
+        ch_count = len(range(self.args.start, self.args.end + 1))
+        possible_permutations = int(
+            factorial(ch_count) / factorial(ch_count - 2)
+        )
 
         TLog.generic(
             "Possible permutations to be tested: ({})".format(
-                len(list(permutations(ch_list, 2)))
+                possible_permutations
             )
         )
 

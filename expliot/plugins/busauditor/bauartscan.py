@@ -1,5 +1,5 @@
 """Support for Bus Auditor Device Information."""
-from itertools import permutations
+from math import factorial
 from expliot.core.interfaces.busauditor import BusAuditor
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget, LOGNO
 from expliot.plugins.busauditor import (
@@ -16,14 +16,17 @@ class BaUartScan(Test):
     Output Format:
     [
         {
-            'baud': 115200,
-            'pins': [{
-                'tx': 6,
-                'rx': 5
-            },
-            # more than one possible pin combinations
-            ]
-        }
+            "baud": 115200,
+            "pins": [
+                        {
+                            "tx": 6,
+                            "rx": 5
+                        },
+                        # ... more than one possible pin combinations
+                    ]
+        },
+        # ... May be zero or more entries.
+        # If zero UART port found the above dict will not be present
     ]
     """
 
@@ -125,7 +128,6 @@ class BaUartScan(Test):
 
     def execute(self):
         """Execute the test."""
-        ch_list = []
 
         # Start channel cannot be less than zero or greater than 15
         if self.args.start < CHANNEL_MIN or self.args.start > CHANNEL_MAX:
@@ -173,13 +175,15 @@ class BaUartScan(Test):
         )
         TLog.generic("Target Voltage ({})".format(self.args.volts))
 
-        # compute channel list
-        for item in range(self.args.start, self.args.end + 1):
-            ch_list.append(item)
+        # compute possible permutations
+        ch_count = len(range(self.args.start, self.args.end + 1))
+        possible_permutations = int(
+            factorial(ch_count) / factorial(ch_count - 2)
+        )
 
         TLog.generic(
             "Possible permutations to be tested: ({})".format(
-                len(list(permutations(ch_list, 2)))
+                possible_permutations
             )
         )
 

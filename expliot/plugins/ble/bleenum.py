@@ -25,7 +25,8 @@ class BleEnum(Test):
             "handle_start": "0xa",
             "handle_end": "0x12"
         },
-        # ... May be more than one service
+        # ... May be zero or more entries.
+        # If no services found the above dict will not be present
         # Characteristics
         {
             "char_uuid": "00002a05-0000-1000-8000-00805f9b34fb",
@@ -36,7 +37,8 @@ class BleEnum(Test):
             "readvalue": "Foobar_value", # optional field, only present it characteristic
                                          # value can be read i.e. READ property is supported
         },
-        # ... May be more than one characteristic
+        # ... May be zero or more entries.
+        # If no characteristics found the above dict will not be present
     ]
     """
 

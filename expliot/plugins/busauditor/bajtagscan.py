@@ -1,5 +1,5 @@
 """Support for Bus Auditor Device Information."""
-from itertools import permutations
+from math import factorial
 from expliot.core.interfaces.busauditor import BusAuditor
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 from expliot.plugins.busauditor import (
@@ -17,24 +17,27 @@ class BaJtagScan(Test):
     # TRST is optional, dependes if it is included by user in jtag scan
     [
         {
-            'jtag_id': '0x4ba00477',
-            'pins': {
-                'trst': 4,      # 'TRST' pin included in jtag scan
-                'tck': 0,
-                'tms': 1,
-                'tdo': 3,
-                'tdi': 2
-            }
-        }, {
-            'jtag_id': '0x06431041',
-            'pins': {
-                'trst': 4,      # 'TRST' pin included in jtag scan
-                'tck': 0,
-                'tms': 1,
-                'tdo': 3,
-                'tdi': 2
-            }
-        }
+            "jtag_idcode": "0x4ba00477",
+            "pins": {
+                        "trst": 4,      # "TRST" pin included in jtag scan
+                        "tck": 0,
+                        "tms": 1,
+                        "tdo": 3,
+                        "tdi": 2
+                    }
+        },
+        {
+            "jtag_idcode": "0x06431041",
+            "pins": {
+                        "trst": 4,      # "TRST" pin included in jtag scan
+                        "tck": 0,
+                        "tms": 1,
+                        "tdo": 3,
+                        "tdi": 2
+                    }
+        },
+        # ... May be zero or more entries.
+        # If zero JTAG devices found the above dict will not be present
     ]
     """
 
@@ -102,7 +105,6 @@ class BaJtagScan(Test):
 
     def execute(self):
         """Execute the test."""
-        ch_list = []
         possible_permutations = 0
 
         # Start channel cannot be less than zero or greater than 15
@@ -137,26 +139,28 @@ class BaJtagScan(Test):
             )
             return
 
-        # compute channel list
-        for item in range(self.args.start, self.args.end + 1):
-            ch_list.append(item)
-
+        # compute possible permutations
+        ch_count = len(range(self.args.start, self.args.end + 1))
         if self.args.include_trst:
-            if len(ch_list) < 5:
+            if ch_count < 5:
                 self.result.setstatus(
                     passed=False,
                     reason="Minimum 5 pins required for jtag scan."
                 )
                 return
-            possible_permutations = permutations(ch_list, 5)
+            possible_permutations = int(
+                factorial(ch_count) / factorial(ch_count - 5)
+            )
         else:
-            if len(ch_list) < 4:
+            if ch_count < 4:
                 self.result.setstatus(
                     passed=False,
                     reason="Minimum 4 pins required for jtag scan."
                 )
                 return
-            possible_permutations = permutations(ch_list, 4)
+            possible_permutations = int(
+                factorial(ch_count) / factorial(ch_count - 4)
+            )
 
         if self.args.volts not in VOLTAGE_RANGE:
             self.result.setstatus(
@@ -179,9 +183,10 @@ class BaJtagScan(Test):
 
         TLog.generic(
             "Possible permutations to be tested: ({})".format(
-                len(list(possible_permutations))
+                possible_permutations
             )
         )
+
         TLog.generic("")
 
         auditor = None

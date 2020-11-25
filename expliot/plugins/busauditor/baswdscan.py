@@ -1,5 +1,5 @@
 """Support for Bus Auditor Device Information."""
-from itertools import permutations
+from math import factorial
 from expliot.core.interfaces.busauditor import BusAuditor
 from expliot.core.tests.test import TCategory, Test, TLog, TTarget
 from expliot.plugins.busauditor import (
@@ -16,12 +16,14 @@ class BaSwdScan(Test):
     Output Format:
     [
         {
-            'swd_id1': '0x2ba01477',
-            'pins': {
-                'swclk': 0,
-                'swdio': 1
-            }
-        }
+            "swd_idcode": "0x2ba01477",
+            "pins": {
+                        "swclk": 0,
+                        "swdio": 1
+                    }
+        },
+        # ... May be zero or more entries.
+        # If zero SWD devices found the above dict will not be present
     ]
     """
 
@@ -79,7 +81,6 @@ class BaSwdScan(Test):
 
     def execute(self):
         """Execute the test."""
-        ch_list = []
 
         # Start channel cannot be less than zero or greater than 15
         if self.args.start < CHANNEL_MIN or self.args.start > CHANNEL_MAX:
@@ -127,13 +128,15 @@ class BaSwdScan(Test):
         )
         TLog.generic("Target Voltage ({})".format(self.args.volts))
 
-        # compute channel list
-        for item in range(self.args.start, self.args.end + 1):
-            ch_list.append(item)
+        # compute possible permutations
+        ch_count = len(range(self.args.start, self.args.end + 1))
+        possible_permutations = int(
+            factorial(ch_count) / factorial(ch_count - 2)
+        )
 
         TLog.generic(
             "Possible permutations to be tested: ({})".format(
-                len(list(permutations(ch_list, 2)))
+                possible_permutations
             )
         )
 

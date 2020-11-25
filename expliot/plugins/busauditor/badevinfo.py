@@ -12,18 +12,18 @@ class BaDevInfo(Test):
     Output Format:
     [
         {
-            'device_name': 'BusAuditor',
-            'serial_number': '348435533437',
-            'fw_revision': '0.0.53',
-            'hw_revision': '0.1',
-            'services': {
-                'read_revision': True,
-                'read_services': True,
-                'jtag_port_scan': True,
-                'swd_port_scan': True,
-                'uart_port_scan': True,
-                'i2c_bus_scan': True
-            }
+            "device_name": "BusAuditor",
+            "serial_number": "348435533437",
+            "fw_revision": "0.0.53",
+            "hw_revision": "0.1",
+            "services": {
+                            "read_revision": True,
+                            "read_services": True,
+                            "jtag_port_scan": True,
+                            "swd_port_scan": True,
+                            "uart_port_scan": True,
+                            "i2c_bus_scan": True
+                        }
         }
     ]
     """

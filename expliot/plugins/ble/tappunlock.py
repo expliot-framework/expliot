@@ -20,7 +20,8 @@ class TappUnlock(Test):
             "sent_pair_data": "55aab4010800abedcc01",
             "sent_unlock_cmd": "55aa810200008201"
         },
-        # ... May be more than one Tapplock device
+        # ... May be zero or more entries.
+        # If zero devices found the above dict will not be present
     ]
     """
 

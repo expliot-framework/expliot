@@ -27,10 +27,8 @@ class BleScan(Test):
                                 ... # may be more than one adtype_data
                             ]
         },
-        # ... May be more than one device entry
-        {
-            "total_devices_discovered": 3
-        }
+        # ... May be zero or more entries.
+        # If zero ble devices found the above dict will not be present
     ]
     """
 
@@ -91,7 +89,6 @@ class BleScan(Test):
                                                    "description": scan_data[1],
                                                    "value": scan_data[2]})
                 self.output_handler(**outdict)
-            # self.output_handler(total_devices_discovered=len(devices))
         except:  # noqa: E722
             self.result.setstatus(passed=False,
                                   reason="Exception caught: {}".format(sysexcinfo()))
