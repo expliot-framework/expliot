@@ -14,21 +14,21 @@ class AwsMqttClient(AWSIoTMQTTClient):
     instead.
     """
 
-    def __init__(self, clientID, protocolType=MQTTv3_1_1, useWebsocket=False, cleanSession=True):
+    def __init__(self, client_id, protocol_type=MQTTv3_1_1, use_websocket=False, clean_session=True):
         """
         Initialize the client and super class
 
         params:
-        clientID     - MQTT Client ID
-        protocolType - MQTT Protocol version
-        useWebsocket - MQTT over Websocket or TCP?
-        cleanSession - MQTT Clean session
+        client_id     - MQTT Client ID
+        protocol_type - MQTT Protocol version
+        use_websocket - MQTT over Websocket or TCP?
+        clean_session - MQTT Clean session
         """
         super().__init__(
-            clientID=clientID,
-            protocolType=protocolType,
-            useWebsocket=useWebsocket,
-            cleanSession=cleanSession,
+            clientID=client_id,
+            protocolType=protocol_type,
+            useWebsocket=use_websocket,
+            cleanSession=clean_session,
         )
         self.is_connected = False
 
