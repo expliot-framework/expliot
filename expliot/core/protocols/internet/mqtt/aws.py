@@ -1,5 +1,5 @@
 """Wrapper for AWSIoTPythonSDK MQTT functionality"""
-# pylint: disable=unused-import
+# pylint: disable=unused-import, import-error
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient, MQTTv3_1_1
 
 DEFAULT_AWSIOT_PORT = 8883
