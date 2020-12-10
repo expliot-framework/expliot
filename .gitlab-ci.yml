@@ -7,14 +7,14 @@ stages:
 
 flake8:
   stage: static_analysis
-  image: python:3.7
+  image: python:3.9
   script:
     - pip install flake8 --quiet
     - flake8 --max-line-length=80 expliot
 
 pylint:
   stage: static_analysis
-  image: python:3.7
+  image: python:3.9
   script:
     - pip install pylint --quiet
     - pip install -r requirements.txt
@@ -94,7 +94,7 @@ fedora_rawhide:
 
 sdist:
   stage: distribution
-  image: python:3.7
+  image: python:3.9
   only:
     - master
   script:
@@ -105,7 +105,7 @@ sdist:
     expire_in: 1 week
 
 wheel:
-  image: python:3.7
+  image: python:3.9
   stage: distribution
   only:
     - master
@@ -119,7 +119,7 @@ wheel:
 # This requires TWINE_USERNAME and TWINE_PASSWORD to be set
 # Settings -> CI/CD -> Variables
 pypi:
-  image: python:3.7
+  image: python:3.9
   stage: post
   cache: {}
   script:
