@@ -6,6 +6,7 @@ DEFAULT_AWSIOT_PORT = 8883
 DEFAULT_AWSIOT_TIMEOUT = 5
 
 
+# pylint: disable=invalid-name, attribute-defined-outside-init
 class AwsMqttClient(AWSIoTMQTTClient):
     """
     Wrapper on AWSIoTMQTTClient class. It implements easy configuration
@@ -14,15 +15,20 @@ class AwsMqttClient(AWSIoTMQTTClient):
     instead.
     """
 
-    def __init__(self, client_id, protocol_type=MQTTv3_1_1, use_websocket=False, clean_session=True):
+    def __init__(
+        self,
+        client_id,
+        protocol_type=MQTTv3_1_1,
+        use_websocket=False,
+        clean_session=True,
+    ):
         """
-        Initialize the client and super class
+        Initialize the client and super class.
 
-        params:
-        client_id     - MQTT Client ID
-        protocol_type - MQTT Protocol version
-        use_websocket - MQTT over Websocket or TCP?
-        clean_session - MQTT Clean session
+        :param client_id: MQTT Client ID
+        :param protocol_type: MQTT Protocol version
+        :param use_websocket: MQTT over Websocket or TCP?
+        :param clean_session: MQTT Clean session
         """
         super().__init__(
             clientID=client_id,
@@ -35,7 +41,7 @@ class AwsMqttClient(AWSIoTMQTTClient):
     def _onlinecb(self):
         """
         A callback method that is called when the thing
-           gets connected to the AWS IoT endpoint.
+        gets connected to the AWS IoT endpoint.
         """
 
         self.is_connected = True
@@ -43,7 +49,7 @@ class AwsMqttClient(AWSIoTMQTTClient):
     def _offlinecb(self):
         """
         A callback method that is called when the thing
-           gets disconnected from the AWS IoT endpoint.
+        gets disconnected from the AWS IoT endpoint.
         """
         self.is_connected = False
 
@@ -59,27 +65,29 @@ class AwsMqttClient(AWSIoTMQTTClient):
             self.disconnect()
 
     def easy_config(self, **kwargs):
-        """Wrapper on different configuration methods in one go
-           and provides simple callbacks to monitor connection and subscribe
+        """
+        Wrapper on different configuration methods in one go
+        and provides simple callbacks to monitor connection and subscribe.
 
-           Params:
-           host          - The AWS endpoint hostname
-           port          - The AWS endpoint port
-           use_websocket - Use websocket or not
-           rootca        - AWS Root CA file
-           privatekey    - AWS Thing private key file
-           cert          - AWS Thing certificate file
-           user          - User Name
-           passwd        - Password
-           timeout       - Connection and MQTT operation timeout
-           """
+        :param host: The AWS endpoint hostname
+        :param port: The AWS endpoint port
+        :param use_websocket: Use websocket or not
+        :param rootca: AWS Root CA file
+        :param privatekey: AWS Thing private key file
+        :param cert: AWS Thing certificate file
+        :param user: User Name
+        :param passwd: Password
+        :param timeout: Connection and MQTT operation timeout
+        """
 
         timeout = kwargs["timeout"] if kwargs["timeout"] else DEFAULT_AWSIOT_TIMEOUT
         self.configureEndpoint(kwargs["host"], kwargs["port"])
         if kwargs["use_websocket"]:
             self.configureCredentials(kwargs["rootca"])
         else:
-            self.configureCredentials(kwargs["rootca"], kwargs["privatekey"], kwargs["cert"])
+            self.configureCredentials(
+                kwargs["rootca"], kwargs["privatekey"], kwargs["cert"]
+            )
 
         if kwargs["user"] and kwargs["passwd"]:
             self.configureUsernamePassword(kwargs["user"], kwargs["passwd"])
@@ -92,6 +100,6 @@ class AwsMqttClient(AWSIoTMQTTClient):
         self.configureConnectDisconnectTimeout(timeout)
         self.configureMQTTOperationTimeout(timeout)
 
-        # Set default Callbacks
+        # Set default callbacks
         self.onOnline = self._onlinecb
         self.onOffline = self._offlinecb
