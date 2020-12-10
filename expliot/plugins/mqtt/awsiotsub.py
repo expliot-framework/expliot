@@ -136,7 +136,7 @@ class AwsIotSub(Test):
         thing = None
         timer = Timer(self.args.timeout)
         try:
-            thing = AwsMqttClient(self.args.id, useWebsocket=self.args.websocket)
+            thing = AwsMqttClient(self.args.id, use_websocket=self.args.websocket)
             thing.easy_config(
                 host=self.args.rhost,
                 port=self.args.rport,

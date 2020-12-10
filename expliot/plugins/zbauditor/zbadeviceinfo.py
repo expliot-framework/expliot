@@ -1,7 +1,6 @@
 """Support for Zigbee Auditor Device Information."""
 from expliot.core.interfaces.zbauditor import ZbAuditor
-from expliot.core.tests.test import TCategory, Test, TLog, \
-    TTarget, LOGNO
+from expliot.core.tests.test import TCategory, Test, TTarget
 
 
 # pylint: disable=bare-except
@@ -12,18 +11,19 @@ class ZbAuditorDevInfo(Test):
     Output Format:
     [
         {
-            "device_name": "ZigBee Auditor",
-            "fw_revision": "1.0.1"
-            "services": {
-                            "Read Revision":True,
-                            "Read Services":True,
-                            "Channel Selection":True,
-                            "Radio ON/OFF":True,
-                            "802.15.4 Sniffer":True,
-                            "802.15.4 Injection":True,
-                            "802.15.4 Network Scan":True,
-                            "2.4 GHz":True
-                        }
+            'device_name': 'ZigBee Auditor',
+            'fw_revision': '1.0.3',
+            'serial_number': 'E761FB48B6E4',
+            'services': {
+                'read_revision': True,
+                'read_services': True,
+                'channel_selection': True,
+                'radio on_off': True,
+                '802.15.4_sniffer': True,
+                '802.15.4_injection': True,
+                '802.15.4_network_scan': True,
+                '2.4_ghz': True
+            }
         }
     ]
     """
@@ -38,27 +38,7 @@ class ZbAuditorDevInfo(Test):
             ref=["Reference: Zigbee Auditor user manual"],
             category=TCategory(TCategory.ZB_AUDITOR, TCategory.RD, TCategory.RECON),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
-            needroot=True,
         )
-
-    @staticmethod
-    def display_device_info(info_dict):
-        """Displays Device information"""
-
-        if info_dict:
-            TLog.success("Zigbee Auditor Details:")
-            TLog.success("{:<17}: {}".format("Device Name", info_dict["device_name"]))
-            TLog.success("{:<17}: {}".format("FW Revision", info_dict["fw_revision"]))
-            TLog.generic("")
-
-            if "services" in info_dict:
-                services = info_dict["services"]
-
-                TLog.generic("Services:")
-                for _, (serivce, value) in enumerate(services.items()):
-                    TLog.success("\t {:<23}: {}".format(serivce, value))
-
-            TLog.generic("")
 
     def execute(self):
         """Execute the test."""
@@ -66,8 +46,7 @@ class ZbAuditorDevInfo(Test):
         try:
             auditor = ZbAuditor()
             dev_info_dict = auditor.get_interface_info()
-            self.output_handler(logkwargs=LOGNO, **dev_info_dict)
-            self.display_device_info(dev_info_dict)
+            self.output_handler(**dev_info_dict)
         except:  # noqa: E722
             self.result.exception()
             return

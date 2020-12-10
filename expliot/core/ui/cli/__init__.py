@@ -82,11 +82,11 @@ class Cli(Cmd):
     def do_list(self, args):
         """List the available plugins (test cases)"""
         print("Total plugins: {}\n".format(len(self.subcmds)))
-        print("{:<25} {}".format("PLUGIN", "SUMMARY"))
-        print("{:<25} {}\n".format("======", "======="))
+        print("{:<28} {}".format("PLUGIN", "SUMMARY"))
+        print("{:<28} {}\n".format("======", "======="))
 
         for test in self.subcmds:
-            print("{:<25} {}".format(test, self.tsuite[test]["summary"]))
+            print("{:<28} {}".format(test, self.tsuite[test]["summary"]))
 
     @with_argument_list
     def do_run(self, arglist):

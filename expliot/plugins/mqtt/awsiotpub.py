@@ -124,7 +124,7 @@ class AwsIotPub(Test):
                 raise FileNotFoundError("Thing Certificate file not specified")
         thing = None
         try:
-            thing = AwsMqttClient(self.args.id, useWebsocket=self.args.websocket)
+            thing = AwsMqttClient(self.args.id, use_websocket=self.args.websocket)
             thing.easy_config(
                 host=self.args.rhost,
                 port=self.args.rport,

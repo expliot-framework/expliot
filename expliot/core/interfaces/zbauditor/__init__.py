@@ -21,9 +21,11 @@ class ZbAuditor:
             name = self.driver.get_device_name()
             fw_rev = self.driver.get_device_fw_rev_str()
             services = self.driver.get_supported_services()
+            serial = self.driver.get_device_serial_num()
             dev_info = dict()
             dev_info["device_name"] = name
             dev_info["fw_revision"] = fw_rev
+            dev_info["serial_number"] = serial
             dev_info["services"] = services
             return dev_info
 

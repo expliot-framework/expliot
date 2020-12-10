@@ -1,6 +1,22 @@
 Zigbee
 ======
 
+ZigBee Auditor - XA device is a tool developed for professionals working with 
+ZigBee network as developers, auditors, and cybersecurity professionals. 
+ZigBee Auditor - XA comes with an on-board antenna that provides indispensable
+100m signal range for network auditing and scanning task. To use ZigBee Auditor,
+you need to install EXPLIoT, an open source framework for security testing and 
+exploiting IoT. 
+ZigBee Auditor provides ZigBee network scanning, packet sniffing, and packet 
+replay functionality.
+
+.. note:: 
+   All ZigBee Auditor plugins need root privileges to access lowlevel usb 
+   driver.
+   If you are seeing permission issues, kindly add a udev rule for your user 
+   for the ZigBee Auditor device.
+
+
 zbauditor.generic.devinfo
 -------------------------
 

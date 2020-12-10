@@ -70,8 +70,8 @@ class Services:
 class BaseServices(Services):
     """Class to store Base Services."""
 
-    GET_FW_REV = "Read Revision"
-    GET_FW_SERV = "Read Services"
+    GET_FW_REV = "read_revision"
+    GET_FW_SERV = "read_services"
 
     def __init__(self):
         """Init Base Services to default."""
@@ -87,15 +87,15 @@ class BaseServices(Services):
 class ZbAuditorServices(BaseServices):
     """Class to Zigbee Auditor's Services."""
 
-    SET_MAC_POWER = "Radio ON/OFF"
-    SET_CH_CHNG = "Channel Selection"
-    RAW_CAPTURE = "802.15.4 Sniffer"
-    RAW_INJECT = "802.15.4 Injection"
-    NWK_SCAN = "802.15.4 Network Scan"
-    SUPP_FREQ_2400 = "2.4 GHz"
-    SUPP_FREQ_784 = "784 MHz"
-    SUPP_FREQ_868 = "868 MHz"
-    SUPP_FREQ_915 = "915 MHz"
+    SET_MAC_POWER = "radio_on_off"
+    SET_CH_CHNG = "channel_selection"
+    RAW_CAPTURE = "802.15.4_sniffer"
+    RAW_INJECT = "802.15.4_injection"
+    NWK_SCAN = "802.15.4_network_scan"
+    SUPP_FREQ_2400 = "2400_mhz"
+    SUPP_FREQ_784 = "784_mhz"
+    SUPP_FREQ_868 = "868_mhz"
+    SUPP_FREQ_915 = "915_mhz"
 
     def __init__(self):
         """Init Zigbee Auditor services to default."""
@@ -112,18 +112,22 @@ class ZbAuditorServices(BaseServices):
         }
 
 
-class BusAuditorServices(Services):
-    """Class to store Bus Auditor's Services."""
+class BusAuditorServices(BaseServices):
+    """Class to store BusAuditor's Services."""
 
-    JTAG_SCAN = "JTAG_SCAN"
-    SWD_SCAN = "SWD_SCAN"
+    JTAG_SCAN = "jtag_port_scan"
+    SWD_SCAN = "swd_port_scan"
+    UART_SCAN = "uart_port_scan"
+    I2C_SCAN = "i2c_bus_scan"
 
     def __init__(self):
-        """Init Bus Auditor services to default."""
+        """Init BusAuditor services to default."""
 
         super().__init__()
 
         self.device_services = {
             self.JTAG_SCAN: False,
             self.SWD_SCAN: False,
+            self.UART_SCAN: False,
+            self.I2C_SCAN: False,
         }

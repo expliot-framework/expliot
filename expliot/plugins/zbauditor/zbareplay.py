@@ -38,7 +38,6 @@ class ZbAuditorReplay(Test):
             ],
             category=TCategory(TCategory.ZB_AUDITOR, TCategory.RD, TCategory.EXPLOIT),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
-            needroot=True,
         )
 
         self.argparser.add_argument(

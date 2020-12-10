@@ -27,7 +27,8 @@ class BleScan(Test):
                                 ... # may be more than one adtype_data
                             ]
         },
-        # ... May be more than one device
+        # ... May be zero or more entries.
+        # If zero ble devices found the above dict will not be present
     ]
     """
 
@@ -42,7 +43,7 @@ class BleScan(Test):
             author="Aseem Jakhar",
             email="aseemjakhar@gmail.com",
             ref=[BLE_REF],
-            category=TCategory(TCategory.BLE, TCategory.RD, TCategory.RECON),
+            category=TCategory(TCategory.BLE, TCategory.RD, TCategory.DISCOVERY),
             target=TTarget(TTarget.GENERIC, TTarget.GENERIC, TTarget.GENERIC),
             needroot=True,
         )

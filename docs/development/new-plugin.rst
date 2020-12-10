@@ -3,7 +3,7 @@ New Plugin (Test Case)
 
 Plugins are classes that inherit from ``Test`` base class and implement a
 specific test case which can be an exploit, analysis, recon, fuzzer etc.
-To extend the framework one can implement any numbers of plugins. 
+To extend the framework one can implement any number of plugins.
 
 Sample Plugin `coap.generic.sample`
 -----------------------------------
@@ -33,11 +33,12 @@ help developers find the relevant plugins.
 Plugin sections
 ---------------
 
-The implementation of a plugin can be divided into three parts:
+The implementation of a plugin can be divided into four parts:
 
 1. Plugin information
 2. Plugin Arguments
 3. Plugin methods
+4. Plugin output
 
 If you are reading this I'm guessing you want to create a new plugin. Well,
 it is pretty simple to implement and add a new plugin to the framework. You
@@ -46,6 +47,12 @@ specific protocol which is not part of the framework yet, just send us an
 email describing your requirement and the reason why you think that the
 protocol is important for IoT and needs to be added and we will add it to the
 framework, if it looks like an interesting protocol.
+
+.. note::
+
+    #. The plugin file name and class name must be the same.
+    #. The plugin must import functionality only from the framework or standard
+       library. It must not import any functionality from external packages.
 
 Plugin information
 ``````````````````
@@ -218,14 +225,104 @@ will override for its execution. They are:
    explained below. Also, the plugin needs to use *TLog* class methods for
    logging any output.
 
+Plugin output
+`````````````
+
+The last but not the least is the output format of the plugin. Each plugin
+needs to define a clear and standard output without any ambiguities. This
+will solve two major concerns:
+
+#. Automation: To help the users (devs, testers) to be able to automate the
+   system within their CI/CD and testing phase with a reliable mechanism of
+   parsing the output and deciding the course of action based on that.
+#. Plugin Chaining: To be able to execute multiple plugins using a single
+   plugin. In simple terms, one plugin may have a dependency on other
+   plugin(s). A standardized output format will ensure that a plugin will
+   be able to execute plugins that it is dependent on and get the required
+   information from the output of that plugin(s).
+
+The output format of a plugin is a list of dicts/lists. The main list is
+created by the ``Test`` base class. The contents of the lists/dicts have to be
+defined by the plugin author. All current plugins define their output and
+can be referred to understand how to specify the format and create it in
+the plugin. The `coap.generic.sample <https://gitlab.com/expliot_framework/expliot/tree/master/expliot/plugins/sample.py>`_
+plugin also shows an example output format. The ``Test`` base class method
+``output_handler()`` does the job of adding the dict/list to the main output
+list as well as logging(printing) the output. The plugin author needs to call
+this method whenever there is information to be added to the output. Please
+read the method documentation as well as other plugin code for information
+on how to implement it. In case there is a need to specifically call
+``TLog`` class logging methods, they can still be used
+
+The output format of a plugin must ensure:
+
+#. It is clearly defined in the docstring of the plugin class
+#. There are comments in front of optional fields of the output, specifying
+   that it is optional.
+#. It is indented clearly to show the hierarchy.
+#. There are comments for repeatable lists/dicts. For example,
+   "one or more", zero or more", etc.
+#. String data is specified in double quotes and others without them.
+#. Will use double quotes for specifying dict keys.
+
+The output of a plugin is stored in ``TResult`` class object's ``self.output``
+member. This must never be updated directly by the plugin even though it is
+accessible via ``self.result.output`` of the plugin class. It is updated by
+calling ``output_handler()`` method as of now.
+
+**Example Format**
+
+.. code-block::
+
+    Output Format:
+    [
+        {
+            "host": "192.168.12.11",
+            "port": 1900,
+            "services":
+            [
+                {
+                    "name": "foo",
+                    "type": "bar",
+                    "actions":
+                    [
+                        {
+                            "name": "foo",
+                            "arguments":
+                            [
+                                {
+                                    "name": "bar",
+                                    "direction": "in",
+                                    "return_value": None,
+                                }, # Zero or more arguments
+                            ]
+                        }, # Zero or more actions
+                    ],
+                    "state_variables":
+                    [
+                        "foobar",
+                        "barfoo",
+                    ] # Zero or more state variables
+                }, # Zero or more services
+            ]
+        }, # Zero or more device entries
+        {
+            "final_actions": 2
+        }
+    ]
+
+
 Result
 ------
 
-The plugin's failure status or result (basically a Boolean and a message
-string) after execution needs to be determined and then set accordingly before
-returning from ``execute()`` method. The plugin does not need to set anything
-for successful execution. The status is stored in plugin's ``self.result``
-object. There are two ways to set the status.
+It is implemented by an object of ``TResult`` class which is a member of plugin
+class object called ``result``, created and maintained by the ``Test`` base class.
+The plugin's failure status (basically a Boolean and a message string) after
+execution needs to be determined and then set accordingly before returning
+from ``execute()`` method in case of failure. The plugin **MUST NOT** set
+anything for successful execution. The complete result including the output
+and the status can be obtained by calling plugin class object's
+``self.result.getresult()`` method. There are two ways to set the status:
 
 #. *Set specific message*: When you know the exact reason, you can set it
    using ``self.result.setstatus(passed=False, reason="Whatever reason")``
