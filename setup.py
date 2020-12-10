@@ -24,7 +24,7 @@ setup(
     packages=find_packages(),
     entry_points={"console_scripts": ["expliot=expliot.expliot:EfCli.main"]},
     install_requires=[
-        "aiocoap>=0.3,<2"
+        "aiocoap>=0.3,<2",
         "AWSIoTPythonSDK>=1.4.8,<2",
         "bluepy>=1.3.0,<2",
         "cmd2>=1.1.0,<2",
