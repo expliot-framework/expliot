@@ -1,7 +1,7 @@
 """Constants for EXPLIoT."""
 MAJOR_VERSION = 0
 MINOR_VERSION = 9
-PATCH_VERSION = 5
+PATCH_VERSION = 6
 
 __short_version__ = "{}.{}".format(MAJOR_VERSION, MINOR_VERSION)
 __version__ = "{}.{}".format(__short_version__, PATCH_VERSION)
@@ -13,7 +13,6 @@ DOCS = "https://expliot.readthedocs.io"
 NAME = "EXPLIoT"
 URL = "https://www.expliot.io"
 BANNER_ART = r"""
-
 
           ____|   \    /    __ \    |       __  __|           __  __|
          |         \  /    |    |   |          |       __ \      |
