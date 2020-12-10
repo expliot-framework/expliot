@@ -9,18 +9,63 @@ from expliot.plugins.upnp import UPNP_REFERENCE
 
 
 class Discover(Test):
-    """Discover devices with support for UPNP."""
+    """
+    Discover devices with support for UPNP.
+
+    Output Format:
+    [
+        {
+            "host": "192.168.12.11",
+            "port": 1900,
+            "friendly_name": "WFADevice",
+            "type": "urn:schemas-wifialliance-org:device:WFADevice:1",
+            "base_url": "http://192.168.12.11:1900",
+            "response": "HTTP/1.1 200 OK...",
+            "description": "<?xml...",
+            "services":
+            [
+                {
+                    "name": "urn:schemas-wifialliance-org:service:WFAWLANConfig:1",
+                    "type": "WLANConfig",
+                    "version": 1,
+                    "id": "urn:wifialliance-org:serviceId:WLANConfig1",
+                    "description": "<?xml...",
+                    "scpd_url": "http://192.168.12.11:1900/wlanconfig.xml",
+                    "control_url": "/controls?WLANConfig",
+                    "event_sub_url": "/events?WLANConfig",
+                    "base_url": "http://192.168.12.11:1900",
+                    "actions":
+                    [
+                        {
+                            "name": "ModAPSettings",
+                            "arguments":
+                            [
+                                {
+                                    "name": "NewAPSettings",
+                                    "direction": "in",
+                                    "return_value": None,
+                                    "related_state_variable": "APSettings",
+                                }, # Zero or more arguments
+                            ]
+                        }, # Zero or more actions
+                    ],
+                    "state_variables":
+                    [
+                        "WLANEventType",
+                        "APSettings",
+                        "Message",
+                    ] # Zero or more state variables
+                }, # Zero or more services
+            ]
+        }, # Zero or more device entries
+        {
+            "total_devices_discovered": 2
+        }
+    ]
+    """
 
     def __init__(self):
-        """
-        Initialize the UPNP discovery.
-
-        Output Format:
-        [
-            {
-            }
-        ]
-        """
+        """Initialize the UPNP discovery."""
 
         super().__init__(
             name="discover",
