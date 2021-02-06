@@ -41,7 +41,7 @@ setup(
         "xmltodict>=0.12.0,<1",
         "zeroconf>=0.27.1,<0.29",
     ],
-    python_requires=">=3.5",
+    python_requires=">=3.7",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
