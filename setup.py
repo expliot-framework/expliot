@@ -39,7 +39,7 @@ setup(
         "python-can>=3.3.3,<4",
         "UPnPy>=1.1.8, <1.2",
         "xmltodict>=0.12.0,<1",
-        "zeroconf>=0.27.1,<0.29",
+        "zeroconf>=0.27.1,<0.30",
     ],
     python_requires=">=3.7",
     classifiers=[
