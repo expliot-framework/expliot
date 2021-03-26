@@ -1,6 +1,6 @@
 FROM python:3.8.8-alpine3.13
 LABEL maintainer="Fabian Affolter <fabian@affolter-engineering.ch>"
-LABEL version="0.9.6"
+LABEL version="0.9.7"
 LABEL description="Expliot - Internet Of Things Security Testing and \
 Exploitation Framework"
 
